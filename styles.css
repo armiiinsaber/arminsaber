@@ -308,3 +308,111 @@ main {
   background: var(--accent);
   opacity: 0.55;
 }
+
+/* ------------------------------------------------------------
+   Hero (Group 3) — dense, not airy. The whole thesis lands
+   before any scrolling: headline states it, the plot shows it.
+   ------------------------------------------------------------ */
+.hero {
+  padding-top: var(--s6);
+  padding-bottom: var(--s5);
+}
+
+.hero-eyebrow {
+  color: var(--accent);
+}
+
+.hero-headline {
+  margin-top: var(--s3);
+  font-size: clamp(38px, 6.6vw, 80px);
+  max-width: 13.5em;
+}
+.w-logic, .w-feel { font-style: normal; }
+.w-logic { color: var(--logic); }
+.w-feel  { color: var(--feel); }
+
+.hero-lede {
+  margin-top: var(--s4);
+  max-width: 54ch;
+  font-size: clamp(16px, 1.5vw, 19px);
+  line-height: 1.65;
+  color: color-mix(in oklab, var(--ink) 72%, var(--muted));
+}
+
+/* The plot: every project as a dot on the one axis that
+   organizes this page. Dot colour is fixed at the project's own
+   spectrum position — the axis previews the whole descent. */
+.plot {
+  margin-top: var(--s5);
+}
+
+.plot-axis {
+  position: relative;
+  height: 56px;
+  margin: 0 var(--s1);
+}
+
+.plot-line {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--logic), var(--feel));
+  opacity: 0.45;
+}
+
+.plot-dot {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--pt) * 100%);
+  width: 30px;
+  height: 44px;
+  transform: translate(-50%, -50%);
+}
+.plot-dot::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: color-mix(in oklch, var(--logic) calc((1 - var(--pt)) * 100%), var(--feel));
+  transform: translate(-50%, -50%);
+  transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) linear;
+}
+.plot-dot:hover::before,
+.plot-dot:focus-visible::before,
+.plot-dot.is-active::before {
+  transform: translate(-50%, -50%) scale(1.45);
+  box-shadow: 0 0 0 5px
+    color-mix(in oklch,
+      color-mix(in oklch, var(--logic) calc((1 - var(--pt)) * 100%), var(--feel)) 22%,
+      transparent);
+}
+
+.plot-scale {
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--s1);
+}
+.plot-pole { font-size: 10px; }
+.plot-pole--logic { color: var(--logic); }
+.plot-pole--feel  { color: var(--feel); }
+
+.plot-readout {
+  margin-top: var(--s3);
+  min-height: 2.6em;
+  color: var(--muted);
+  transition: color var(--dur-fast) linear;
+}
+.plot-readout.is-active { color: var(--ink); }
+.plot-readout .ro-n { color: var(--accent); margin-right: 1em; }
+.plot-readout .ro-cat { color: var(--muted); margin-left: 1em; }
+
+@media (max-width: 640px) {
+  .hero { padding-top: var(--s5); }
+  .hero-lede { margin-top: var(--s3); }
+  .plot { margin-top: var(--s4); }
+}

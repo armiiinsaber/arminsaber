@@ -221,3 +221,52 @@
 
   window.__reveal = { collect, measure, render };
 })();
+
+/* ============================================================
+   Hero plot.
+   Hover/focus a dot → its name and category appear in the
+   readout line (fixed height, no layout shift). Click → jump.
+   ============================================================ */
+(() => {
+  "use strict";
+
+  const readout = document.querySelector(".plot-readout");
+  const dots = [...document.querySelectorAll(".plot-dot")];
+  if (!readout || !dots.length) return;
+
+  const idleText = readout.textContent;
+
+  function show(dot) {
+    const target = document.getElementById(dot.dataset.target);
+    if (!target) return;
+    dots.forEach((d) => d.classList.toggle("is-active", d === dot));
+    readout.classList.add("is-active");
+    readout.replaceChildren();
+    const n = document.createElement("span");
+    n.className = "ro-n";
+    n.textContent = dot.dataset.n;
+    const name = document.createElement("span");
+    name.textContent = target.dataset.name;
+    const cat = document.createElement("span");
+    cat.className = "ro-cat";
+    cat.textContent = target.dataset.cat;
+    readout.append(n, name, cat);
+  }
+
+  function idle() {
+    dots.forEach((d) => d.classList.remove("is-active"));
+    readout.classList.remove("is-active");
+    readout.textContent = idleText;
+  }
+
+  for (const dot of dots) {
+    dot.addEventListener("pointerenter", () => show(dot));
+    dot.addEventListener("focus", () => show(dot));
+    dot.addEventListener("pointerleave", idle);
+    dot.addEventListener("blur", idle);
+    dot.addEventListener("click", () => {
+      const target = document.getElementById(dot.dataset.target);
+      if (target) window.__spectrum.jumpTo(target);
+    });
+  }
+})();

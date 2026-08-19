@@ -29,8 +29,29 @@
 
 <main id="top">
 
-  <section class="hero" id="hero">
-    <!-- Group 3: hero -->
+  <section class="hero stagger" id="hero" style="--st:0">
+    <p class="mono hero-eyebrow">Armin Saber — Toronto</p>
+    <h1 class="display hero-headline">Everything I make sits somewhere between <em class="w-logic">logic</em> and <em class="w-feel">feeling</em>.</h1>
+    <p class="hero-lede">The top of this page is the part that answers to numbers — products, companies, decisions I can defend in a spreadsheet. The bottom is the part that answers to nothing but the room.</p>
+
+    <div class="plot">
+      <div class="plot-axis" role="group" aria-label="Eight projects plotted from logic to feeling">
+        <span class="plot-line" aria-hidden="true"></span>
+        <button class="plot-dot" type="button" style="--pt:0.04" data-target="wealthsimple" data-n="01" aria-label="Wealthsimple — Applied AI, in production"></button>
+        <button class="plot-dot" type="button" style="--pt:0.13" data-target="rentletter" data-n="02" aria-label="RentLetter — SaaS, rental paperwork"></button>
+        <button class="plot-dot" type="button" style="--pt:0.30" data-target="easymonee" data-n="03" aria-label="easymonee — personal tooling, markets"></button>
+        <button class="plot-dot" type="button" style="--pt:0.46" data-target="klenz" data-n="04" aria-label="Klenz — wellness, Strava-wired"></button>
+        <button class="plot-dot" type="button" style="--pt:0.58" data-target="dj-network" data-n="05" aria-label="The DJ network — gatekept network"></button>
+        <button class="plot-dot" type="button" style="--pt:0.72" data-target="echoes" data-n="06" aria-label="Echoes — consumer, music memory"></button>
+        <button class="plot-dot" type="button" style="--pt:0.86" data-target="melomania" data-n="07" aria-label="MELOMANIA — live series, Toronto"></button>
+        <button class="plot-dot" type="button" style="--pt:0.97" data-target="live-sets" data-n="08" aria-label="Live sets — performance, original"></button>
+      </div>
+      <div class="plot-scale" aria-hidden="true">
+        <span class="mono plot-pole plot-pole--logic">Logic</span>
+        <span class="mono plot-pole plot-pole--feel">Feeling</span>
+      </div>
+      <p class="plot-readout mono" aria-live="polite">Hover a point — click to jump</p>
+    </div>
   </section>
 
   <section class="entries" aria-label="Projects">
