@@ -1,0 +1,266 @@
+/* ============================================================
+   ARMIN SABER — arminsaber.com
+   One page, one axis: logic at the top, feeling at the bottom.
+   The accent colour and the typographic register are the only
+   things that change as you descend. The background never does.
+   ============================================================ */
+
+/* --t: global spectrum position, 0 = logic, 1 = feeling.
+   Driven from scroll by script.js. Everything accent-coloured
+   derives from it; nothing else moves with it. */
+@property --t {
+  syntax: '<number>';
+  initial-value: 0;
+  inherits: true;
+}
+
+:root {
+  --bg:    #0A0A0C;
+  --ink:   #EDEBE6;
+  --muted: #75757F;
+  --hair:  #1E1E23;
+  --logic: #7E8CF0;
+  --feel:  #B8F06E;
+
+  --accent: color-mix(in oklch, var(--logic) calc((1 - var(--t)) * 100%), var(--feel));
+
+  /* spacing rhythm — hold to this scale, nothing arbitrary */
+  --s1: 8px;
+  --s2: 16px;
+  --s3: 24px;
+  --s4: 40px;
+  --s5: 64px;
+  --s6: 104px;
+  --s7: 168px;
+
+  --ribbon-h: 44px;
+  --edge-h: 2px;
+  --measure: 62ch;
+  --page-max: 1060px;
+  --pad-x: clamp(20px, 5vw, 48px);
+
+  --font-display: "Fraunces", "Georgia", serif;
+  --font-body: "Instrument Sans", system-ui, sans-serif;
+  --font-mono: "Fragment Mono", "SF Mono", monospace;
+
+  /* motion — quick, confident, ease-out; nothing bouncy */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 180ms;
+  --dur-med: 420ms;
+}
+
+/* ------------------------------------------------------------
+   Reset + base
+   ------------------------------------------------------------ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--ribbon-h) + var(--edge-h) + var(--s3));
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+@media (min-width: 720px) {
+  body { font-size: 17px; }
+}
+
+::selection { background: var(--accent); color: var(--bg); }
+
+a { color: inherit; }
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 1px;
+}
+
+/* Sections carry their own fixed register via --st (0..1):
+   type is set by where a thing SITS on the spectrum, while
+   accents follow where the READER is. Display type tightens
+   at the logic end; softens, loosens and goes slightly wonky
+   at the feeling end. Felt, not announced. */
+.display {
+  font-family: var(--font-display);
+  font-variation-settings:
+    "SOFT" calc(var(--st, 0) * 100),
+    "WONK" var(--st, 0);
+  font-weight: calc(580 - var(--st, 0) * 120);
+  letter-spacing: calc(-0.034em + var(--st, 0) * 0.042em);
+  line-height: calc(1.02 + var(--st, 0) * 0.14);
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: calc(0.14em + var(--st, 0) * 0.08em);
+  text-transform: uppercase;
+}
+
+/* ------------------------------------------------------------
+   Top edge + spectrum ribbon (the signature element)
+   ------------------------------------------------------------ */
+.edge {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: var(--edge-h);
+  background: var(--accent);
+  z-index: 30;
+}
+
+.ribbon {
+  position: fixed;
+  top: var(--edge-h);
+  left: 0;
+  right: 0;
+  height: var(--ribbon-h);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  padding: 0 var(--pad-x);
+  background: var(--bg);
+  border-bottom: 1px solid var(--hair);
+}
+
+.ribbon-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  flex: none;
+  user-select: none;
+}
+.ribbon-label--logic { color: var(--logic); }
+.ribbon-label--feel  { color: var(--feel); }
+
+.ribbon-track {
+  position: relative;
+  flex: 1;
+  height: 100%;
+}
+
+.ribbon-line {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--hair);
+}
+
+/* Ticks: one per project, placed at its spectrum position.
+   They light in --accent as the thumb passes. */
+.ribbon-tick {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 20px;
+  transform: translateX(-50%);
+  display: block;
+}
+.ribbon-tick::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 1px;
+  height: 10px;
+  background: var(--muted);
+  transition: background var(--dur-fast) linear, height var(--dur-fast) var(--ease-out);
+}
+.ribbon-tick.is-lit::before {
+  background: var(--accent);
+  height: 14px;
+}
+
+/* Tick tooltip — desktop hover/focus only */
+.ribbon-tick::after {
+  content: attr(data-name);
+  position: absolute;
+  top: calc(100% + 1px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 5px 9px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--hair);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-fast) linear;
+}
+.ribbon-tick:hover::after,
+.ribbon-tick:focus-visible::after { opacity: 1; }
+
+.ribbon-thumb {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  border-radius: 50%;
+  background: var(--accent);
+  will-change: transform;
+}
+
+/* ------------------------------------------------------------
+   Page scaffold
+   ------------------------------------------------------------ */
+main {
+  padding-top: calc(var(--ribbon-h) + var(--edge-h));
+}
+
+.hero,
+.entries {
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding-left: var(--pad-x);
+  padding-right: var(--pad-x);
+}
+
+/* ------------------------------------------------------------
+   Mobile ribbon: track + thumb only, labels shrink,
+   no per-tick hover states
+   ------------------------------------------------------------ */
+@media (max-width: 640px) {
+  :root { --ribbon-h: 40px; }
+  .ribbon { gap: var(--s1); }
+  .ribbon-label { font-size: 9px; letter-spacing: 0.14em; }
+  .ribbon-tick::after { display: none; }
+}
+
+/* ------------------------------------------------------------
+   Reduced motion: no smooth scroll; script.js also snaps the
+   spectrum engine and disables reveals.
+   ------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
