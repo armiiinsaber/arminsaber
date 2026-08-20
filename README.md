@@ -2,6 +2,12 @@
 
 Personal site. Static, vanilla HTML/CSS/JS, no build step.
 
+> **Before announcing the site:** remove the
+> `<meta name="robots" content="noindex, nofollow">` tag from
+> `index.html`. It is there because the page still carries two
+> `[ARMIN: …]` placeholders and five `href="#"` links, and the site
+> should not be indexed in that state.
+
 One page, one axis: logic at the top, feeling at the bottom. Scroll
 position drives `--t`; the accent colour and the typographic register
 cool from indigo to chartreuse as you descend. The sticky ribbon plots
