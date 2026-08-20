@@ -329,7 +329,7 @@ main {
 
 .hero-headline {
   margin-top: var(--s3);
-  font-size: clamp(38px, 6.6vw, 80px);
+  font-size: clamp(32px, 6.6vw, 80px);
   max-width: 13.5em;
 }
 .w-logic, .w-feel { font-style: normal; }
@@ -702,3 +702,20 @@ mark.ph {
   opacity: 1;
 }
 
+
+/* ------------------------------------------------------------
+   Line-break discipline — no single word stranded on its own
+   final line, at any breakpoint.
+   ------------------------------------------------------------ */
+.nowrap { white-space: nowrap; }
+
+h1, h2, .entry-name, .ending-statement, .plot-readout, .entry-pos, .entry-cat {
+  text-wrap: balance;
+}
+
+p, dd, .entry-one, .hero-lede {
+  text-wrap: pretty;
+}
+
+/* balance would centre-out the lede unevenly; pretty + a capped
+   measure keeps its rag tight instead */
