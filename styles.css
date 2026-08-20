@@ -495,12 +495,6 @@ main {
 .entry-name {
   font-size: clamp(30px, 3.8vw, 46px);
 }
-.entry-wip {
-  color: var(--muted);
-  vertical-align: middle;
-  margin-left: var(--s1);
-}
-
 .entry-one {
   margin-top: var(--s2);
   max-width: var(--measure);
