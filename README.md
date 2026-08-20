@@ -30,6 +30,17 @@ Pushing to `main` deploys via `.github/workflows/deploy.yml`
 3. DNS: point `arminsaber.com` A records at GitHub Pages, `www` CNAME
    at `<user>.github.io`
 
+## Before every push
+
+```sh
+node tools/check-links.mjs
+```
+
+Requests every outbound link on the page and reports status codes and
+TLS errors. Two links are temporarily pointed at platform hosts while
+their custom domains are broken — search `index.html` for
+`TODO(armin)` to swap them back.
+
 ## Developing
 
 Any static server works:
