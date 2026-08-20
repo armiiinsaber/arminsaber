@@ -657,12 +657,33 @@ mark.ph {
   max-width: 21em;
 }
 
+/* six links must always wrap as a balanced group — explicit
+   column counts per range so no link strands alone on a row */
 .ending-contact {
   margin-top: var(--s5);
   display: flex;
   flex-wrap: wrap;
   gap: var(--s2) var(--s4);
 }
+@media (max-width: 899px) {
+  .ending-contact {
+    display: grid;
+    grid-template-columns: repeat(3, max-content);
+    column-gap: var(--s4);
+  }
+}
+@media (max-width: 519px) {
+  .ending-contact {
+    grid-template-columns: repeat(2, max-content);
+    column-gap: var(--s3);
+  }
+  .contact-slot mark.ph {
+    font-size: 10px;
+    letter-spacing: 0.06em;
+  }
+}
+.contact-slot { padding: 6px 0; }
+.contact-slot mark.ph { font-size: 11px; }
 .ending-contact a {
   color: var(--ink);
   text-decoration: none;
