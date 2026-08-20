@@ -510,8 +510,6 @@ main {
 }
 .entry-link:hover { color: var(--accent); }
 
-.entry-note { color: var(--muted); }
-
 /* expanded brief: animated with the 0fr → 1fr grid technique —
    smooth height, no measuring, no jump on the entries below */
 .entry-brief {
