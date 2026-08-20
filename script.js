@@ -270,3 +270,71 @@
     });
   }
 })();
+
+/* ============================================================
+   Entries: one open at a time, whole header tappable,
+   deep-linkable by id. Heights change on toggle, so the
+   spectrum and reveal engines re-measure after the transition.
+   ============================================================ */
+(() => {
+  "use strict";
+
+  const entries = [...document.querySelectorAll(".entry")];
+
+  function remeasure() {
+    window.__spectrum.measure();
+    window.__spectrum.wake();
+    window.__reveal.measure();
+    window.__reveal.render();
+  }
+
+  function setOpen(entry, open) {
+    entry.classList.toggle("is-open", open);
+    const btn = entry.querySelector(".entry-toggle");
+    if (btn) btn.setAttribute("aria-expanded", String(open));
+  }
+
+  function toggle(entry) {
+    const opening = !entry.classList.contains("is-open");
+    for (const e of entries) setOpen(e, e === entry && opening);
+    if (opening && entry.id) history.replaceState(null, "", `#${entry.id}`);
+    // grid-template-rows transition ends ~420ms; settle after it
+    setTimeout(remeasure, 480);
+  }
+
+  for (const entry of entries) {
+    const head = entry.querySelector(".entry-head");
+    const btn = entry.querySelector(".entry-toggle");
+    if (btn) btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggle(entry);
+    });
+    if (head) head.addEventListener("click", (e) => {
+      if (e.target.closest("a")) return; // live links stay links
+      toggle(entry);
+    });
+  }
+
+  // deep link: /#easymonee opens and lands on that entry
+  function openFromHash() {
+    const id = location.hash.slice(1);
+    if (!id) return;
+    const entry = document.getElementById(id);
+    if (entry && entry.classList.contains("entry")) {
+      for (const e of entries) setOpen(e, e === entry);
+      setTimeout(() => {
+        remeasure();
+        entry.scrollIntoView({ behavior: "auto", block: "start" });
+      }, 60);
+    }
+  }
+  openFromHash();
+  addEventListener("hashchange", () => {
+    const id = location.hash.slice(1);
+    const entry = document.getElementById(id);
+    if (entry && entry.classList.contains("entry") && !entry.classList.contains("is-open")) {
+      for (const e of entries) setOpen(e, e === entry);
+      setTimeout(remeasure, 480);
+    }
+  });
+})();

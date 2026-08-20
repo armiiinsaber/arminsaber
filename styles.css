@@ -416,3 +416,180 @@ main {
   .hero-lede { margin-top: var(--s3); }
   .plot { margin-top: var(--s4); }
 }
+
+/* ------------------------------------------------------------
+   Entries (Group 4) — the core of the site.
+   A ledger: meta column left, substance right. The expanded
+   brief keeps the same two columns so its labels align with
+   the meta column above them.
+   ------------------------------------------------------------ */
+.entries {
+  padding-bottom: var(--s5);
+}
+
+.entry {
+  border-top: 1px solid var(--hair);
+  padding: var(--s5) 0;
+}
+
+.entry-head {
+  display: grid;
+  grid-template-columns: 230px 1fr;
+  column-gap: var(--s4);
+  cursor: pointer;
+}
+
+/* meta column */
+.entry-meta { display: flex; flex-direction: column; gap: var(--s2); }
+.entry-pos { color: var(--accent); }
+.entry-cat { color: var(--muted); }
+
+/* miniature of the hero axis: where this entry sits */
+.entry-axis {
+  position: relative;
+  width: 72px;
+  height: 1px;
+  background: var(--hair);
+}
+.entry-axis i {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--pt) * 100%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--accent);
+}
+
+/* main column */
+.entry-name {
+  font-size: clamp(30px, 3.8vw, 46px);
+}
+.entry-wip {
+  color: var(--muted);
+  vertical-align: middle;
+  margin-left: var(--s1);
+}
+
+.entry-one {
+  margin-top: var(--s2);
+  max-width: var(--measure);
+  color: color-mix(in oklab, var(--ink) 80%, var(--muted));
+}
+
+.entry-actions {
+  margin-top: var(--s3);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--s2) var(--s4);
+}
+
+.entry-toggle {
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+}
+.entry-toggle .tgl {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1;
+  transition: transform var(--dur-med) var(--ease-out);
+}
+.entry.is-open .entry-toggle .tgl { transform: rotate(45deg); }
+.entry-toggle:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+.entry-link {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color var(--dur-fast) linear;
+}
+.entry-link:hover { color: var(--accent); }
+
+.entry-note { color: var(--muted); }
+
+/* expanded brief: animated with the 0fr → 1fr grid technique —
+   smooth height, no measuring, no jump on the entries below */
+.entry-brief {
+  display: grid;
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  transition:
+    grid-template-rows var(--dur-med) var(--ease-out),
+    visibility 0s var(--dur-med);
+}
+.entry.is-open .entry-brief {
+  grid-template-rows: 1fr;
+  visibility: visible;
+  transition: grid-template-rows var(--dur-med) var(--ease-out);
+}
+.entry-brief-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.brief {
+  padding-top: var(--s4);
+  display: flex;
+  flex-direction: column;
+}
+
+.brief-row {
+  display: grid;
+  grid-template-columns: 230px 1fr;
+  column-gap: var(--s4);
+  padding: var(--s3) 0;
+  border-top: 1px dashed color-mix(in oklab, var(--hair) 72%, var(--muted));
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity var(--dur-med) var(--ease-out),
+    transform var(--dur-med) var(--ease-out);
+}
+.entry.is-open .brief-row { opacity: 1; transform: none; }
+.entry.is-open .brief-row:nth-child(1) { transition-delay: 60ms; }
+.entry.is-open .brief-row:nth-child(2) { transition-delay: 110ms; }
+.entry.is-open .brief-row:nth-child(3) { transition-delay: 160ms; }
+.entry.is-open .brief-row:nth-child(4) { transition-delay: 210ms; }
+.entry.is-open .brief-row:nth-child(5) { transition-delay: 260ms; }
+
+.brief-row dt { color: var(--accent); padding-top: 3px; }
+.brief-row dd {
+  max-width: var(--measure);
+  color: color-mix(in oklab, var(--ink) 86%, var(--muted));
+}
+
+/* the visible to-fill placeholders — meant to be found */
+mark.ph {
+  background: none;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.82em;
+  border: 1px dashed color-mix(in oklab, var(--accent) 45%, transparent);
+  border-radius: 2px;
+  padding: 1px 7px;
+}
+
+/* ------------------------------------------------------------
+   Entries — stacked below 760px
+   ------------------------------------------------------------ */
+@media (max-width: 760px) {
+  .entry { padding: var(--s4) 0; }
+  .entry-head,
+  .brief-row {
+    grid-template-columns: 1fr;
+    row-gap: var(--s2);
+  }
+  .entry-meta {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--s2);
+    flex-wrap: wrap;
+  }
+  .entry-axis { width: 44px; }
+  .brief-row { row-gap: var(--s1); }
+}
