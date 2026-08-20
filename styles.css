@@ -626,7 +626,10 @@ mark.ph {
   max-width: var(--page-max);
   margin: 0 auto;
   padding: var(--s6) var(--pad-x) var(--s4);
-  border-top: 1px solid var(--hair);
+  /* mirrors the coda's dissolving rule so the ending reads as a
+     continuation of it, not a new section */
+  border-image: linear-gradient(90deg, transparent 5%, var(--hair) 70%) 1;
+  border-top: 1px solid;
 }
 
 .ending-eyebrow { color: var(--accent); }
