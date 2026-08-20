@@ -15,9 +15,10 @@
 <noscript>
 <style>
   .stagger > * { opacity: 1 !important; }
-  .entry-brief { visibility: visible !important; grid-template-rows: 1fr !important; }
+  .entry-brief { grid-template-rows: 1fr !important; }
+  .entry-brief-inner { content-visibility: visible !important; display: block !important; }
   .brief-row { opacity: 1 !important; transform: none !important; }
-  .plot-readout { display: none; }
+  .plot-readout, .entries-tools { display: none; }
 </style>
 </noscript>
 </head>
@@ -63,6 +64,10 @@
 
   <section class="entries" aria-label="Projects">
 
+    <div class="entries-tools" data-reveal>
+      <button class="expand-all mono" type="button" aria-pressed="false"><span class="xa-label">Expand all</span> <span class="tgl" aria-hidden="true">+</span></button>
+    </div>
+
     <article class="entry" id="rentletter" data-t="0.06" data-name="RentLetter" data-cat="SaaS · rental paperwork" style="--st:0.06">
       <div class="entry-head" data-reveal>
         <div class="entry-meta">
@@ -80,7 +85,7 @@
         </div>
       </div>
       <div class="entry-brief" id="rentletter-brief">
-        <div class="entry-brief-inner">
+        <div class="entry-brief-inner" hidden="until-found">
           <dl class="brief">
             <div class="brief-row"><dt class="mono">Why I built it</dt><dd>A real market gap in Canadian rental screening — chosen from workflow and market logic, not personal taste.</dd></div>
             <div class="brief-row"><dt class="mono">Who it&rsquo;s for</dt><dd>Realtors, landlords and ordinary tenants — a general-public audience with no patience for software. Because of that, ease of use drove nearly every design decision: the product had to be obvious on first contact to people who did not want to learn a tool.</dd></div>
@@ -109,7 +114,7 @@
         </div>
       </div>
       <div class="entry-brief" id="easymonee-brief">
-        <div class="entry-brief-inner">
+        <div class="entry-brief-inner" hidden="until-found">
           <dl class="brief">
             <div class="brief-row"><dt class="mono">Why I built it</dt><dd>Purely for myself. No market research, no customer — I wanted a specific instrument for my own investing, and nothing on the market was it. The name is deliberately ridiculous for exactly that reason: it was never meant to be sold to anyone, so it never needed a serious one. Knowing which game you are playing — building for a market or building for yourself — is half of product judgement.</dd></div>
             <div class="brief-row"><dt class="mono">Who it&rsquo;s for</dt><dd>One user. Me.</dd></div>
@@ -138,7 +143,7 @@
         </div>
       </div>
       <div class="entry-brief" id="klenz-brief">
-        <div class="entry-brief-inner">
+        <div class="entry-brief-inner" hidden="until-found">
           <dl class="brief">
             <div class="brief-row"><dt class="mono">Why I built it</dt><dd><mark class="ph">[ARMIN: the personal habit this served]</mark></dd></div>
             <div class="brief-row"><dt class="mono">Who it&rsquo;s for</dt><dd>Also mostly me — scope deliberately kept small.</dd></div>
@@ -166,7 +171,7 @@
         </div>
       </div>
       <div class="entry-brief" id="dj-network-brief">
-        <div class="entry-brief-inner">
+        <div class="entry-brief-inner" hidden="until-found">
           <dl class="brief">
             <div class="brief-row"><dt class="mono">Why I built it</dt><dd>A problem I have personally as a performer: the useful connections happen when two artists are in the same city on the same weekend and neither knows it.</dd></div>
             <div class="brief-row"><dt class="mono">Who it&rsquo;s for</dt><dd>Touring DJs and electronic artists. Gatekeeping is a product decision here, not an attitude — the value collapses if it is open.</dd></div>
@@ -195,7 +200,7 @@
         </div>
       </div>
       <div class="entry-brief" id="echoes-brief">
-        <div class="entry-brief-inner">
+        <div class="entry-brief-inner" hidden="until-found">
           <dl class="brief">
             <div class="brief-row"><dt class="mono">Why I built it</dt><dd>Started as a feeling everyone has and nobody records — a song welded to the place you first heard it — then got a real data model so it would survive past the demo.</dd></div>
             <div class="brief-row"><dt class="mono">Who it&rsquo;s for</dt><dd><mark class="ph">[ARMIN: who it&rsquo;s for]</mark></dd></div>
@@ -223,7 +228,7 @@
         </div>
       </div>
       <div class="entry-brief" id="melomania-brief">
-        <div class="entry-brief-inner">
+        <div class="entry-brief-inner" hidden="until-found">
           <dl class="brief">
             <div class="brief-row"><dt class="mono">Why I built it</dt><dd>It starts as a feeling about what a night should be, then quietly becomes artist deals, door splits and a ticketing funnel. This is the entry where the two ends of this page meet.</dd></div>
             <div class="brief-row"><dt class="mono">Who it&rsquo;s for</dt><dd>Toronto&rsquo;s electronic music audience.</dd></div>
@@ -251,7 +256,7 @@
         </div>
       </div>
       <div class="entry-brief" id="live-sets-brief">
-        <div class="entry-brief-inner">
+        <div class="entry-brief-inner" hidden="until-found">
           <dl class="brief">
             <div class="brief-row"><dt class="mono">Why I built it</dt><dd>Nothing here is measured. The only test is whether a room moves, and you find that out on the night.</dd></div>
             <div class="brief-row"><dt class="mono">Who it&rsquo;s for</dt><dd><mark class="ph">[ARMIN: who it&rsquo;s for]</mark></dd></div>

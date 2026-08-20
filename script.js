@@ -278,14 +278,20 @@
 })();
 
 /* ============================================================
-   Entries: one open at a time, whole header tappable,
-   deep-linkable by id. Heights change on toggle, so the
-   spectrum and reveal engines re-measure after the transition.
+   Entries: one open at a time (suspended while "Expand all" is
+   active), whole header tappable, deep-linkable by id.
+   Collapsed briefs stay searchable: the inner carries
+   hidden="until-found", and beforematch expands the entry before
+   the browser scrolls to the match. Heights change on toggle, so
+   the spectrum and reveal engines re-measure after the transition.
    ============================================================ */
 (() => {
   "use strict";
 
   const entries = [...document.querySelectorAll(".entry")];
+  const allBtn = document.querySelector(".expand-all");
+  let expandAll = false;
+  const hideTimers = new WeakMap();
 
   function remeasure() {
     window.__spectrum.measure();
@@ -294,23 +300,56 @@
     window.__reveal.render();
   }
 
-  function setOpen(entry, open) {
-    entry.classList.toggle("is-open", open);
+  function setOpen(entry, open, instant = false) {
+    const inner = entry.querySelector(".entry-brief-inner");
     const btn = entry.querySelector(".entry-toggle");
+    clearTimeout(hideTimers.get(entry));
+    if (instant) {
+      entry.classList.add("no-anim");
+      requestAnimationFrame(() => entry.classList.remove("no-anim"));
+    }
+    if (open) {
+      inner.removeAttribute("hidden");
+      entry.classList.add("is-open");
+    } else {
+      entry.classList.remove("is-open");
+      // restore searchable-hidden once the collapse has finished
+      hideTimers.set(entry, setTimeout(() => {
+        if (!entry.classList.contains("is-open")) {
+          inner.setAttribute("hidden", "until-found");
+        }
+      }, instant ? 0 : 500));
+    }
     if (btn) btn.setAttribute("aria-expanded", String(open));
   }
 
   function toggle(entry) {
     const opening = !entry.classList.contains("is-open");
-    for (const e of entries) setOpen(e, e === entry && opening);
+    if (expandAll) {
+      setOpen(entry, opening); // no one-at-a-time while all-expanded
+    } else {
+      for (const e of entries) setOpen(e, e === entry && opening);
+    }
     if (opening && entry.id) history.replaceState(null, "", `#${entry.id}`);
-    // grid-template-rows transition ends ~420ms; settle after it
-    setTimeout(remeasure, 480);
+    setTimeout(remeasure, 520);
   }
+
+  function setExpandAll(on) {
+    expandAll = on;
+    for (const e of entries) setOpen(e, on);
+    if (allBtn) {
+      allBtn.setAttribute("aria-pressed", String(on));
+      allBtn.querySelector(".xa-label").textContent = on ? "Collapse all" : "Expand all";
+    }
+    setTimeout(remeasure, 520);
+  }
+
+  if (allBtn) allBtn.addEventListener("click", () => setExpandAll(!expandAll));
 
   for (const entry of entries) {
     const head = entry.querySelector(".entry-head");
     const btn = entry.querySelector(".entry-toggle");
+    const inner = entry.querySelector(".entry-brief-inner");
     if (btn) btn.addEventListener("click", (e) => {
       e.stopPropagation();
       toggle(entry);
@@ -318,6 +357,17 @@
     if (head) head.addEventListener("click", (e) => {
       if (e.target.closest("a")) return; // live links stay links
       toggle(entry);
+    });
+    // browser find (Cmd+F) landed inside the collapsed brief:
+    // open this entry instantly so the scroll-to-match has a layout
+    inner.addEventListener("beforematch", () => {
+      if (expandAll) {
+        setOpen(entry, true, true);
+      } else {
+        for (const e of entries) setOpen(e, e === entry, true);
+      }
+      remeasure();
+      setTimeout(remeasure, 100);
     });
   }
 
@@ -327,7 +377,7 @@
     if (!id) return;
     const entry = document.getElementById(id);
     if (entry && entry.classList.contains("entry")) {
-      for (const e of entries) setOpen(e, e === entry);
+      for (const e of entries) setOpen(e, e === entry, true);
       setTimeout(() => {
         remeasure();
         entry.scrollIntoView({ behavior: "auto", block: "start" });
@@ -339,8 +389,9 @@
     const id = location.hash.slice(1);
     const entry = document.getElementById(id);
     if (entry && entry.classList.contains("entry") && !entry.classList.contains("is-open")) {
-      for (const e of entries) setOpen(e, e === entry);
-      setTimeout(remeasure, 480);
+      if (expandAll) setOpen(entry, true);
+      else for (const e of entries) setOpen(e, e === entry);
+      setTimeout(remeasure, 520);
     }
   });
 })();

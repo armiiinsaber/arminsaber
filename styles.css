@@ -431,6 +431,31 @@ main {
   padding-bottom: var(--s5);
 }
 
+/* expand/collapse-all — sits in the meta column's grid lane */
+.entries-tools {
+  display: grid;
+  grid-template-columns: 230px 1fr;
+  column-gap: var(--s4);
+  padding: var(--s2) 0;
+}
+.expand-all {
+  justify-self: start;
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+}
+.expand-all .tgl {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1;
+  transition: transform var(--dur-med) var(--ease-out);
+}
+.expand-all[aria-pressed="true"] .tgl { transform: rotate(45deg); }
+.expand-all:hover { text-decoration: underline; text-underline-offset: 4px; }
+
 .entry {
   border-top: 1px solid var(--hair);
   padding: var(--s5) 0;
@@ -519,15 +544,17 @@ main {
 .entry-brief {
   display: grid;
   grid-template-rows: 0fr;
-  visibility: hidden;
-  transition:
-    grid-template-rows var(--dur-med) var(--ease-out),
-    visibility 0s var(--dur-med);
+  transition: grid-template-rows var(--dur-med) var(--ease-out);
 }
 .entry.is-open .entry-brief {
   grid-template-rows: 1fr;
-  visibility: visible;
-  transition: grid-template-rows var(--dur-med) var(--ease-out);
+}
+/* collapsed content stays in the DOM and findable: the inner
+   carries hidden="until-found" (content-visibility, searchable);
+   script.js lifts it on expand and on beforematch */
+.entry.no-anim .entry-brief,
+.entry.no-anim .brief-row {
+  transition: none !important;
 }
 .entry-brief-inner {
   overflow: hidden;
