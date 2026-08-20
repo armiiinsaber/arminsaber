@@ -749,7 +749,6 @@ p, dd, .entry-one, .hero-lede {
   border: 1px solid var(--hair);
   background: #0D0D11;
   padding: var(--s3) var(--s4) var(--s1);
-  max-width: 640px;
 }
 
 .labs-eyebrow { color: var(--accent); }
@@ -791,4 +790,79 @@ p, dd, .entry-one, .hero-lede {
 
 @media (max-width: 760px) {
   .labs { padding: var(--s3) var(--s3) var(--s1); }
+}
+
+/* ------------------------------------------------------------
+   Product shots — corroboration, not decoration. One identical
+   frame for every product: 16:10, inset ground, hairline, slight
+   dim at rest that lifts on hover. Small on purpose.
+   ------------------------------------------------------------ */
+.shot {
+  width: 208px;
+  aspect-ratio: 16 / 10;
+  flex: none;
+  padding: 6px;
+  background: #101015;
+  border: 1px solid var(--hair);
+  border-radius: 6px;
+}
+.shot img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 3px;
+  filter: brightness(0.8) saturate(0.88);
+  transition: filter var(--dur-fast) linear;
+}
+.entry-head:hover .shot img,
+.labs-row:hover .shot img,
+.shot:hover img {
+  filter: none;
+}
+
+.shot--empty {
+  display: grid;
+  place-items: center;
+  border-style: dashed;
+}
+.shot--empty mark.ph { border: 0; text-align: center; }
+
+/* head becomes three lanes where a shot exists */
+.entry-head {
+  grid-template-columns: 230px 1fr auto;
+}
+.entry-head > .shot { grid-column: 3; align-self: start; }
+
+/* labs rows: copy beside shot */
+.labs-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: var(--s3);
+  align-items: start;
+}
+
+@media (max-width: 760px) {
+  .entry-head { grid-template-columns: 1fr; }
+  .entry-head > .shot { grid-column: auto; }
+  .labs-row { grid-template-columns: 1fr; row-gap: var(--s2); }
+}
+
+/* studio: the labs container escapes the middle lane and spans
+   the full width under the name row */
+.entry-head > .labs {
+  grid-column: 2 / -1;
+}
+
+.entry-credit { white-space: nowrap; }
+
+/* tablet: shot tucks under the main column instead of owning a lane */
+@media (min-width: 761px) and (max-width: 1023px) {
+  .entry-head { grid-template-columns: 230px 1fr; }
+  .entry-head > .shot { grid-column: 2; margin-top: var(--s3); }
+  .entry-head > .labs { grid-column: 2; }
+  .labs-row { grid-template-columns: 1fr; row-gap: var(--s2); }
+}
+@media (max-width: 760px) {
+  .entry-head > .labs { grid-column: auto; }
 }
