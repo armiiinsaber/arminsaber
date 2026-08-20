@@ -677,13 +677,8 @@ mark.ph {
     grid-template-columns: repeat(2, max-content);
     column-gap: var(--s3);
   }
-  .contact-slot mark.ph {
-    font-size: 10px;
-    letter-spacing: 0.06em;
-  }
 }
-.contact-slot { padding: 6px 0; }
-.contact-slot mark.ph { font-size: 11px; }
+
 .ending-contact a {
   color: var(--ink);
   text-decoration: none;
