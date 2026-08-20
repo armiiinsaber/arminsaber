@@ -19,8 +19,8 @@
   --ink:   #EDEBE6;
   --muted: #75757F;
   --hair:  #1E1E23;
-  --logic: #7E8CF0;
-  --feel:  #B8F06E;
+  --logic: #6D7DFF;
+  --feel:  #C8FA4B;
 
   --accent: color-mix(in oklch, var(--logic) calc((1 - var(--t)) * 100%), var(--feel));
 
@@ -33,8 +33,8 @@
   --s6: 104px;
   --s7: 168px;
 
-  --ribbon-h: 44px;
-  --edge-h: 2px;
+  --ribbon-h: 56px;
+  --edge-h: 3px;
   --measure: 62ch;
   --page-max: 1060px;
   --pad-x: clamp(20px, 5vw, 48px);
@@ -142,7 +142,8 @@ button {
 
 .ribbon-label {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-weight: 500;
+  font-size: 11px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   flex: none;
@@ -162,8 +163,10 @@ button {
   top: 50%;
   left: 0;
   right: 0;
-  height: 1px;
-  background: var(--hair);
+  height: 2px;
+  margin-top: -1px;
+  background: linear-gradient(90deg, var(--logic), var(--feel));
+  opacity: 0.38;
 }
 
 /* Ticks: one per project, placed at its spectrum position.
@@ -182,14 +185,14 @@ button {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 1px;
-  height: 10px;
-  background: var(--muted);
+  width: 2px;
+  height: 12px;
+  background: #3A3A44;
   transition: background var(--dur-fast) linear, height var(--dur-fast) var(--ease-out);
 }
 .ribbon-tick.is-lit::before {
   background: var(--accent);
-  height: 14px;
+  height: 18px;
 }
 
 /* Tick tooltip — desktop hover/focus only */
@@ -219,11 +222,13 @@ button {
   position: absolute;
   top: 50%;
   left: 0;
-  width: 8px;
-  height: 8px;
-  margin: -4px 0 0 -4px;
+  width: 13px;
+  height: 13px;
+  margin: -6.5px 0 0 -6.5px;
   border-radius: 50%;
   background: var(--accent);
+  /* bg-coloured ring separates the thumb from ticks it crosses */
+  box-shadow: 0 0 0 3px var(--bg);
   will-change: transform;
 }
 
@@ -247,7 +252,7 @@ main {
    no per-tick hover states
    ------------------------------------------------------------ */
 @media (max-width: 640px) {
-  :root { --ribbon-h: 40px; }
+  :root { --ribbon-h: 48px; }
   .ribbon { gap: var(--s1); }
   .ribbon-label { font-size: 9px; letter-spacing: 0.14em; }
   .ribbon-tick::after { display: none; }
@@ -353,7 +358,7 @@ main {
 
 .plot-axis {
   position: relative;
-  height: 56px;
+  height: 84px;
   margin: 0 var(--s1);
 }
 
@@ -362,9 +367,10 @@ main {
   top: 50%;
   left: 0;
   right: 0;
-  height: 1px;
+  height: 2px;
+  margin-top: -1px;
   background: linear-gradient(90deg, var(--logic), var(--feel));
-  opacity: 0.45;
+  opacity: 0.55;
 }
 
 .plot-dot {
@@ -380,8 +386,8 @@ main {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 11px;
-  height: 11px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: color-mix(in oklch, var(--logic) calc((1 - var(--pt)) * 100%), var(--feel));
   transform: translate(-50%, -50%);
@@ -402,7 +408,7 @@ main {
   justify-content: space-between;
   margin-top: var(--s1);
 }
-.plot-pole { font-size: 10px; }
+.plot-pole { font-size: 12px; letter-spacing: 0.2em; }
 .plot-pole--logic { color: var(--logic); }
 .plot-pole--feel  { color: var(--feel); }
 
@@ -477,19 +483,32 @@ main {
 /* miniature of the hero axis: where this entry sits */
 .entry-axis {
   position: relative;
-  width: 72px;
-  height: 1px;
-  background: var(--hair);
+  width: 120px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--logic), var(--feel));
+  opacity: 0.9;
 }
+.entry-axis::before,
+.entry-axis::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 2px;
+  height: 8px;
+  transform: translateY(-50%);
+}
+.entry-axis::before { left: 0; background: var(--logic); }
+.entry-axis::after  { right: 0; background: var(--feel); }
 .entry-axis i {
   position: absolute;
   top: 50%;
   left: calc(var(--pt) * 100%);
-  width: 5px;
-  height: 5px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
   transform: translate(-50%, -50%);
   background: var(--accent);
+  box-shadow: 0 0 0 3px var(--bg);
 }
 
 /* main column */
@@ -614,7 +633,7 @@ mark.ph {
     gap: var(--s2);
     flex-wrap: wrap;
   }
-  .entry-axis { width: 44px; }
+  .entry-axis { width: 72px; }
   .brief-row { row-gap: var(--s1); }
 }
 
