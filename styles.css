@@ -320,6 +320,10 @@ main {
 
 .hero-eyebrow {
   color: var(--accent);
+  line-height: 2;
+}
+.hero-eyebrow-sub {
+  color: var(--muted);
 }
 
 .hero-headline {
