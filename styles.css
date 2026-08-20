@@ -738,3 +738,57 @@ p, dd, .entry-one, .hero-lede {
 
 /* balance would centre-out the lede unevenly; pretty + a capped
    measure keeps its rag tight instead */
+
+/* ------------------------------------------------------------
+   Melomaniac Studios — the Labs live in one shared container so
+   membership is legible at a glance; each product row speaks the
+   same language as the entries around it.
+   ------------------------------------------------------------ */
+.labs {
+  margin-top: var(--s4);
+  border: 1px solid var(--hair);
+  background: #0D0D11;
+  padding: var(--s3) var(--s4) var(--s1);
+  max-width: 640px;
+}
+
+.labs-eyebrow { color: var(--accent); }
+
+.labs-note {
+  margin-top: var(--s2);
+  font-size: 15px;
+  color: color-mix(in oklab, var(--ink) 62%, var(--muted));
+  max-width: 52ch;
+}
+
+.labs-list {
+  margin-top: var(--s3);
+  list-style: none;
+}
+
+.labs-row {
+  padding: var(--s3) 0;
+  border-top: 1px dashed color-mix(in oklab, var(--hair) 72%, var(--muted));
+}
+
+.labs-name { font-size: 22px; }
+
+.labs-line {
+  margin-top: 6px;
+  max-width: 44ch;
+  color: color-mix(in oklab, var(--ink) 80%, var(--muted));
+}
+
+.labs-row .entry-link {
+  display: inline-block;
+  margin-top: var(--s2);
+}
+
+.entry-credit {
+  margin-top: var(--s2);
+  color: var(--muted);
+}
+
+@media (max-width: 760px) {
+  .labs { padding: var(--s3) var(--s3) var(--s1); }
+}
