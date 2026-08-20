@@ -218,6 +218,12 @@
   collect();
   render();
   document.body.classList.add("is-ready"); // page-load stagger gate
+  // after the load stagger finishes, its fill-mode must not pin
+  // opacity — swap to .stagger-done so scroll reveals take over
+  setTimeout(() => {
+    document.querySelectorAll(".stagger").forEach((el) =>
+      el.classList.add("stagger-done"));
+  }, 900);
 
   window.__reveal = { collect, measure, render };
 })();
