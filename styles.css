@@ -700,3 +700,63 @@ mark.ph {
   animation: none !important;
   opacity: 1;
 }
+
+/* ------------------------------------------------------------
+   The coda (Live sets) — the ledger deliberately comes apart.
+   No category, no expander, no labels: one paragraph at the
+   loosest end of the Fraunces register, and a hairline above
+   that dissolves instead of ruling a row off.
+   ------------------------------------------------------------ */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.entry--coda {
+  border-top: 0;
+  border-image: linear-gradient(90deg, var(--hair) 30%, transparent 95%) 1;
+  border-top: 1px solid;
+  padding-top: var(--s6);
+}
+
+.entry--coda .entry-head { cursor: default; }
+
+/* position number and mini-axis at their quietest */
+.entry--coda .entry-meta { opacity: 0.5; }
+.entry--coda .entry-pos { color: var(--muted); }
+.entry--coda .entry-axis i { background: var(--muted); }
+
+.coda-text {
+  font-size: clamp(24px, 3vw, 40px);
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  font-weight: 330;
+  letter-spacing: 0.014em;
+  line-height: 1.44;
+  max-width: 26em;
+  color: var(--ink);
+}
+
+.coda-link {
+  display: inline-block;
+  margin-top: var(--s4);
+  font-size: 15px;
+  color: var(--muted);
+  text-decoration: none;
+  border-bottom: 1px solid var(--hair);
+  padding-bottom: 4px;
+  transition: color var(--dur-fast) linear, border-color var(--dur-fast) linear;
+}
+.coda-link:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+@media (max-width: 760px) {
+  .entry--coda { padding-top: var(--s5); }
+}

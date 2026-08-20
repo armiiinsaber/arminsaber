@@ -288,7 +288,9 @@
 (() => {
   "use strict";
 
-  const entries = [...document.querySelectorAll(".entry")];
+  // the coda entry has no brief — only entries with one are managed
+  const entries = [...document.querySelectorAll(".entry")]
+    .filter((e) => e.querySelector(".entry-brief-inner"));
   const allBtn = document.querySelector(".expand-all");
   let expandAll = false;
   const hideTimers = new WeakMap();
@@ -376,7 +378,7 @@
     const id = location.hash.slice(1);
     if (!id) return;
     const entry = document.getElementById(id);
-    if (entry && entry.classList.contains("entry")) {
+    if (entry && entries.includes(entry)) {
       for (const e of entries) setOpen(e, e === entry, true);
       setTimeout(() => {
         remeasure();
@@ -388,7 +390,7 @@
   addEventListener("hashchange", () => {
     const id = location.hash.slice(1);
     const entry = document.getElementById(id);
-    if (entry && entry.classList.contains("entry") && !entry.classList.contains("is-open")) {
+    if (entry && entries.includes(entry) && !entry.classList.contains("is-open")) {
       if (expandAll) setOpen(entry, true);
       else for (const e of entries) setOpen(e, e === entry);
       setTimeout(remeasure, 520);
