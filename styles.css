@@ -276,11 +276,26 @@ main {
    before any scrolling: headline states it, the plot shows it.
    ------------------------------------------------------------ */
 .hero {
-  padding-top: var(--s6);
+  padding-top: var(--s3);
   padding-bottom: var(--s4);
 }
 
+/* the two links a professional needs, above the fold, quiet */
+.hero-contact {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--s4);
+}
+.hero-contact a {
+  color: var(--muted);
+  text-decoration: none;
+  padding: 6px 0;
+  transition: color var(--dur-fast) linear;
+}
+.hero-contact a:hover { color: var(--accent); }
+
 .hero-headline {
+  margin-top: var(--s5);
   font-size: clamp(34px, 7vw, 88px);
   max-width: 13.5em;
 }
@@ -362,7 +377,8 @@ main {
 .plot-readout .ro-cat { color: var(--muted); margin-left: 1em; }
 
 @media (max-width: 640px) {
-  .hero { padding-top: var(--s5); }
+  .hero { padding-top: var(--s2); }
+  .hero-headline { margin-top: var(--s4); }
   .plot { margin-top: var(--s4); }
 }
 
@@ -641,17 +657,12 @@ mark.ph {
   flex-wrap: wrap;
   gap: var(--s2) var(--s4);
 }
-@media (max-width: 899px) {
+/* four links: one row where they fit, an even two-by-two below */
+@media (max-width: 639px) {
   .ending-contact {
     display: grid;
-    grid-template-columns: repeat(3, max-content);
-    column-gap: var(--s4);
-  }
-}
-@media (max-width: 519px) {
-  .ending-contact {
     grid-template-columns: repeat(2, max-content);
-    column-gap: var(--s3);
+    column-gap: var(--s4);
   }
 }
 
