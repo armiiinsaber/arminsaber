@@ -574,10 +574,54 @@ mark.ph {
 }
 
 /* ------------------------------------------------------------
+   Entry weights — the page is deliberately lopsided. The work
+   that matters most (RentLetter, the studio, Echoes) gets the
+   full five-field treatment, larger marks and more air; minor
+   entries (Klenz, Live sets) collapse to two fields shown flat
+   in the main column, no expander, tighter everything.
+   ------------------------------------------------------------ */
+.entry--major { padding: var(--s6) 0; }
+.entry--major .entry-name { font-size: clamp(30px, 4vw, 56px); }
+.entry--major .entry-one { margin-top: var(--s3); }
+.entry--major .entry-actions { margin-top: var(--s4); }
+.entry--major .entry-head > .mark { width: 68px; height: 68px; }
+
+.entry--minor { padding: var(--s4) 0; }
+.entry--minor .entry-name { font-size: clamp(24px, 2.6vw, 30px); }
+.entry--minor .entry-one { font-size: 15px; }
+.entry--minor .entry-actions { margin-top: var(--s2); }
+.entry--minor .entry-head { cursor: default; }
+.entry--minor .entry-head > .mark { width: 36px; height: 36px; }
+
+/* flat brief: the two kept fields sit inline in the main column,
+   always visible — no expander, no entrance state */
+.brief--flat { padding-top: var(--s3); }
+.brief--flat .brief-row {
+  grid-template-columns: 150px 1fr;
+  padding: var(--s2) 0;
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+.brief--flat .brief-row dd { font-size: 15px; }
+
+/* below the wide-desktop range the main lane is too narrow for a
+   label column — flat rows stack their label above the text */
+@media (max-width: 1023px) {
+  .brief--flat .brief-row {
+    grid-template-columns: 1fr;
+    row-gap: var(--s1);
+  }
+}
+
+/* ------------------------------------------------------------
    Entries — stacked below 760px
    ------------------------------------------------------------ */
 @media (max-width: 760px) {
   .entry { padding: var(--s4) 0; }
+  .entry--major { padding: var(--s5) 0; }
+  .entry--minor { padding: var(--s3) 0; }
+  .entry--major .entry-head > .mark { width: 56px; height: 56px; }
   .entry-head,
   .brief-row {
     grid-template-columns: 1fr;

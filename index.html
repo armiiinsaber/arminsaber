@@ -79,7 +79,7 @@
       <button class="expand-all mono" type="button" aria-pressed="false"><span class="xa-label">Expand all</span> <span class="tgl" aria-hidden="true">+</span></button>
     </div>
 
-    <article class="entry" id="rentletter" data-t="0.06" data-name="RentLetter" data-cat="SaaS · rental paperwork" style="--st:0.06">
+    <article class="entry entry--major" id="rentletter" data-t="0.06" data-name="RentLetter" data-cat="SaaS · rental paperwork" style="--st:0.06">
       <div class="entry-head">
         <div class="entry-meta">
           <p class="mono entry-pos">01 / Logic</p>
@@ -132,7 +132,9 @@
           <dl class="brief">
             <div class="brief-row"><dt class="mono">Why I built it</dt><dd>I had a small amount of capital and a specific way I wanted to use it: asymmetric bets, where the downside is a couple hundred dollars and the upside is a couple of thousand. At that ratio, one hit in ten pays for the other nine. What I needed was a way to find candidates that actually clear that math, and specifically to find them while the information is still ahead of the market&rsquo;s reaction to it. No product I could buy did that, so I built the instrument I wanted. The name is deliberately ridiculous because it was never going to be sold to anyone — it has exactly one user, and he didn&rsquo;t need to be convinced.</dd></div>
             <div class="brief-row"><dt class="mono">Who it&rsquo;s for</dt><dd>Me. That&rsquo;s the whole user research. Building for one known user is a completely different discipline from building for a market — no onboarding, no persuasion, no lowest common denominator, and every feature justified by whether I&rsquo;d actually use it on a Tuesday.</dd></div>
+            <!-- held out of display (de-templating), copy preserved:
             <div class="brief-row"><dt class="mono">How it went</dt><dd>It runs, it&rsquo;s in daily use, and it surfaces things I would not have found by reading. I&rsquo;m treating this as the testing phase and not claiming more than that — the sample is small, and I&rsquo;d rather be honest about that than impressive about it.</dd></div>
+            -->
             <div class="brief-row"><dt class="mono">What blocked it</dt><dd>Nothing external. The hard part is judgment, not engineering: separating a signal the market hasn&rsquo;t priced from one it has priced and disagreed with. That&rsquo;s an ongoing problem, not a solved one.</dd></div>
             <div class="brief-row"><dt class="mono">Where it stands</dt><dd>Active, in testing, and mine.</dd></div>
           </dl>
@@ -140,7 +142,7 @@
       </div>
     </article>
 
-    <article class="entry" id="klenz" data-t="0.38" data-name="Klenz" data-cat="Wellness · Strava-wired" style="--st:0.38">
+    <article class="entry entry--minor" id="klenz" data-t="0.38" data-name="Klenz" data-cat="Wellness · Strava-wired" style="--st:0.38">
       <div class="entry-head">
         <div class="entry-meta">
           <p class="mono entry-pos">03 / Mixed</p>
@@ -150,28 +152,25 @@
         <div class="entry-main">
           <h2 class="display entry-name">Klenz</h2>
           <p class="entry-one">A shared health tracker for me and a few friends — running, sleep, supplements, habits, in one place.</p>
+          <dl class="brief brief--flat">
+            <div class="brief-row"><dt class="mono">Who it&rsquo;s for</dt><dd>Me and a small circle of friends. It&rsquo;s a public web app in the technical sense — anyone can open it — but no one outside that group was ever in mind, and that shows in every decision. This is the first thing I built for people other than myself, and even a handful of real users changes the work: they notice different things, they use it differently than you expect, and you stop being able to hold the whole product in your own head.</dd></div>
+            <div class="brief-row"><dt class="mono">How it went</dt><dd>It got used, which is the only bar. My friends and I are still on it, and it pulls running data from Strava automatically so the tracking doesn&rsquo;t depend on anyone remembering to log anything. Sleep from WHOOP is the piece I&rsquo;m wiring in now.</dd></div>
+          </dl>
+          <!-- held out of display (de-templating), copy preserved:
+            <div class="brief-row"><dt class="mono">Why I built it</dt><dd>Me and a few close friends wanted one place for the specific things we were each trying to hold ourselves to — running goals, sleep, supplements, habits we wanted to build and habits we wanted to drop. I did no market research and never looked for an existing app, because it genuinely didn&rsquo;t matter whether one existed. We knew exactly what we cared about tracking, and general-purpose wellness apps track everything except that.</dd></div>
+            <div class="brief-row"><dt class="mono">What blocked it</dt><dd>Nothing. It&rsquo;s small on purpose, and I&rsquo;ve resisted every temptation to widen it into a real wellness product — the moment it tries to serve everyone it stops serving us.</dd></div>
+            <div class="brief-row"><dt class="mono">Where it stands</dt><dd>In use, still being improved, still deliberately small.</dd></div>
+          -->
           <div class="entry-actions">
-            <button class="entry-toggle mono" type="button" aria-expanded="false" aria-controls="klenz-brief">The making of <span class="tgl" aria-hidden="true">+</span></button>
             <!-- TODO(armin): restore https://klenzapp.com once the domain clears Namecheap WHOIS verification -->
             <a class="entry-link mono" href="https://klenz.vercel.app" target="_blank" rel="noopener">klenz.vercel.app&thinsp;&#8599;</a>
           </div>
         </div>
         <span style="--pt:0.38" class="mark mark--klenz" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle cx="24" cy="24" r="7" vector-effect="non-scaling-stroke"/><circle cx="24" cy="24" r="12.5" vector-effect="non-scaling-stroke"/><path class="m-open" d="M40.9 17.8 A18 18 0 1 1 27.1 6.3" vector-effect="non-scaling-stroke"/></svg></span>
       </div>
-      <div class="entry-brief" id="klenz-brief">
-        <div class="entry-brief-inner" hidden="until-found">
-          <dl class="brief">
-            <div class="brief-row"><dt class="mono">Why I built it</dt><dd>Me and a few close friends wanted one place for the specific things we were each trying to hold ourselves to — running goals, sleep, supplements, habits we wanted to build and habits we wanted to drop. I did no market research and never looked for an existing app, because it genuinely didn&rsquo;t matter whether one existed. We knew exactly what we cared about tracking, and general-purpose wellness apps track everything except that.</dd></div>
-            <div class="brief-row"><dt class="mono">Who it&rsquo;s for</dt><dd>Me and a small circle of friends. It&rsquo;s a public web app in the technical sense — anyone can open it — but no one outside that group was ever in mind, and that shows in every decision. This is the first thing I built for people other than myself, and even a handful of real users changes the work: they notice different things, they use it differently than you expect, and you stop being able to hold the whole product in your own head.</dd></div>
-            <div class="brief-row"><dt class="mono">How it went</dt><dd>It got used, which is the only bar. My friends and I are still on it, and it pulls running data from Strava automatically so the tracking doesn&rsquo;t depend on anyone remembering to log anything. Sleep from WHOOP is the piece I&rsquo;m wiring in now.</dd></div>
-            <div class="brief-row"><dt class="mono">What blocked it</dt><dd>Nothing. It&rsquo;s small on purpose, and I&rsquo;ve resisted every temptation to widen it into a real wellness product — the moment it tries to serve everyone it stops serving us.</dd></div>
-            <div class="brief-row"><dt class="mono">Where it stands</dt><dd>In use, still being improved, still deliberately small.</dd></div>
-          </dl>
-        </div>
-      </div>
     </article>
 
-    <article class="entry" id="melomaniac-studios" data-t="0.50" data-name="Melomaniac Studios" data-cat="Studio · Labs" style="--st:0.50">
+    <article class="entry entry--major" id="melomaniac-studios" data-t="0.50" data-name="Melomaniac Studios" data-cat="Studio · Labs" style="--st:0.50">
       <div class="entry-head">
         <div class="entry-meta">
           <p class="mono entry-pos">04 / Mixed</p>
@@ -231,7 +230,7 @@
       </div>
     </article>
 
-    <article class="entry" id="echoes" data-t="0.60" data-name="Echoes" data-cat="Consumer · music memory" style="--st:0.60">
+    <article class="entry entry--major" id="echoes" data-t="0.60" data-name="Echoes" data-cat="Consumer · music memory" style="--st:0.60">
       <div class="entry-head">
         <div class="entry-meta">
           <p class="mono entry-pos">05 / Feeling</p>
@@ -284,14 +283,16 @@
             <div class="brief-row"><dt class="mono">Why I built it</dt><dd>I don&rsquo;t like DJing. That&rsquo;s the honest origin. I was given the chance to perform live at a venue in Toronto, and instead of playing other people&rsquo;s records I wrote the music myself and played only that. Most DJs aren&rsquo;t making what they play, and most musicians can&rsquo;t play out what they&rsquo;ve made. Once I realised that the thing I&rsquo;d done to get out of DJing was rarer than DJing itself, I doubled down and turned it into its own brand. Every MELOMANIA set is built from scratch for that specific night — exclusivity at its finest, and it only exists because I was avoiding something I didn&rsquo;t enjoy.</dd></div>
             <div class="brief-row"><dt class="mono">Who it&rsquo;s for</dt><dd>A Toronto audience that mostly knows DJ sets. That turned out to be a real design problem, not just a booking one: a live set looks like a DJ set from across a room, and if nobody tells the audience what they&rsquo;re watching, the difference is invisible. I ended up doing the audience education directly — explaining beforehand what a live set actually is and how to watch one. Teaching people how to receive the thing is part of making the thing.</dd></div>
             <div class="brief-row"><dt class="mono">How it went</dt><dd>This is the entry where both halves of this page meet. It starts as a feeling about what a night should be, and within a week it&rsquo;s artist booking negotiations, a Resident Advisor ticketing funnel, promotional infrastructure and a door split. I&rsquo;ve run all of it. Every emotional decision on a night like this has a number attached to it within about two steps, and running the series is where I learned to hold both without letting either one win by default. <mark class="ph">[ARMIN: whether the nights broke even, what you paid artists out of pocket, roughly how many editions and what size rooms]</mark></dd></div>
+            <!-- held out of display (de-templating), copy preserved:
             <div class="brief-row"><dt class="mono">What blocked it</dt><dd>The economics of an independent night are unforgiving, and the audience for live electronic performance in this city has to be built rather than found.</dd></div>
+            -->
             <div class="brief-row"><dt class="mono">Where it stands</dt><dd><mark class="ph">[ARMIN: running / paused / between seasons — and what would restart it]</mark></dd></div>
           </dl>
         </div>
       </div>
     </article>
 
-    <article class="entry" id="live-sets" data-t="0.95" data-name="Live sets" data-cat="Performance · original" style="--st:0.95">
+    <article class="entry entry--minor" id="live-sets" data-t="0.95" data-name="Live sets" data-cat="Performance · original" style="--st:0.95">
       <div class="entry-head">
         <div class="entry-meta">
           <p class="mono entry-pos">07 / Feeling</p>
@@ -301,23 +302,20 @@
         <div class="entry-main">
           <h2 class="display entry-name">Live sets</h2>
           <p class="entry-one">Original electronic sets performed under my own name, built for rooms rather than playlists.</p>
+          <dl class="brief brief--flat">
+            <div class="brief-row"><dt class="mono">Why I built it</dt><dd>Because it&rsquo;s the one thing I make that doesn&rsquo;t answer to anything. I spend most of my week building things that report to numbers, and this reports to nothing.</dd></div>
+            <div class="brief-row"><dt class="mono">How it went</dt><dd>A set is a set of guesses about what a room will need in forty minutes&rsquo; time, made in advance. You find out whether you were right while standing in front of it. That&rsquo;s the entire feedback loop, and it&rsquo;s faster and more honest than any product metric I&rsquo;ve worked with.</dd></div>
+          </dl>
+          <!-- held out of display (de-templating), copy preserved:
+            <div class="brief-row"><dt class="mono">Who it&rsquo;s for</dt><dd>A room, on one night. Not a playlist, not an algorithm, not a market.</dd></div>
+            <div class="brief-row"><dt class="mono">What blocked it</dt><dd>Nothing blocks it. It&rsquo;s the part that runs on its own.</dd></div>
+            <div class="brief-row"><dt class="mono">Where it stands</dt><dd>Ongoing.</dd></div>
+          -->
           <div class="entry-actions">
-            <button class="entry-toggle mono" type="button" aria-expanded="false" aria-controls="live-sets-brief">The making of <span class="tgl" aria-hidden="true">+</span></button>
             <a class="entry-link mono" href="https://soundcloud.com/arminsaber" target="_blank" rel="noopener">hear a set&thinsp;&#8599;</a>
           </div>
         </div>
         <span style="--pt:0.95" class="mark mark--livesets" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path class="m-draw" pathLength="1" d="M4 26.5 C6.5 25.8 7.2 19.6 9 21.8 C11.4 24.8 11.8 33.5 14 30.6 C16.4 27.4 15.8 15.2 18.6 17.9 C21 20.2 20.6 30.8 23 28.2 C25.8 25.2 24.6 10.6 27.8 13.6 C30.4 16 29.2 34.6 32 31.4 C34 29.1 33.6 20.9 35.8 22.6 C37.6 24 37.4 27.9 39.4 26.2 C41 24.8 42 25.9 44 25.1" vector-effect="non-scaling-stroke"/></svg></span>
-      </div>
-      <div class="entry-brief" id="live-sets-brief">
-        <div class="entry-brief-inner" hidden="until-found">
-          <dl class="brief">
-            <div class="brief-row"><dt class="mono">Why I built it</dt><dd>Because it&rsquo;s the one thing I make that doesn&rsquo;t answer to anything. I spend most of my week building things that report to numbers, and this reports to nothing.</dd></div>
-            <div class="brief-row"><dt class="mono">Who it&rsquo;s for</dt><dd>A room, on one night. Not a playlist, not an algorithm, not a market.</dd></div>
-            <div class="brief-row"><dt class="mono">How it went</dt><dd>A set is a set of guesses about what a room will need in forty minutes&rsquo; time, made in advance. You find out whether you were right while standing in front of it. That&rsquo;s the entire feedback loop, and it&rsquo;s faster and more honest than any product metric I&rsquo;ve worked with.</dd></div>
-            <div class="brief-row"><dt class="mono">What blocked it</dt><dd>Nothing blocks it. It&rsquo;s the part that runs on its own.</dd></div>
-            <div class="brief-row"><dt class="mono">Where it stands</dt><dd>Ongoing.</dd></div>
-          </dl>
-        </div>
       </div>
     </article>
 
