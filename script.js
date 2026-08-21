@@ -134,101 +134,6 @@
 })();
 
 /* ============================================================
-   Reveal engine.
-   Scroll-linked, not scroll-triggered: every [data-reveal]
-   element fades/translates over a narrow band as it enters the
-   bottom of the viewport and dissolves as it leaves the top —
-   sections never snap against each other.
-   data-reveal="in" | "out" | "" (both)
-   ============================================================ */
-(() => {
-  "use strict";
-
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-  const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
-  const easeOut = (p) => 1 - Math.pow(1 - p, 3);
-
-  let items = [];
-
-  function collect() {
-    items = [...document.querySelectorAll("[data-reveal]")].map((el) => ({
-      el,
-      mode: el.dataset.reveal || "both",
-      top: 0,
-      height: 0,
-      opacity: -1,
-    }));
-    measure();
-  }
-
-  function measure() {
-    // offsetTop chains ignore our own transforms, so this is stable
-    for (const it of items) {
-      let y = 0;
-      let n = it.el;
-      while (n) { y += n.offsetTop; n = n.offsetParent; }
-      it.top = y;
-      it.height = it.el.offsetHeight;
-    }
-  }
-
-  function render() {
-    if (reduceMotion.matches) {
-      for (const it of items) {
-        it.el.style.opacity = "";
-        it.el.style.transform = "";
-      }
-      return;
-    }
-    const vh = window.innerHeight;
-    const y = window.scrollY;
-    for (const it of items) {
-      const top = it.top - y;            // viewport-relative
-      const bottom = top + it.height;
-      // enter: fade in across a band near the bottom edge
-      const pIn = it.mode === "out" ? 1
-        : easeOut(clamp((vh * 0.94 - top) / (vh * 0.16), 0, 1));
-      // exit: dissolve as the element leaves through the top
-      const pOut = it.mode === "in" ? 1
-        : easeOut(clamp((bottom - vh * 0.03) / (vh * 0.11), 0, 1));
-      const o = Math.min(pIn, pOut);
-      const rounded = Math.round(o * 100) / 100;
-      if (rounded === it.opacity) continue;
-      it.opacity = rounded;
-      it.el.style.opacity = rounded === 1 ? "" : String(rounded);
-      const ty = (1 - pIn) * 16 - (1 - pOut) * 10;
-      it.el.style.transform =
-        Math.abs(ty) < 0.05 ? "" : `translateY(${ty.toFixed(1)}px)`;
-    }
-  }
-
-  let rafId = 0;
-  function onScroll() {
-    if (rafId) return;
-    rafId = requestAnimationFrame(() => { rafId = 0; render(); });
-  }
-
-  addEventListener("scroll", onScroll, { passive: true });
-  addEventListener("resize", () => { measure(); render(); });
-  addEventListener("load", () => { measure(); render(); });
-  if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(() => { measure(); render(); });
-  }
-
-  collect();
-  render();
-  document.body.classList.add("is-ready"); // page-load stagger gate
-  // after the load stagger finishes, its fill-mode must not pin
-  // opacity — swap to .stagger-done so scroll reveals take over
-  setTimeout(() => {
-    document.querySelectorAll(".stagger").forEach((el) =>
-      el.classList.add("stagger-done"));
-  }, 900);
-
-  window.__reveal = { collect, measure, render };
-})();
-
-/* ============================================================
    Hero plot.
    Hover/focus a dot → its name and category appear in the
    readout line (fixed height, no layout shift). Click → jump.
@@ -283,7 +188,7 @@
    Collapsed briefs stay searchable: the inner carries
    hidden="until-found", and beforematch expands the entry before
    the browser scrolls to the match. Heights change on toggle, so
-   the spectrum and reveal engines re-measure after the transition.
+   the spectrum engine re-measures after the transition.
    ============================================================ */
 (() => {
   "use strict";
@@ -298,8 +203,6 @@
   function remeasure() {
     window.__spectrum.measure();
     window.__spectrum.wake();
-    window.__reveal.measure();
-    window.__reveal.render();
   }
 
   function setOpen(entry, open, instant = false) {

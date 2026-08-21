@@ -260,7 +260,7 @@ main {
 
 /* ------------------------------------------------------------
    Reduced motion: no smooth scroll; script.js also snaps the
-   spectrum engine and disables reveals.
+   spectrum engine.
    ------------------------------------------------------------ */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -269,50 +269,6 @@ main {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-}
-
-/* ------------------------------------------------------------
-   Motion system (Group 2)
-   Scroll-linked reveals are driven inline by script.js; here we
-   only stage the page-load sequence: quick, staggered, ease-out.
-   ------------------------------------------------------------ */
-@keyframes rise {
-  from { opacity: 0; transform: translateY(14px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.stagger > * {
-  opacity: 0;
-}
-.is-ready .stagger > * {
-  animation: rise 560ms var(--ease-out) both;
-}
-.is-ready .stagger > :nth-child(1) { animation-delay: 40ms; }
-.is-ready .stagger > :nth-child(2) { animation-delay: 110ms; }
-.is-ready .stagger > :nth-child(3) { animation-delay: 180ms; }
-.is-ready .stagger > :nth-child(4) { animation-delay: 250ms; }
-.is-ready .stagger > :nth-child(5) { animation-delay: 320ms; }
-
-/* no-JS fallback: never leave content hidden */
-@media (scripting: none) {
-  .stagger > * { opacity: 1; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .stagger > * { opacity: 1; animation: none !important; }
-}
-
-/* hairline rule that draws itself in as it enters */
-.rule {
-  border: 0;
-  height: 1px;
-  background: var(--hair);
-  transform-origin: left center;
-}
-
-.rule--accent {
-  background: var(--accent);
-  opacity: 0.55;
 }
 
 /* ------------------------------------------------------------
@@ -729,14 +685,6 @@ mark.ph {
   }
   .ending-glyph { display: none; }
 }
-
-/* once the load stagger has played, hand opacity control back to
-   the reveal engine so the hero can dissolve out like everything else */
-.stagger-done > * {
-  animation: none !important;
-  opacity: 1;
-}
-
 
 /* ------------------------------------------------------------
    Line-break discipline — no single word stranded on its own

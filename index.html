@@ -26,7 +26,6 @@
 <link rel="stylesheet" href="styles.css">
 <noscript>
 <style>
-  .stagger > * { opacity: 1 !important; }
   .entry-brief { grid-template-rows: 1fr !important; }
   .entry-brief-inner { content-visibility: visible !important; display: block !important; }
   .brief-row { opacity: 1 !important; transform: none !important; }
@@ -50,12 +49,12 @@
 
 <main id="top">
 
-  <section class="hero stagger" id="hero" style="--st:0">
-    <p class="mono hero-eyebrow" data-reveal="out">Armin Saber — Toronto<br><span class="hero-eyebrow-sub">Promotions ops at Wealthsimple</span></p>
-    <h1 class="display hero-headline" data-reveal="out">Everything I make sits somewhere between <span class="nowrap"><em class="w-logic">logic</em> and <em class="w-feel">feeling</em>.</span></h1>
-    <p class="hero-lede" data-reveal="out">The top of this page is the part that answers to numbers — products, companies, decisions I can defend in a spreadsheet. The bottom is the part that answers to nothing but the room.</p>
+  <section class="hero" id="hero" style="--st:0">
+    <p class="mono hero-eyebrow">Armin Saber — Toronto<br><span class="hero-eyebrow-sub">Promotions ops at Wealthsimple</span></p>
+    <h1 class="display hero-headline">Everything I make sits somewhere between <span class="nowrap"><em class="w-logic">logic</em> and <em class="w-feel">feeling</em>.</span></h1>
+    <p class="hero-lede">The top of this page is the part that answers to numbers — products, companies, decisions I can defend in a spreadsheet. The bottom is the part that answers to nothing but the room.</p>
 
-    <div class="plot" data-reveal="out">
+    <div class="plot">
       <div class="plot-axis" role="group" aria-label="Seven projects plotted from logic to feeling">
         <span class="plot-line" aria-hidden="true"></span>
         <button class="plot-dot" type="button" style="--pt:0.06" data-target="rentletter" data-n="01" aria-label="RentLetter — SaaS, rental paperwork"></button>
@@ -76,12 +75,12 @@
 
   <section class="entries" aria-label="Projects">
 
-    <div class="entries-tools" data-reveal>
+    <div class="entries-tools">
       <button class="expand-all mono" type="button" aria-pressed="false"><span class="xa-label">Expand all</span> <span class="tgl" aria-hidden="true">+</span></button>
     </div>
 
     <article class="entry" id="rentletter" data-t="0.06" data-name="RentLetter" data-cat="SaaS · rental paperwork" style="--st:0.06">
-      <div class="entry-head" data-reveal>
+      <div class="entry-head">
         <div class="entry-meta">
           <p class="mono entry-pos">01 / Logic</p>
           <span class="entry-axis" aria-hidden="true"><i style="--pt:0.06"></i></span>
@@ -111,7 +110,7 @@
     </article>
 
     <article class="entry" id="easymonee" data-t="0.20" data-name="easymonee" data-cat="Personal tooling · markets" style="--st:0.20">
-      <div class="entry-head" data-reveal>
+      <div class="entry-head">
         <div class="entry-meta">
           <p class="mono entry-pos">02 / Logic</p>
           <span class="entry-axis" aria-hidden="true"><i style="--pt:0.20"></i></span>
@@ -142,7 +141,7 @@
     </article>
 
     <article class="entry" id="klenz" data-t="0.38" data-name="Klenz" data-cat="Wellness · Strava-wired" style="--st:0.38">
-      <div class="entry-head" data-reveal>
+      <div class="entry-head">
         <div class="entry-meta">
           <p class="mono entry-pos">03 / Mixed</p>
           <span class="entry-axis" aria-hidden="true"><i style="--pt:0.38"></i></span>
@@ -173,7 +172,7 @@
     </article>
 
     <article class="entry" id="melomaniac-studios" data-t="0.50" data-name="Melomaniac Studios" data-cat="Studio · Labs" style="--st:0.50">
-      <div class="entry-head" data-reveal>
+      <div class="entry-head">
         <div class="entry-meta">
           <p class="mono entry-pos">04 / Mixed</p>
           <span class="entry-axis" aria-hidden="true"><i style="--pt:0.50"></i></span>
@@ -233,7 +232,7 @@
     </article>
 
     <article class="entry" id="echoes" data-t="0.60" data-name="Echoes" data-cat="Consumer · music memory" style="--st:0.60">
-      <div class="entry-head" data-reveal>
+      <div class="entry-head">
         <div class="entry-meta">
           <p class="mono entry-pos">05 / Feeling</p>
           <span class="entry-axis" aria-hidden="true"><i style="--pt:0.60"></i></span>
@@ -264,7 +263,7 @@
     </article>
 
     <article class="entry" id="melomania" data-t="0.80" data-name="MELOMANIA" data-cat="Live series · Toronto" style="--st:0.80">
-      <div class="entry-head" data-reveal>
+      <div class="entry-head">
         <div class="entry-meta">
           <p class="mono entry-pos">06 / Feeling</p>
           <span class="entry-axis" aria-hidden="true"><i style="--pt:0.80"></i></span>
@@ -293,7 +292,7 @@
     </article>
 
     <article class="entry" id="live-sets" data-t="0.95" data-name="Live sets" data-cat="Performance · original" style="--st:0.95">
-      <div class="entry-head" data-reveal>
+      <div class="entry-head">
         <div class="entry-meta">
           <p class="mono entry-pos">07 / Feeling</p>
           <span class="entry-axis" aria-hidden="true"><i style="--pt:0.95"></i></span>
@@ -325,9 +324,9 @@
   </section>
 
   <footer class="ending" style="--st:1">
-    <p class="mono ending-eyebrow" data-reveal>The feeling end</p>
-    <p class="display ending-statement" data-reveal>The spreadsheet tells me if it worked. The room tells me if it mattered. On the best nights, one thing passes <span class="nowrap">both tests.</span></p>
-    <nav class="ending-contact" aria-label="Contact" data-reveal>
+    <p class="mono ending-eyebrow">The feeling end</p>
+    <p class="display ending-statement">The spreadsheet tells me if it worked. The room tells me if it mattered. On the best nights, one thing passes <span class="nowrap">both tests.</span></p>
+    <nav class="ending-contact" aria-label="Contact">
       <a class="mono" href="mailto:armin@melomaniacstudios.com">Email</a>
       <a class="mono" href="https://www.linkedin.com/in/armin-saber-6b3b82190/" target="_blank" rel="noopener">LinkedIn</a>
       <a class="mono" href="https://instagram.com/armiiinsaber" target="_blank" rel="noopener">Instagram</a>
@@ -335,7 +334,7 @@
       <a class="mono" href="https://open.spotify.com/artist/5cI5jeUkUKcKSvMs5DNKno" target="_blank" rel="noopener">Spotify</a>
       <a class="mono" href="https://music.apple.com/us/artist/armin-saber/1690610771" target="_blank" rel="noopener">Apple Music</a>
     </nav>
-    <div class="ending-base" data-reveal="in">
+    <div class="ending-base">
       <span class="mono">Armin Saber — Toronto</span>
       <span class="ending-glyph" aria-hidden="true"><i class="pole pole--logic"></i><i class="pole pole--feel"></i></span>
       <span class="mono">Logic → feeling, top to bottom</span>
