@@ -627,22 +627,16 @@ mark.ph {
 .ending {
   max-width: var(--page-max);
   margin: 0 auto;
-  padding: var(--s6) var(--pad-x) var(--s4);
+  padding: var(--s5) var(--pad-x) var(--s4);
   border-top: 1px solid var(--hair);
 }
 
 .ending-eyebrow { color: var(--accent); }
 
-.ending-statement {
-  margin-top: var(--s3);
-  font-size: clamp(32px, 4.4vw, 58px);
-  max-width: 21em;
-}
-
-/* six links must always wrap as a balanced group — explicit
-   column counts per range so no link strands alone on a row */
+/* links must always wrap as a balanced group — explicit column
+   counts per range so no link strands alone on a row */
 .ending-contact {
-  margin-top: var(--s5);
+  margin-top: var(--s3);
   display: flex;
   flex-wrap: wrap;
   gap: var(--s2) var(--s4);
@@ -674,7 +668,7 @@ mark.ph {
 }
 
 .ending-base {
-  margin-top: var(--s5);
+  margin-top: var(--s4);
   padding-top: var(--s3);
   border-top: 1px solid var(--hair);
   display: flex;
@@ -703,10 +697,10 @@ mark.ph {
 .pole--feel  { left: 100%; background: var(--feel); }
 
 @media (max-width: 640px) {
-  .ending { padding-top: var(--s5); }
-  .ending-contact { margin-top: var(--s4); }
+  .ending { padding-top: var(--s4); }
+  .ending-contact { margin-top: var(--s3); }
   .ending-base {
-    margin-top: var(--s5);
+    margin-top: var(--s4);
     flex-wrap: wrap;
   }
   .ending-glyph { display: none; }
@@ -718,7 +712,7 @@ mark.ph {
    ------------------------------------------------------------ */
 .nowrap { white-space: nowrap; }
 
-h1, h2, .entry-name, .ending-statement, .plot-readout, .entry-pos, .entry-cat {
+h1, h2, .entry-name, .plot-readout, .entry-pos, .entry-cat {
   text-wrap: balance;
 }
 
