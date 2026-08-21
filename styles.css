@@ -809,6 +809,69 @@ p, dd, .entry-one, .hero-lede {
 }
 
 /* ------------------------------------------------------------
+   Marks — one hand-drawn SVG per entry, in the lane the
+   screenshots used to hold. One family: shared 48-grid, uniform
+   2px stroke (non-scaling), currentColor only. The system rule:
+   marks are compass-perfect at the logic end and loosen as the
+   page descends, ending freehand. Each carries its entry's --pt
+   so it sits on the accent spectrum automatically.
+   ------------------------------------------------------------ */
+.mark {
+  width: 52px;
+  height: 52px;
+  flex: none;
+  color: color-mix(in oklch, var(--logic) calc((1 - var(--pt, 0.5)) * 100%), var(--feel));
+}
+.mark svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  stroke-width: 2;
+  overflow: visible;
+}
+/* labs marks: children of the studio mark — smaller, same weight */
+.labs-row .mark { width: 34px; height: 34px; }
+
+/* one restrained motion per mark, page easing, hover on the row */
+.mark [class^="m-"] {
+  transition: transform var(--dur-med) var(--ease-out);
+  transform-box: view-box;
+  transform-origin: 24px 24px;
+}
+.entry-head:hover .mark--rentletter .m-lift { transform: translateY(-2px); }
+.entry-head:hover .mark--easymonee .m-peak { transform: translate(1.5px, -1.5px); }
+.entry-head:hover .mark--klenz .m-open { transform: rotate(16deg); }
+.entry-head:hover .mark--studio .m-wave { transform: translateX(3px); }
+.entry-head:hover .mark--echoes .m-rings {
+  transform-origin: 17px 31px;
+  transform: scale(1.06);
+}
+.entry-head:hover .mark--melomania .m-arcs {
+  transform-origin: 13px 37px;
+  transform: rotate(-4deg);
+}
+.labs-row:hover .mark--manifold .m-eq { transform: rotate(-10deg); }
+.labs-row:hover .mark--frequency .m-chirp { transform: translateX(-2px); }
+.labs-row:hover .mark--noted .m-reply { transform: translateX(2.5px); }
+/* the loosest mark redraws itself freehand on hover */
+@keyframes markdraw {
+  from { stroke-dashoffset: 1; }
+  to   { stroke-dashoffset: 0; }
+}
+.mark--livesets .m-draw { stroke-dasharray: 1; stroke-dashoffset: 0; }
+.entry-head:hover .mark--livesets .m-draw {
+  animation: markdraw 640ms var(--ease-out);
+}
+@media (prefers-reduced-motion: reduce) {
+  .mark [class^="m-"] { transition: none; animation: none !important; }
+}
+
+.entry-head > .mark { grid-column: 3; align-self: start; margin-top: 8px; }
+@media (max-width: 760px) {
+  .entry-head > .mark { grid-column: auto; margin-top: 0; }
+}
+
+/* ------------------------------------------------------------
    Third lane — kept from the screenshot era: each entry head
    reserves a slim right-hand lane; the marks occupy it now.
    ------------------------------------------------------------ */
