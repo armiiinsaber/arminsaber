@@ -41,7 +41,7 @@
 
   --font-display: "Fraunces", "Georgia", serif;
   --font-body: "Instrument Sans", system-ui, sans-serif;
-  --font-mono: "DM Mono", "SF Mono", monospace;
+  --font-mono: "Martian Mono", "SF Mono", monospace;
 
   /* motion — quick, confident, ease-out; nothing bouncy */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
@@ -106,11 +106,13 @@ button {
   line-height: calc(1.02 + var(--st, 0) * 0.14);
 }
 
+/* Martian Mono runs wide and dark; every mono role drops a step
+   in size, weight and tracking so nothing crowds its lane */
 .mono {
   font-family: var(--font-mono);
-  font-weight: 500;
-  font-size: 11px;
-  letter-spacing: calc(0.14em + var(--st, 0) * 0.08em);
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: calc(0.06em + var(--st, 0) * 0.05em);
   text-transform: uppercase;
 }
 
@@ -142,9 +144,9 @@ button {
 
 .ribbon-label {
   font-family: var(--font-mono);
-  font-weight: 500;
-  font-size: 11px;
-  letter-spacing: 0.18em;
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   flex: none;
   user-select: none;
@@ -204,8 +206,8 @@ button {
   transform: translateX(-50%);
   padding: 5px 9px;
   font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.1em;
+  font-size: 9px;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   white-space: nowrap;
   color: var(--ink);
@@ -254,7 +256,7 @@ main {
 @media (max-width: 640px) {
   :root { --ribbon-h: 48px; }
   .ribbon { gap: var(--s1); }
-  .ribbon-label { font-size: 9px; letter-spacing: 0.14em; }
+  .ribbon-label { font-size: 8px; letter-spacing: 0.08em; }
   .ribbon-tick::after { display: none; }
 }
 
@@ -362,7 +364,7 @@ main {
   justify-content: space-between;
   margin-top: var(--s1);
 }
-.plot-pole { font-size: 12px; letter-spacing: 0.2em; }
+.plot-pole { font-size: 11px; letter-spacing: 0.1em; }
 .plot-pole--logic { color: var(--logic); }
 .plot-pole--feel  { color: var(--feel); }
 
@@ -565,7 +567,7 @@ mark.ph {
   background: none;
   color: var(--muted);
   font-family: var(--font-mono);
-  font-size: 0.82em;
+  font-size: 0.72em;
   border: 1px dashed color-mix(in oklab, var(--accent) 45%, transparent);
   border-radius: 2px;
   padding: 1px 7px;
