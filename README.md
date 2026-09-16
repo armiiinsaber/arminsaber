@@ -41,6 +41,19 @@ TLS errors. Two links are temporarily pointed at platform hosts while
 their custom domains are broken — search `index.html` for
 `TODO(armin)` to swap them back.
 
+```sh
+node tools/check-orphans.mjs
+```
+
+Renders the page in headless Chrome at 1440, 390 and 360, once
+collapsed and once with every brief expanded, and fails if a block of
+copy ends with a single word alone on its last line. No orphans is a
+house rule, so run it after any copy change. It needs a local Chrome
+and a copy of `puppeteer-core`; set `CHROME_PATH` or `PUPPETEER_PATH`
+if either sits somewhere unusual. `--shots <dir>` also writes the
+hero and full page screenshots at each width, `--width <n>` checks one
+width instead of three.
+
 ## Developing
 
 Any static server works:
