@@ -1416,35 +1416,136 @@ p, dd, .entry-desc {
 }
 
 /* ============================================================
-   THE PORTRAIT
-   It shares the first screen with the headline. It is the only
-   image with his face on a page that exists to introduce him, so
-   it does not wait until the bottom.
+   JOB 1 GUARD
+   Nothing that is positioned off the column may widen the page.
    ============================================================ */
-.hero { position: relative; }
+html { overflow-x: clip; }
+
+/* ============================================================
+   THE HERO: THE PORTRAIT IS THE GROUND
+   The copy and the plot keep exactly the positions they had; the
+   portrait goes behind them rather than beside them. It is not
+   object-fit: cover, which would pin the face at a quarter of the
+   box height and put it under the headline at every width. The
+   image floats in a box painted its own red, sampled from its own
+   ground on load (the same seam mechanism the artwork slots use),
+   so it can sit wherever the type is not: right and low on
+   desktop, low on a phone, with the flat red under the words.
+   ============================================================ */
+/* full bleed: the hero box itself runs edge to edge and the padding puts
+   the copy back in the page lane. Clipping on the box then contains the
+   portrait and the scrims without touching the page width. */
+.hero {
+  position: relative;
+  overflow: clip;
+  max-width: none;
+  margin-inline: 0;
+  padding-inline: max(var(--pad-x), calc(50% - var(--page-max) / 2 + var(--pad-x)));
+  background: var(--hero-bg, var(--c7));
+  min-height: 92svh;
+}
 .hero-portrait {
-  display: block;
-  margin: 0;
   position: absolute;
-  top: 0;
-  right: calc(var(--pad-x) * -1);
-  width: 38vw;
-  max-width: 560px;
+  z-index: 0;
+  margin: 0;
+  right: 4vw;
+  bottom: 0;
   height: 100%;
-  background: var(--c7);
+  width: auto;
+  aspect-ratio: 4 / 5;
+  /* the image edge meets the sampled ground; feather it so the baked
+     grain fades in instead of starting on a line */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 9%), linear-gradient(180deg, transparent, #000 9%);
+          mask-image: linear-gradient(90deg, transparent, #000 9%), linear-gradient(180deg, transparent, #000 9%);
+  -webkit-mask-composite: source-in;
+          mask-composite: intersect;
 }
 .hero-portrait img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.hero-copy { position: relative; z-index: 1; max-width: min(58%, 620px); padding-right: var(--s4); }
-.plot { position: relative; z-index: 1; max-width: 58%; }
+.hero-contact, .hero-copy, .plot { position: relative; z-index: 1; }
+.hero-copy { max-width: min(58%, 620px); padding-right: var(--s4); }
+.plot { max-width: 58%; }
+/* the words keep their colours, and cobalt on red is not legible, so a
+   soft dark field sits behind the copy block only: the red stays red
+   everywhere the type is not */
+.hero-copy::before, .plot::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -40% -30% -40% -24%;
+  background: radial-gradient(ellipse at 42% 50%,
+    color-mix(in oklab, var(--bg) 86%, transparent) 0%,
+    color-mix(in oklab, var(--bg) 72%, transparent) 44%,
+    color-mix(in oklab, var(--bg) 26%, transparent) 62%,
+    transparent 74%);
+  pointer-events: none;
+}
+.plot::before { inset: -60% -30% -50% -24%; }
 
 @media (max-width: 900px) {
+  .hero { min-height: 100svh; }
   .hero-portrait {
-    position: relative;
-    right: auto;
-    width: auto;
-    max-width: none;
-    height: 54vh;
-    margin: 0 calc(var(--pad-x) * -1) var(--s4);
+    right: 0;
+    height: 57%;
+    bottom: 0;
   }
-  .hero-copy, .plot { max-width: none; }
+  .hero-copy, .plot { max-width: none; padding-right: 0; }
+  .hero-copy::before { inset: -14% -8% -14% -8%; }
 }
+
+/* ============================================================
+   THE LEOPARD, THE FEELING END
+   The page is framed by two paintings: the portrait at the logic
+   end, the leopard at the feeling end. The lip leaves one and
+   lands on the other.
+   ============================================================ */
+.closer {
+  max-width: var(--page-max);
+  margin: var(--s6) auto 0;
+  padding: 0 var(--pad-x);
+}
+.closer-art {
+  margin: 0;
+  aspect-ratio: 4 / 5;
+  max-height: 92vh;
+  background: var(--closer-bg, var(--c7));
+  overflow: hidden;
+}
+.closer-art img { display: block; width: 100%; height: 100%; object-fit: cover; }
+@media (max-width: 760px) { .closer { margin-top: var(--s5); } }
+
+/* ============================================================
+   THE TRAVELLING LIP
+   One object, the painted lip's own pixels lifted off the portrait.
+   Fixed to the viewport; a rAF loop eases it toward whatever is
+   worth looking at; it rests on the leopard's mouth at the end.
+   transform and opacity only. These rules were cut by an earlier
+   edit and the lip fell into the page flow as a full-width block,
+   which is what opened the gap down the right of a phone.
+   ============================================================ */
+.lip {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 35;
+  width: 64px;
+  pointer-events: none;
+  opacity: 0;
+  transform-origin: 50% 50%;
+  will-change: transform;
+  transition: opacity 400ms var(--ease-out);
+}
+.lip img { display: block; width: 100%; height: auto; filter: drop-shadow(0 0 8px color-mix(in oklab, var(--lip) 50%, transparent)); }
+.lip.is-on { opacity: 1; }
+.lip.is-static { position: absolute; will-change: auto; transition: none; }
+@media (prefers-reduced-motion: reduce) {
+  .lip { transition: none; }
+}
+
+/* On the red ground the two spectrum words and the pole labels fall
+   under 4.5:1 even over the dark field, cobalt at 2.3 and vermilion at
+   3.6, measured against the rendered pixels behind them. Cobalt was
+   already 2.4 on the plain dark page, so this is the hero making a
+   pre-existing weakness worse. Here only, they are lifted toward the
+   ink until they clear AA; the tokens themselves do not change. */
+.hero .w-logic, .hero .plot-pole--logic { color: color-mix(in oklab, var(--c1) 44%, var(--ink)); }
+.hero .w-feel,  .hero .plot-pole--feel  { color: color-mix(in oklab, var(--c7) 56%, var(--ink)); }

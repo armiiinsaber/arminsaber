@@ -419,115 +419,133 @@
 })();
 
 /* ============================================================
-   The travelling lip, prototype.
+   The travelling lip.
 
-   A single object that moves with the scroll and lands on the
-   thing worth looking at, finishing on the figure's mouth.
+   The blue lip painted on the portrait is the object. At the top
+   of the page it sits exactly over the place it was painted (the
+   painting has had it removed). Scroll, and it lifts off and
+   travels down with you, easing onto whatever is worth looking at,
+   and comes to rest on the leopard's mouth at the bottom.
 
-   Built the same way as the spectrum engine: scroll only wakes a
-   rAF loop, the loop eases the current position toward a target
-   and stops when it arrives. Nothing measures layout inside a
-   scroll handler, and only transform and opacity are written, so
-   there is no reflow and no repaint, just compositing.
+   Same engine as the spectrum: scroll wakes a rAF loop, the loop
+   eases toward a target and stops on arrival. Nothing reads layout
+   in a scroll handler; only transform and opacity are written.
+   Waypoints are measured on load, resize and after a layer toggle.
 
-   Targets are measured once and re-measured on resize and on
-   layer changes, never per frame.
+   Reduced motion: it does not travel. It sits on the portrait's
+   mouth, in the page, where it was painted. The leopard keeps its
+   own painted lip. Nothing moves and nothing is missing.
    ============================================================ */
 (() => {
   "use strict";
   const lip = document.querySelector("[data-lip]");
   if (!lip) return;
   const reduce = matchMedia("(prefers-reduced-motion: reduce)");
+  const LIP_ASPECT = 1;   // set from the image once it loads
 
-  let targets = [];
-  let cur = null, tgt = null, rafId = 0, settled = true;
+  let targets = [], cur = null, tgt = null, rafId = 0, settled = true;
 
-  function measure() {
+  const focusOf = (el) => (el.dataset.focus || "50 50").split(/\s+/).map(Number);
+  const measure = () => {
     const out = [];
-    // every artwork gets a waypoint at its own centre
+    // depart: the portrait's mouth. The lip's width there is the painted
+    // lip's share of the image, so it is the same size as what it covers
+    const hero = document.querySelector(".hero-portrait");
+    const heroImg = hero && hero.querySelector("img");
+    if (hero && heroImg) {
+      const r = heroImg.getBoundingClientRect();
+      const [fx, fy] = focusOf(hero);
+      out.push({ y: r.top + scrollY + r.height * fy / 100, x: r.left + r.width * fx / 100,
+                 size: r.width * (Number(hero.dataset.lipWidth) || 6.4) / 100, depart: true });
+    }
     for (const fig of document.querySelectorAll(".entry-art")) {
       const r = fig.getBoundingClientRect();
-      // data-focus is "x y" in percent: where in this artwork the lip
-      // should land. Without it the lip sits in the middle of a
-      // rectangle, which is not the same as landing on something.
-      const [fx, fy] = (fig.dataset.focus || "50 50").split(/\s+/).map(Number);
-      out.push({
-        y: r.top + scrollY + r.height * (fy / 100),
-        x: r.left + r.width * (fx / 100),
-        size: 56,
-      });
+      const [fx, fy] = focusOf(fig);
+      out.push({ y: r.top + scrollY + r.height * fy / 100, x: r.left + r.width * fx / 100, size: 60 });
+    }
+    // rest: the leopard's mouth
+    const closer = document.querySelector(".closer-art");
+    const closerImg = closer && closer.querySelector("img");
+    if (closer && closerImg) {
+      const r = closerImg.getBoundingClientRect();
+      const [fx, fy] = focusOf(closer);
+      out.push({ y: r.top + scrollY + r.height * fy / 100, x: r.left + r.width * fx / 100,
+                 size: r.width * (Number(closer.dataset.lipWidth) || 7.5) / 100, rest: true });
     }
     targets = out.sort((a, b) => a.y - b.y);
-    // The portrait is on the first screen now, so the lip starts beside
-    // it and travels down rather than toward it. The last artwork is
-    // where it comes to rest.
-    if (targets.length) {
-      const last = targets[targets.length - 1];
-      last.rest = true;
-      last.size = 34;
-    }
-  }
+  };
 
-  function pick() {
-    // the waypoint nearest the middle of what is currently on screen
-    const mid = scrollY + innerHeight / 2;
+  const pick = () => {
+    const mid = scrollY + innerHeight * 0.45;
+    // before anything else is in view the lip stays on the mouth
+    if (scrollY < 8 && targets[0] && targets[0].depart) return targets[0];
     let best = targets[0], d = Infinity;
-    for (const t of targets) {
-      const dist = Math.abs(t.y - mid);
-      if (dist < d) { d = dist; best = t; }
-    }
+    for (const t of targets) { const dist = Math.abs(t.y - mid); if (dist < d) { d = dist; best = t; } }
     return best;
-  }
+  };
 
-  // Reduced motion does not mean a faster version of the same thing. A
-  // lip that teleports between waypoints as you scroll is worse than one
-  // that travels. So it stops travelling altogether and sits where it was
-  // always heading: on the mouth, placed in the page rather than pinned
-  // to the viewport. Static, and the motif still lands.
-  function rest() {
-    const t = targets.find((x) => x.rest) || targets[targets.length - 1];
-    if (!t) return;
+  const place = (t) => ({ x: t.x - t.size / 2, y: t.y - scrollY - (t.size * LIP_ASPECT) / 2, s: t.size / 64 });
+
+  const frame = () => {
+    const t = tgt; if (!t) { rafId = 0; return; }
+    const want = place(t);
+    if (!cur) cur = { ...want };
+    const k = 0.11;
+    cur.x += (want.x - cur.x) * k; cur.y += (want.y - cur.y) * k; cur.s += (want.s - cur.s) * k;
+    lip.style.transform = `translate3d(${cur.x.toFixed(1)}px, ${cur.y.toFixed(1)}px, 0) scale(${cur.s.toFixed(3)})`;
+    const near = Math.abs(want.x - cur.x) < 0.3 && Math.abs(want.y - cur.y) < 0.3;
+    if (near) { rafId = 0; settled = true; } else { settled = false; rafId = requestAnimationFrame(frame); }
+  };
+
+  const rest = () => {
+    const t = targets.find((x) => x.depart) || targets[0]; if (!t) return;
     lip.classList.add("is-static");
     lip.style.transform = "none";
+    lip.style.width = `${t.size.toFixed(1)}px`;
     lip.style.left = `${(t.x - t.size / 2).toFixed(1)}px`;
-    lip.style.top = `${(t.y - t.size / 2).toFixed(1)}px`;
-    lip.style.width = `${t.size}px`;
-  }
+    lip.style.top = `${(t.y - (t.size * LIP_ASPECT) / 2).toFixed(1)}px`;
+  };
 
-  function frame() {
-    const t = tgt;
-    if (!t) { rafId = 0; return; }
-    const want = { x: t.x - 32, y: t.y - scrollY - 15, s: t.size / 64 };
-    if (!cur) cur = { ...want };
-    const k = 0.12;
-    cur.x += (want.x - cur.x) * k;
-    cur.y += (want.y - cur.y) * k;
-    cur.s += (want.s - cur.s) * k;
-    lip.style.transform =
-      `translate3d(${cur.x.toFixed(1)}px, ${cur.y.toFixed(1)}px, 0) scale(${cur.s.toFixed(3)})`;
-    const near = Math.abs(want.x - cur.x) < 0.4 && Math.abs(want.y - cur.y) < 0.4;
-    if (near) { rafId = 0; settled = true; }
-    else { settled = false; rafId = requestAnimationFrame(frame); }
-  }
-
-  function wake() {
+  const wake = () => {
     if (reduce.matches) { rest(); return; }
     tgt = pick();
     if (!rafId) rafId = requestAnimationFrame(frame);
-  }
+  };
 
   addEventListener("scroll", wake, { passive: true });
   addEventListener("resize", () => { measure(); wake(); });
-  // layer changes move the waypoints, so re-measure after a toggle settles
   document.addEventListener("click", () => setTimeout(() => { measure(); wake(); }, 560), true);
+  reduce.addEventListener("change", () => { lip.classList.remove("is-static"); lip.style.cssText = ""; cur = null; measure(); wake(); });
 
-  measure();
-  wake();
-  reduce.addEventListener("change", () => { lip.classList.remove("is-static"); lip.style.cssText = ""; measure(); wake(); });
-  requestAnimationFrame(() => lip.classList.add("is-on"));
-  if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(() => { measure(); wake(); });
-  }
+  const start = () => { measure(); cur = null; wake(); requestAnimationFrame(() => lip.classList.add("is-on")); };
+  const img = lip.querySelector("img");
+  if (img && !img.complete) img.addEventListener("load", start, { once: true }); else start();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { measure(); wake(); });
   addEventListener("load", () => { measure(); wake(); });
+  // the hero image decides where the mouth is, so re-measure when it lands
+  for (const im of document.querySelectorAll(".hero-portrait img, .closer-art img")) {
+    im.addEventListener("load", () => { measure(); wake(); }, { once: true });
+  }
   window.__lip = { measure, wake, targets: () => targets, settled: () => settled };
+})();
+
+/* the hero and the closer paint their box the image's own ground, the
+   same way the artwork slots do, so the image can float in it */
+(() => {
+  "use strict";
+  const sample = (img) => {
+    try {
+      const c = document.createElement("canvas"); c.width = c.height = 1;
+      const ctx = c.getContext("2d", { willReadFrequently: true });
+      const i = Math.max(2, Math.round(img.naturalWidth * 0.02));
+      ctx.drawImage(img, i, i, 1, 1, 0, 0, 1, 1);
+      const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
+      return `rgb(${r} ${g} ${b})`;
+    } catch { return null; }
+  };
+  for (const [sel, prop] of [[".hero-portrait img", "--hero-bg"], [".closer-art img", "--closer-bg"]]) {
+    const img = document.querySelector(sel); if (!img) continue;
+    const done = () => { const c = sample(img); if (c) document.documentElement.style.setProperty(prop, c); };
+    if (img.complete && img.naturalWidth) done(); else img.addEventListener("load", done, { once: true });
+  }
 })();
