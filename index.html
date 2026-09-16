@@ -26,8 +26,8 @@
 <link rel="stylesheet" href="styles.css">
 <noscript>
 <style>
-  .entry-brief { grid-template-rows: 1fr !important; }
-  .entry-brief-inner { content-visibility: visible !important; display: block !important; }
+  .entry-sum { grid-template-rows: 1fr !important; }
+  .entry-sum-inner { content-visibility: visible !important; display: block !important; }
   .brief-row { opacity: 1 !important; transform: none !important; }
   .plot-readout, .entries-tools { display: none; }
 </style>
@@ -90,16 +90,22 @@
         </div>
         <div class="entry-main">
           <h2 class="display entry-name">RentLetter</h2>
-          <p class="entry-one">Software for rental realtors in Ontario and BC. The paperwork end of leasing, made routine.</p>
-          <div class="entry-actions">
-            <button class="entry-toggle mono" type="button" aria-expanded="false" aria-controls="rentletter-brief">The making of <span class="tgl" aria-hidden="true">+</span></button>
-            <a class="entry-link mono" href="https://rentletter.ca" target="_blank" rel="noopener">rentletter.ca&thinsp;&#8599;</a>
+          <div class="entry-line">
+            <p class="entry-desc">Lease paperwork for rental realtors</p>
+            <span class="entry-status mono">Active</span>
+            <button class="entry-toggle" type="button" aria-expanded="false" aria-controls="rentletter-sum" aria-label="RentLetter summary"><span class="tgl" aria-hidden="true">+</span></button>
           </div>
         </div>
         <span style="--pt:0.06" class="mark mark--rentletter" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path class="m-lift" d="M24 6 L38 13 L24 20 L10 13 Z" vector-effect="non-scaling-stroke"/><path d="M10 22 L24 29 L38 22" vector-effect="non-scaling-stroke"/><path d="M10 31 L24 38 L38 31" vector-effect="non-scaling-stroke"/></svg></span>
       </div>
-      <div class="entry-brief" id="rentletter-brief">
-        <div class="entry-brief-inner" hidden="until-found">
+      <div class="entry-sum" id="rentletter-sum">
+        <div class="entry-sum-inner" hidden="until-found">
+          <div class="sum">
+            <p class="sum-lede">Software for rental realtors in Ontario and BC, the paperwork end of leasing made routine. This is the fourth version, and every change came from a realtor conversation, not a hunch.</p>
+            <p class="sum-links">
+              <a class="entry-link mono" href="https://rentletter.ca" target="_blank" rel="noopener">rentletter.ca&thinsp;&#8599;</a>
+            </p>
+          </div>
           <dl class="brief">
             <div class="brief-row"><dt class="mono">Why I built it</dt><dd>I wanted to build in real estate before I knew what. This is the fourth version, and every change came from a realtor conversation, not a hunch. The product I planned and the product they use share almost nothing, which is the point.</dd></div>
             <div class="brief-row"><dt class="mono">Who it&rsquo;s for</dt><dd>Rental realtors, plus the landlords and tenants on the other side of every application. A realtor will tolerate a tool, but a tenant abandons anything that asks them to learn. So it has to be obvious on first contact, on a phone, to a stranger.</dd></div>
@@ -120,17 +126,26 @@
         </div>
         <div class="entry-main">
           <h2 class="display entry-name">easymonee</h2>
-          <p class="entry-one">A stock research and monitoring dashboard with an AI chat at the centre.</p>
-          <div class="entry-actions">
-            <button class="entry-toggle mono" type="button" aria-expanded="false" aria-controls="easymonee-brief">The making of <span class="tgl" aria-hidden="true">+</span></button>
-            <!-- TODO(armin): restore https://easymonee.com once the custom domain is attached to the Render service -->
-            <a class="entry-link mono" href="https://easymonee.onrender.com" target="_blank" rel="noopener">easymonee.onrender.com&thinsp;&#8599;</a>
+          <div class="entry-line">
+            <p class="entry-desc">Stock research dashboard with AI chat</p>
+            <span class="entry-status mono">In testing</span>
+            <button class="entry-toggle" type="button" aria-expanded="false" aria-controls="easymonee-sum" aria-label="easymonee summary"><span class="tgl" aria-hidden="true">+</span></button>
           </div>
         </div>
         <span style="--pt:0.2" class="mark mark--easymonee" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M8 8 V40 H40" vector-effect="non-scaling-stroke"/><circle cx="14" cy="34" r="2" vector-effect="non-scaling-stroke"/><circle cx="21" cy="27" r="2" vector-effect="non-scaling-stroke"/><circle cx="28" cy="20" r="2" vector-effect="non-scaling-stroke"/><circle class="m-peak" cx="35" cy="13" r="2" vector-effect="non-scaling-stroke"/></svg></span>
       </div>
-      <div class="entry-brief" id="easymonee-brief">
-        <div class="entry-brief-inner" hidden="until-found">
+      <div class="entry-sum" id="easymonee-sum">
+        <div class="entry-sum-inner" hidden="until-found">
+          <div class="sum">
+            <p class="sum-lede">A stock research and monitoring dashboard with an AI chat at the centre. Nothing I could buy found asymmetric bets ahead of the market, so I built it.</p>
+            <p class="sum-links">
+              <!-- TODO(armin): restore https://easymonee.com once the custom domain is attached to the Render service -->
+              <a class="entry-link mono" href="https://easymonee.onrender.com" target="_blank" rel="noopener">easymonee.onrender.com&thinsp;&#8599;</a>
+            </p>
+          </div>
+          <!-- held out of display (de-templating), copy preserved:
+            <div class="brief-row"><dt class="mono">How it went</dt><dd>It runs, it&rsquo;s in daily use, and it surfaces things I would not have found by reading. I&rsquo;m treating this as the testing phase and not claiming more than that — the sample is small, and I&rsquo;d rather be honest about that than impressive about it.</dd></div>
+            -->
           <dl class="brief">
             <div class="brief-row"><dt class="mono">Why I built it</dt><dd>Asymmetric bets: risk a couple hundred, make a couple thousand, one hit pays for nine misses. Nothing I could buy found those candidates ahead of the market, so I built it. The name is ridiculous on purpose, it was never for sale.</dd></div>
             <div class="brief-row"><dt class="mono">Who it&rsquo;s for</dt><dd>Me. That&rsquo;s the whole user research. Building for one user means no onboarding, no persuasion, and features that earn their place on a Tuesday.</dd></div>
@@ -153,22 +168,33 @@
         </div>
         <div class="entry-main">
           <h2 class="display entry-name">Klenz</h2>
-          <p class="entry-one">A shared health tracker for me and a few friends. Running, sleep, supplements, habits, in one place.</p>
-          <dl class="brief brief--flat">
-            <div class="brief-row"><dt class="mono">Who it&rsquo;s for</dt><dd>Me and a small circle of friends. Anyone can open it, but no one else was ever in mind. First thing I built for others, and even a few real users change the work.</dd></div>
-            <div class="brief-row"><dt class="mono">How it went</dt><dd>It got used, which is the only bar. We&rsquo;re still on it, and Strava feeds the running data automatically. WHOOP sleep is next.</dd></div>
-          </dl>
+          <div class="entry-line">
+            <p class="entry-desc">Shared health tracker for friends</p>
+            <span class="entry-status mono">Live</span>
+            <button class="entry-toggle" type="button" aria-expanded="false" aria-controls="klenz-sum" aria-label="Klenz summary"><span class="tgl" aria-hidden="true">+</span></button>
+          </div>
+        </div>
+        <span style="--pt:0.38" class="mark mark--klenz" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle cx="24" cy="24" r="7" vector-effect="non-scaling-stroke"/><circle cx="24" cy="24" r="12.5" vector-effect="non-scaling-stroke"/><path class="m-open" d="M40.9 17.8 A18 18 0 1 1 27.1 6.3" vector-effect="non-scaling-stroke"/></svg></span>
+      </div>
+      <div class="entry-sum" id="klenz-sum">
+        <div class="entry-sum-inner" hidden="until-found">
+          <div class="sum">
+            <p class="sum-lede">A shared health tracker for me and a few friends. Running, sleep, supplements, habits, in one place.</p>
+            <p class="sum-links">
+              <!-- TODO(armin): restore https://klenzapp.com once the domain clears Namecheap WHOIS verification -->
+              <a class="entry-link mono" href="https://klenz.vercel.app" target="_blank" rel="noopener">klenz.vercel.app&thinsp;&#8599;</a>
+            </p>
+          </div>
           <!-- held out of display (de-templating), copy preserved:
             <div class="brief-row"><dt class="mono">Why I built it</dt><dd>Me and a few close friends wanted one place for the specific things we were each trying to hold ourselves to — running goals, sleep, supplements, habits we wanted to build and habits we wanted to drop. I did no market research and never looked for an existing app, because it genuinely didn&rsquo;t matter whether one existed. We knew exactly what we cared about tracking, and general-purpose wellness apps track everything except that.</dd></div>
             <div class="brief-row"><dt class="mono">What blocked it</dt><dd>Nothing. It&rsquo;s small on purpose, and I&rsquo;ve resisted every temptation to widen it into a real wellness product — the moment it tries to serve everyone it stops serving us.</dd></div>
             <div class="brief-row"><dt class="mono">Where it stands</dt><dd>In use, still being improved, still deliberately small.</dd></div>
           -->
-          <div class="entry-actions">
-            <!-- TODO(armin): restore https://klenzapp.com once the domain clears Namecheap WHOIS verification -->
-            <a class="entry-link mono" href="https://klenz.vercel.app" target="_blank" rel="noopener">klenz.vercel.app&thinsp;&#8599;</a>
-          </div>
+          <dl class="brief">
+            <div class="brief-row"><dt class="mono">Who it&rsquo;s for</dt><dd>Me and a small circle of friends. Anyone can open it, but no one else was ever in mind. First thing I built for others, and even a few real users change the work.</dd></div>
+            <div class="brief-row"><dt class="mono">How it went</dt><dd>It got used, which is the only bar. We&rsquo;re still on it, and Strava feeds the running data automatically. WHOOP sleep is next.</dd></div>
+          </dl>
         </div>
-        <span style="--pt:0.38" class="mark mark--klenz" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle cx="24" cy="24" r="7" vector-effect="non-scaling-stroke"/><circle cx="24" cy="24" r="12.5" vector-effect="non-scaling-stroke"/><path class="m-open" d="M40.9 17.8 A18 18 0 1 1 27.1 6.3" vector-effect="non-scaling-stroke"/></svg></span>
       </div>
     </article>
 
@@ -181,14 +207,23 @@
         </div>
         <div class="entry-main">
           <h2 class="display entry-name">Melomaniac Studios</h2>
-          <p class="entry-one">A house for sound.</p>
-          <div class="entry-actions">
-            <button class="entry-toggle mono" type="button" aria-expanded="false" aria-controls="melomaniac-studios-brief">The making of <span class="tgl" aria-hidden="true">+</span></button>
-            <a class="entry-link mono" href="https://melomaniacstudios.com" target="_blank" rel="noopener">melomaniacstudios.com&thinsp;&#8599;</a>
+          <div class="entry-line">
+            <p class="entry-desc">A house for sound</p>
+            <span class="entry-status mono">Live</span>
+            <button class="entry-toggle" type="button" aria-expanded="false" aria-controls="melomaniac-studios-sum" aria-label="Melomaniac Studios summary"><span class="tgl" aria-hidden="true">+</span></button>
           </div>
         </div>
         <span style="--pt:0.5" class="mark mark--studio" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M11 41 V24 A13 13 0 0 1 37 24 V41" vector-effect="non-scaling-stroke"/><path class="m-wave" d="M4 33 C9 29.5 13 36 18 32.8 S27 29.6 31 33 S40 35.6 44 31.8" vector-effect="non-scaling-stroke"/></svg></span>
-        <div class="labs">
+      </div>
+      <div class="entry-sum" id="melomaniac-studios-sum">
+        <div class="entry-sum-inner" hidden="until-found">
+          <div class="sum">
+            <p class="sum-lede">My label, and a house for sound. I want to make music for high-end creative brands, and those brands hire studios, not SoundCloud links.</p>
+            <p class="sum-links">
+              <a class="entry-link mono" href="https://melomaniacstudios.com" target="_blank" rel="noopener">melomaniacstudios.com&thinsp;&#8599;</a>
+            </p>
+          </div>
+          <div class="labs">
             <p class="mono labs-eyebrow">Labs, the newest wing of the house.</p>
             <p class="labs-note">Where the house experiments. Instruments we wished existed, so we built them. Everything is live, made in-house, and more join as they&rsquo;re ready.</p>
             <ul class="labs-list" role="list">
@@ -218,9 +253,6 @@
               </li>
             </ul>
           </div>
-      </div>
-      <div class="entry-brief" id="melomaniac-studios-brief">
-        <div class="entry-brief-inner" hidden="until-found">
           <dl class="brief">
             <div class="brief-row"><dt class="mono">Why I built it</dt><dd>I&rsquo;m a musician and composer, and Melomaniac Studios is my label. I want to make music for high-end creative brands, and those brands hire studios, not SoundCloud links. So I built the studio, and now it holds my music technology too.</dd></div>
             <div class="brief-row"><dt class="mono">Who it&rsquo;s for</dt><dd>Not everyday listeners. It&rsquo;s built so creative brands and their communities notice me. Taken seriously by a few specific people, not liked by a general many.</dd></div>
@@ -241,17 +273,23 @@
         </div>
         <div class="entry-main">
           <h2 class="display entry-name">Echoes</h2>
-          <p class="entry-one">Save a song to the place you heard it. A timeline and a map of where music happened to you.</p>
-          <p class="mono entry-credit">by Melomaniac Studios</p>
-          <div class="entry-actions">
-            <button class="entry-toggle mono" type="button" aria-expanded="false" aria-controls="echoes-brief">The making of <span class="tgl" aria-hidden="true">+</span></button>
-            <a class="entry-link mono" href="https://echoesbymm.com" target="_blank" rel="noopener">echoesbymm.com&thinsp;&#8599;</a>
+          <div class="entry-line">
+            <p class="entry-desc">Save a song to a place</p>
+            <span class="entry-status mono">Live</span>
+            <button class="entry-toggle" type="button" aria-expanded="false" aria-controls="echoes-sum" aria-label="Echoes summary"><span class="tgl" aria-hidden="true">+</span></button>
           </div>
         </div>
         <span style="--pt:0.6" class="mark mark--echoes" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle cx="17" cy="31" r="1.6" vector-effect="non-scaling-stroke"/><g class="m-rings"><path d="M18.2 24.1 A7 7 0 1 1 10.9 27.5" vector-effect="non-scaling-stroke"/><path d="M24.5 20.4 A13 13.6 0 1 1 5.2 36.5" vector-effect="non-scaling-stroke"/><path d="M15.3 11.6 A19.5 20.5 0 0 1 33 42.2" vector-effect="non-scaling-stroke"/></g></svg></span>
       </div>
-      <div class="entry-brief" id="echoes-brief">
-        <div class="entry-brief-inner" hidden="until-found">
+      <div class="entry-sum" id="echoes-sum">
+        <div class="entry-sum-inner" hidden="until-found">
+          <div class="sum">
+            <p class="sum-lede">Save a song to the place you heard it, a timeline and a map of where music happened to you. A song puts me back in a place, closer than any photo.</p>
+            <p class="mono sum-credit">by Melomaniac Studios</p>
+            <p class="sum-links">
+              <a class="entry-link mono" href="https://echoesbymm.com" target="_blank" rel="noopener">echoesbymm.com&thinsp;&#8599;</a>
+            </p>
+          </div>
           <dl class="brief">
             <div class="brief-row"><dt class="mono">Why I built it</dt><dd>I left home seven years ago and have moved a lot since. A song puts me back in a place, closer than any photo. You keep every photo and none of the songs, so I built the thing that keeps them.</dd></div>
             <div class="brief-row"><dt class="mono">Who it&rsquo;s for</dt><dd>It started as mine, then friends kept using it. Now it&rsquo;s a small, quiet social space for people who relate to music this way. I assumed that was a niche of one, and it isn&rsquo;t.</dd></div>
@@ -272,15 +310,22 @@
         </div>
         <div class="entry-main">
           <h2 class="display entry-name">MELOMANIA</h2>
-          <p class="entry-one">A live electronic series in Toronto where every set is written from scratch for that night.</p>
-          <div class="entry-actions">
-            <button class="entry-toggle mono" type="button" aria-expanded="false" aria-controls="melomania-brief">The making of <span class="tgl" aria-hidden="true">+</span></button>
+          <div class="entry-line">
+            <p class="entry-desc">Toronto live series, sets written fresh</p>
+            <span class="entry-status mono">Active</span>
+            <button class="entry-toggle" type="button" aria-expanded="false" aria-controls="melomania-sum" aria-label="MELOMANIA summary"><span class="tgl" aria-hidden="true">+</span></button>
           </div>
         </div>
         <span style="--pt:0.8" class="mark mark--melomania" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle cx="13" cy="37" r="1.6" vector-effect="non-scaling-stroke"/><g class="m-arcs"><path d="M21.6 35 C22.2 33.3 20.6 31.7 19.9 30.6 C19.2 29.6 17.3 29.9 16.4 29.2 C15.7 28.6 14.9 29.7 14.2 29.1" vector-effect="non-scaling-stroke"/><path d="M28 34.1 C29 30.4 26.4 28 25 26.1 C23.6 24.3 20.7 23 19.2 24.1 C17.7 25.1 16.9 22.4 15.1 23.7" vector-effect="non-scaling-stroke"/><path d="M34.3 33.3 C35.7 28.6 32.3 24.3 31.2 22 C29.9 19.5 26.3 17.6 23.7 17.5 C21 17.3 17.8 15.7 15.1 18.3" vector-effect="non-scaling-stroke"/></g></svg></span>
       </div>
-      <div class="entry-brief" id="melomania-brief">
-        <div class="entry-brief-inner" hidden="until-found">
+      <div class="entry-sum" id="melomania-sum">
+        <div class="entry-sum-inner" hidden="until-found">
+          <div class="sum">
+            <p class="sum-lede">A live electronic series in Toronto where every set is written from scratch for that night. Most DJs don&rsquo;t make what they play, and most musicians can&rsquo;t play what they make.</p>
+          </div>
+          <!-- held out of display (de-templating), copy preserved:
+            <div class="brief-row"><dt class="mono">What blocked it</dt><dd>The economics of an independent night are unforgiving, and the audience for live electronic performance in this city has to be built rather than found.</dd></div>
+            -->
           <dl class="brief">
             <div class="brief-row"><dt class="mono">Why I built it</dt><dd>I don&rsquo;t like DJing. Offered a Toronto slot, I wrote my own music and played only that. Most DJs don&rsquo;t make what they play, and most musicians can&rsquo;t play what they make. So I doubled down: every set written from scratch for its night.</dd></div>
             <div class="brief-row"><dt class="mono">Who it&rsquo;s for</dt><dd>A Toronto audience that mostly knows DJ sets. From across a room the two look identical, so I taught the audience the difference beforehand. Teaching people to receive the thing is part of making the thing.</dd></div>
@@ -303,21 +348,32 @@
         </div>
         <div class="entry-main">
           <h2 class="display entry-name">Live sets</h2>
-          <p class="entry-one">Original electronic sets performed under my own name, built for rooms rather than playlists.</p>
-          <dl class="brief brief--flat">
-            <div class="brief-row"><dt class="mono">Why I built it</dt><dd>The one thing I make that answers to nothing. Everything else in my week reports to numbers.</dd></div>
-            <div class="brief-row"><dt class="mono">How it went</dt><dd>A set is guesses, made in advance, about what a room will need in forty minutes. You find out if you were right standing in front of it. Faster and more honest than any product metric.</dd></div>
-          </dl>
+          <div class="entry-line">
+            <p class="entry-desc">Original electronic sets under my name</p>
+            <span class="entry-status mono">Ongoing</span>
+            <button class="entry-toggle" type="button" aria-expanded="false" aria-controls="live-sets-sum" aria-label="Live sets summary"><span class="tgl" aria-hidden="true">+</span></button>
+          </div>
+        </div>
+        <span style="--pt:0.95" class="mark mark--livesets" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path class="m-draw" pathLength="1" d="M4 26.5 C6.5 25.8 7.2 19.6 9 21.8 C11.4 24.8 11.8 33.5 14 30.6 C16.4 27.4 15.8 15.2 18.6 17.9 C21 20.2 20.6 30.8 23 28.2 C25.8 25.2 24.6 10.6 27.8 13.6 C30.4 16 29.2 34.6 32 31.4 C34 29.1 33.6 20.9 35.8 22.6 C37.6 24 37.4 27.9 39.4 26.2 C41 24.8 42 25.9 44 25.1" vector-effect="non-scaling-stroke"/></svg></span>
+      </div>
+      <div class="entry-sum" id="live-sets-sum">
+        <div class="entry-sum-inner" hidden="until-found">
+          <div class="sum">
+            <p class="sum-lede">Original electronic sets performed under my own name, built for rooms rather than playlists. The one thing I make that answers to nothing.</p>
+            <p class="sum-links">
+              <a class="entry-link mono" href="https://soundcloud.com/arminsaber" target="_blank" rel="noopener">hear a set&thinsp;&#8599;</a>
+            </p>
+          </div>
           <!-- held out of display (de-templating), copy preserved:
             <div class="brief-row"><dt class="mono">Who it&rsquo;s for</dt><dd>A room, on one night. Not a playlist, not an algorithm, not a market.</dd></div>
             <div class="brief-row"><dt class="mono">What blocked it</dt><dd>Nothing blocks it. It&rsquo;s the part that runs on its own.</dd></div>
             <div class="brief-row"><dt class="mono">Where it stands</dt><dd>Ongoing.</dd></div>
           -->
-          <div class="entry-actions">
-            <a class="entry-link mono" href="https://soundcloud.com/arminsaber" target="_blank" rel="noopener">hear a set&thinsp;&#8599;</a>
-          </div>
+          <dl class="brief">
+            <div class="brief-row"><dt class="mono">Why I built it</dt><dd>The one thing I make that answers to nothing. Everything else in my week reports to numbers.</dd></div>
+            <div class="brief-row"><dt class="mono">How it went</dt><dd>A set is guesses, made in advance, about what a room will need in forty minutes. You find out if you were right standing in front of it. Faster and more honest than any product metric.</dd></div>
+          </dl>
         </div>
-        <span style="--pt:0.95" class="mark mark--livesets" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path class="m-draw" pathLength="1" d="M4 26.5 C6.5 25.8 7.2 19.6 9 21.8 C11.4 24.8 11.8 33.5 14 30.6 C16.4 27.4 15.8 15.2 18.6 17.9 C21 20.2 20.6 30.8 23 28.2 C25.8 25.2 24.6 10.6 27.8 13.6 C30.4 16 29.2 34.6 32 31.4 C34 29.1 33.6 20.9 35.8 22.6 C37.6 24 37.4 27.9 39.4 26.2 C41 24.8 42 25.9 44 25.1" vector-effect="non-scaling-stroke"/></svg></span>
       </div>
     </article>
 

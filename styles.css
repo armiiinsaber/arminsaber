@@ -471,36 +471,46 @@ main {
 .entry-name {
   font-size: clamp(30px, 3.8vw, 46px);
 }
-.entry-one {
-  margin-top: var(--s2);
-  max-width: var(--measure);
-  color: color-mix(in oklab, var(--ink) 80%, var(--muted));
-}
 
-.entry-actions {
-  margin-top: var(--s3);
+/* the collapsed row: descriptor, status, toggle. One line, the
+   twenty-second version of the page. Inherits the old one-liner's
+   colour and the old action row's baseline-aligned flex. */
+.entry-line {
+  margin-top: var(--s2);
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: var(--s2) var(--s4);
+  gap: var(--s2) var(--s3);
+}
+.entry-desc {
+  max-width: var(--measure);
+  color: color-mix(in oklab, var(--ink) 80%, var(--muted));
+}
+.entry-status {
+  color: var(--muted);
 }
 
+/* the toggle is a glyph now, not a phrase — it needs its own hit
+   area instead of the underline a text control carried */
 .entry-toggle {
   color: var(--accent);
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 0;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex: none;
 }
 .entry-toggle .tgl {
-  display: inline-block;
+  display: block;
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1;
   transition: transform var(--dur-med) var(--ease-out);
 }
 .entry.is-open .entry-toggle .tgl { transform: rotate(45deg); }
-.entry-toggle:hover { text-decoration: underline; text-underline-offset: 4px; }
+.entry-toggle:hover .tgl { transform: scale(1.18); }
+.entry.is-open .entry-toggle:hover .tgl { transform: rotate(45deg) scale(1.18); }
 
 .entry-link {
   color: var(--muted);
@@ -509,26 +519,52 @@ main {
 }
 .entry-link:hover { color: var(--accent); }
 
-/* expanded brief: animated with the 0fr → 1fr grid technique —
+/* layer 2, the summary: animated with the 0fr → 1fr grid technique —
    smooth height, no measuring, no jump on the entries below */
-.entry-brief {
+.entry-sum {
   display: grid;
   grid-template-rows: 0fr;
   transition: grid-template-rows var(--dur-med) var(--ease-out);
 }
-.entry.is-open .entry-brief {
+.entry.is-open .entry-sum {
   grid-template-rows: 1fr;
 }
 /* collapsed content stays in the DOM and findable: the inner
    carries hidden="until-found" (content-visibility, searchable);
    script.js lifts it on expand and on beforematch */
-.entry.no-anim .entry-brief,
+.entry.no-anim .entry-sum,
 .entry.no-anim .brief-row {
   transition: none !important;
 }
-.entry-brief-inner {
+.entry-sum-inner {
   overflow: hidden;
   min-height: 0;
+}
+
+/* summary body sits in the main lane, under the name — the meta
+   lane stays empty so the left edge of the copy never moves */
+.sum {
+  display: grid;
+  grid-template-columns: 230px 1fr;
+  column-gap: var(--s4);
+  padding-top: var(--s4);
+}
+.sum > * { grid-column: 2; }
+
+.sum-lede {
+  max-width: var(--measure);
+  color: color-mix(in oklab, var(--ink) 86%, var(--muted));
+}
+.sum-credit {
+  margin-top: var(--s1);
+  color: var(--muted);
+}
+.sum-links {
+  margin-top: var(--s3);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--s2) var(--s4);
 }
 
 .brief {
@@ -577,42 +613,19 @@ mark.ph {
    Entry weights — the page is deliberately lopsided. The work
    that matters most (RentLetter, the studio, Echoes) gets the
    full five-field treatment, larger marks and more air; minor
-   entries (Klenz, Live sets) collapse to two fields shown flat
-   in the main column, no expander, tighter everything.
+   entries (Klenz, Live sets) keep the same three layers with a
+   smaller name, a smaller mark and tighter everything.
    ------------------------------------------------------------ */
 .entry--major { padding: var(--s6) 0; }
 .entry--major .entry-name { font-size: clamp(30px, 4vw, 56px); }
-.entry--major .entry-one { margin-top: var(--s3); }
-.entry--major .entry-actions { margin-top: var(--s4); }
+.entry--major .entry-line { margin-top: var(--s3); }
 .entry--major .entry-head > .mark { width: 68px; height: 68px; }
 
 .entry--minor { padding: var(--s4) 0; }
 .entry--minor .entry-name { font-size: clamp(24px, 2.6vw, 30px); }
-.entry--minor .entry-one { font-size: 15px; }
-.entry--minor .entry-actions { margin-top: var(--s2); }
-.entry--minor .entry-head { cursor: default; }
+.entry--minor .entry-desc { font-size: 15px; }
+.entry--minor .entry-line { margin-top: var(--s1); }
 .entry--minor .entry-head > .mark { width: 36px; height: 36px; }
-
-/* flat brief: the two kept fields sit inline in the main column,
-   always visible — no expander, no entrance state */
-.brief--flat { padding-top: var(--s3); }
-.brief--flat .brief-row {
-  grid-template-columns: 150px 1fr;
-  padding: var(--s2) 0;
-  opacity: 1;
-  transform: none;
-  transition: none;
-}
-.brief--flat .brief-row dd { font-size: 15px; }
-
-/* below the wide-desktop range the main lane is too narrow for a
-   label column — flat rows stack their label above the text */
-@media (max-width: 1023px) {
-  .brief--flat .brief-row {
-    grid-template-columns: 1fr;
-    row-gap: var(--s1);
-  }
-}
 
 /* ------------------------------------------------------------
    Entries — stacked below 760px
@@ -623,6 +636,7 @@ mark.ph {
   .entry--minor { padding: var(--s3) 0; }
   .entry--major .entry-head > .mark { width: 56px; height: 56px; }
   .entry-head,
+  .sum,
   .brief-row {
     grid-template-columns: 1fr;
     row-gap: var(--s2);
@@ -729,7 +743,7 @@ h1, h2, .entry-name, .plot-readout, .entry-pos, .entry-cat {
   text-wrap: balance;
 }
 
-p, dd, .entry-one {
+p, dd, .entry-desc {
   text-wrap: pretty;
 }
 
@@ -778,11 +792,6 @@ p, dd, .entry-one {
 .labs-row .entry-link {
   display: inline-block;
   margin-top: var(--s2);
-}
-
-.entry-credit {
-  margin-top: var(--s2);
-  color: var(--muted);
 }
 
 @media (max-width: 760px) {
@@ -878,8 +887,6 @@ p, dd, .entry-one {
 .entry-head > .labs {
   grid-column: 2 / -1;
 }
-
-.entry-credit { white-space: nowrap; }
 
 @media (max-width: 760px) {
   .entry-head > .labs { grid-column: auto; }

@@ -185,7 +185,7 @@
 /* ============================================================
    Entries: one open at a time (suspended while "Expand all" is
    active), whole header tappable, deep-linkable by id.
-   Collapsed briefs stay searchable: the inner carries
+   Collapsed summaries stay searchable: the inner carries
    hidden="until-found", and beforematch expands the entry before
    the browser scrolls to the match. Heights change on toggle, so
    the spectrum engine re-measures after the transition.
@@ -193,9 +193,9 @@
 (() => {
   "use strict";
 
-  // the coda entry has no brief — only entries with one are managed
+  // only entries that actually carry a summary are managed
   const entries = [...document.querySelectorAll(".entry")]
-    .filter((e) => e.querySelector(".entry-brief-inner"));
+    .filter((e) => e.querySelector(".entry-sum-inner"));
   const allBtn = document.querySelector(".expand-all");
   let expandAll = false;
   const hideTimers = new WeakMap();
@@ -206,7 +206,7 @@
   }
 
   function setOpen(entry, open, instant = false) {
-    const inner = entry.querySelector(".entry-brief-inner");
+    const inner = entry.querySelector(".entry-sum-inner");
     const btn = entry.querySelector(".entry-toggle");
     clearTimeout(hideTimers.get(entry));
     if (instant) {
@@ -254,7 +254,7 @@
   for (const entry of entries) {
     const head = entry.querySelector(".entry-head");
     const btn = entry.querySelector(".entry-toggle");
-    const inner = entry.querySelector(".entry-brief-inner");
+    const inner = entry.querySelector(".entry-sum-inner");
     if (btn) btn.addEventListener("click", (e) => {
       e.stopPropagation();
       toggle(entry);
