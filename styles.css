@@ -621,7 +621,6 @@ main {
 .fact dd {
   margin-top: 6px;
   font-size: 15px;
-  line-height: 1.45;
   color: color-mix(in oklab, var(--ink) 86%, var(--muted));
 }
 /* Labs rides up into the summary as names only: a scanner learns the
@@ -638,11 +637,10 @@ main {
   color: var(--muted);
   margin-right: var(--s1);
 }
+/* carries .display in the markup, so weight, tracking and line height
+   come from the face. Size and colour are the only things it sets. */
 .sum-labs-name {
-  font-family: var(--font-display);
   font-size: 20px;
-  font-weight: 480;
-  letter-spacing: -0.012em;
   text-decoration: none;
   color: color-mix(in oklab, var(--ink) 86%, var(--muted));
   transition: color var(--dur-fast) linear;
@@ -661,10 +659,8 @@ main {
    made one role render two ways for no reason a reader could see. */
 .brief--flat { margin-top: var(--s4); }
 
-/* the link fact keeps the page's link register rather than the body
-   type of the values beside it, and never breaks before its arrow */
+/* a URL is one unbreakable token, so it never breaks before its arrow */
 .fact dd .entry-link {
-  line-height: 1.6;
   white-space: nowrap;
 }
 
@@ -781,6 +777,7 @@ mark.ph {
   color: var(--muted);
   font-family: var(--font-mono);
   font-size: 0.72em;
+  letter-spacing: 0.09em;
   border: 1px dashed color-mix(in oklab, var(--accent) 45%, transparent);
   border-radius: 2px;
   padding: 1px 7px;
