@@ -1416,18 +1416,13 @@ p, dd, .entry-desc {
 }
 
 /* ============================================================
-   JOB 7: THE PORTRAIT, TWO OPTIONS
-   Both are built. html.opt-a and html.opt-b pick one; A is the
-   default. Whichever survives, the other comes out.
+   THE PORTRAIT
+   It shares the first screen with the headline. It is the only
+   image with his face on a page that exists to introduce him, so
+   it does not wait until the bottom.
    ============================================================ */
-
-/* shared */
-.hero-portrait, .closer { display: none; }
-.hero-portrait img, .closer-art img { display: block; width: 100%; height: 100%; object-fit: cover; }
-
-/* --- A: the portrait shares the first screen -------------------- */
-.opt-a .hero { position: relative; }
-.opt-a .hero-portrait {
+.hero { position: relative; }
+.hero-portrait {
   display: block;
   margin: 0;
   position: absolute;
@@ -1438,11 +1433,12 @@ p, dd, .entry-desc {
   height: 100%;
   background: var(--c7);
 }
-.opt-a .hero-copy { position: relative; z-index: 1; max-width: min(58%, 620px); padding-right: var(--s4); }
-.opt-a .plot { position: relative; z-index: 1; max-width: 58%; }
+.hero-portrait img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.hero-copy { position: relative; z-index: 1; max-width: min(58%, 620px); padding-right: var(--s4); }
+.plot { position: relative; z-index: 1; max-width: 58%; }
 
 @media (max-width: 900px) {
-  .opt-a .hero-portrait {
+  .hero-portrait {
     position: relative;
     right: auto;
     width: auto;
@@ -1450,55 +1446,5 @@ p, dd, .entry-desc {
     height: 54vh;
     margin: 0 calc(var(--pad-x) * -1) var(--s4);
   }
-  .opt-a .hero-copy, .opt-a .plot { max-width: none; }
+  .hero-copy, .plot { max-width: none; }
 }
-
-/* --- B: the portrait closes the page ---------------------------- */
-.opt-b .closer { display: block; }
-.opt-b .closer-art {
-  margin: var(--s6) 0 0;
-  aspect-ratio: 4 / 5;
-  max-height: 92vh;
-  background: var(--c7);
-  overflow: hidden;
-}
-@media (max-width: 760px) {
-  .opt-b .closer-art { margin-top: var(--s5); aspect-ratio: 4 / 5; }
-}
-
-/* ============================================================
-   JOB 6: THE TRAVELLING LIP, PROTOTYPE
-   One object, fixed to the viewport, that moves down the page
-   with you and settles on whatever is worth looking at, ending on
-   the figure's mouth.
-
-   transform and opacity only. Position is written once per frame
-   from a rAF loop that eases toward a target, which is the same
-   machinery the spectrum engine already uses, so it never reads
-   layout during a scroll event and never forces a reflow.
-   ============================================================ */
-.lip {
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 35;
-  width: 64px;
-  pointer-events: none;
-  opacity: 0;
-  will-change: transform;
-  transition: opacity 600ms var(--ease-out);
-}
-.lip svg { display: block; width: 100%; height: auto; }
-.lip path { fill: var(--lip); }
-.lip.is-on { opacity: 1; }
-
-/* it is a sprayed object like everything else here */
-.lip svg { filter: blur(0.6px) drop-shadow(0 0 10px color-mix(in oklab, var(--lip) 55%, transparent)); }
-
-/* Reduced motion: it stops travelling and simply sits on the mouth it
-   was always heading for. Static and sensible rather than absent, and
-   the page still gets the motif. */
-@media (prefers-reduced-motion: reduce) {
-  .lip { transition: none; }
-}
-.lip.is-static { position: absolute; will-change: auto; }

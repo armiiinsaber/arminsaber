@@ -447,16 +447,25 @@
     // every artwork gets a waypoint at its own centre
     for (const fig of document.querySelectorAll(".entry-art")) {
       const r = fig.getBoundingClientRect();
-      out.push({ y: r.top + scrollY + r.height / 2, x: r.left + r.width * 0.5, size: 56 });
-    }
-    // and the mouth of the figure, which is where it comes to rest.
-    // The face sits about 17% down and 53% across the portrait crop.
-    const face = document.querySelector(".opt-a .hero-portrait img, .opt-b .closer-art img");
-    if (face) {
-      const r = face.getBoundingClientRect();
-      out.push({ y: r.top + scrollY + r.height * 0.175, x: r.left + r.width * 0.535, size: 30, rest: true });
+      // data-focus is "x y" in percent: where in this artwork the lip
+      // should land. Without it the lip sits in the middle of a
+      // rectangle, which is not the same as landing on something.
+      const [fx, fy] = (fig.dataset.focus || "50 50").split(/\s+/).map(Number);
+      out.push({
+        y: r.top + scrollY + r.height * (fy / 100),
+        x: r.left + r.width * (fx / 100),
+        size: 56,
+      });
     }
     targets = out.sort((a, b) => a.y - b.y);
+    // The portrait is on the first screen now, so the lip starts beside
+    // it and travels down rather than toward it. The last artwork is
+    // where it comes to rest.
+    if (targets.length) {
+      const last = targets[targets.length - 1];
+      last.rest = true;
+      last.size = 34;
+    }
   }
 
   function pick() {

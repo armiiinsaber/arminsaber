@@ -281,6 +281,101 @@ was planted and confirmed to slip through:
   copy earns its place, whether the page means what it says. No tool
   here has an opinion, and someone still has to look at the page.
 
+## Supplying artwork
+
+Seven entry artworks, one per project, plus the portrait. Everything
+below is what the page needs in order not to have to guess.
+
+### Naming
+
+```
+reference/                     the style references, not shipped
+  portrait-armin.png           the portrait
+  style-01-cap-teal.png        style reference only
+  style-02-desk-blue.png
+  style-03-leopard-vermilion.png
+  mockup-homepage.png
+
+img/art/                       the shipped artwork, one per entry
+  01-rentletter.png            master, 2400x1200
+  02-easymonee.png
+  03-klenz.png
+  04-melomaniac-studios.png
+  05-echoes.png
+  06-melomania.png
+  07-live-sets.png
+  portrait.png                 master, 1600x2000, the hero
+```
+
+The number is the entry's position and the slug is its `id` in
+`index.html`. Both are in the name so a file can never land in the
+wrong slot: the number orders them, the slug proves it.
+
+Hand over the **masters**. The `.webp` the page actually ships is
+generated from them, so the treatment can change without going back to
+you for new exports.
+
+### The canvas
+
+| | |
+|---|---|
+| Aspect | **2:1** for the seven, **4:5** for the portrait |
+| Master size | **2400 × 1200** for the seven, **1600 × 2000** for the portrait |
+| Format | **PNG**, lossless |
+| Grain | **baked in**, at the scale you want it seen |
+
+The ground is part of the picture, not a cutout on transparency. In the
+references the flat colour is the sky, or the room: the environment is
+the photograph and cutting the subject out of it would throw away most
+of the image.
+
+### Colour, and this is the part that matters
+
+Each artwork's flat ground must be **exactly** its entry's hex, because
+the same colour is on that entry's dot, its mini axis and its accent.
+Colour is what encodes position on the spectrum here, so an artwork
+whose ground is a different red is an artwork that disagrees with its
+own entry.
+
+| entry | ground |
+|---|---|
+| 01 Rentletter | `#1E3FE6` |
+| 02 easymonee | `#1D8BE6` |
+| 03 Klenz | `#0FA893` |
+| 04 Melomaniac Studios | `#6DA85C` |
+| 05 Echoes | `#E6A21D` |
+| 06 MELOMANIA | `#EE6A1F` |
+| 07 Live sets | `#E3341C` |
+
+**Export sRGB, with the profile embedded.** Not Display P3, not Adobe
+RGB. `#E3341C` in P3 is a different colour once the browser converts
+it, and it will miss the token by more than the eye tolerates next to a
+flat swatch of the real thing. If the editor offers "convert to sRGB"
+rather than "assign", take convert.
+
+Fill the ground as a flat layer at that hex **before** the grain goes
+on. Grain over the top is fine and expected; grain underneath shifts
+the base colour.
+
+The page samples a pixel from inside each image's own ground on load
+and paints the slot that exact value, so a small drift will not show as
+a seam. That is a safety net, not permission: it hides the edge, it
+cannot make a wrong hue mean the right thing.
+
+### Focal point
+
+Each artwork carries the point the travelling lip should land on:
+
+```html
+<figure class="entry-art" data-focus="61 28">
+```
+
+Two numbers, **x then y, as percentages of the image**, from the top
+left. `50 50` is the middle. Supply one per artwork, as the eye, the
+hand, the face, whatever the picture is actually about. Without it the
+lip lands in the centre of a rectangle, which is a weaker idea than
+landing on something.
+
 ## Developing
 
 Any static server works:
