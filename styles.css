@@ -431,7 +431,9 @@ main {
   cursor: pointer;
 }
 
-/* meta column */
+/* meta column — position and mode label, then the mini axis.
+   The category line is held out of the scan row; the rule stays
+   so uncommenting it in the markup restores it intact. */
 .entry-meta { display: flex; flex-direction: column; gap: var(--s2); }
 .entry-pos { color: var(--accent); }
 .entry-cat { color: var(--muted); }
@@ -472,22 +474,32 @@ main {
   font-size: clamp(30px, 3.8vw, 46px);
 }
 
-/* the collapsed row: descriptor, status, toggle. One line, the
-   twenty-second version of the page. Inherits the old one-liner's
-   colour and the old action row's baseline-aligned flex. */
+/* ------------------------------------------------------------
+   Layer 1, the scan. The collapsed row is the twenty-second
+   version of the page: mark, position, mini axis, name,
+   descriptor, status, toggle, and nothing else. Read down the
+   page without opening anything and the work still reads.
+
+   A grid rather than a wrapping flex row: the descriptor takes
+   the slack and the status and toggle hold a rail at the right
+   edge of the lane, so they line up down the page however long
+   the names and descriptors are.
+   ------------------------------------------------------------ */
 .entry-line {
-  margin-top: var(--s2);
-  display: flex;
-  flex-wrap: wrap;
+  margin-top: var(--s1);
+  display: grid;
+  grid-template-columns: 1fr auto auto;
   align-items: baseline;
-  gap: var(--s2) var(--s3);
+  column-gap: var(--s3);
 }
 .entry-desc {
+  min-width: 0;
   max-width: var(--measure);
   color: color-mix(in oklab, var(--ink) 80%, var(--muted));
 }
 .entry-status {
   color: var(--muted);
+  white-space: nowrap;
 }
 
 /* the toggle is a glyph now, not a phrase — it needs its own hit
@@ -618,13 +630,12 @@ mark.ph {
    ------------------------------------------------------------ */
 .entry--major { padding: var(--s6) 0; }
 .entry--major .entry-name { font-size: clamp(30px, 4vw, 56px); }
-.entry--major .entry-line { margin-top: var(--s3); }
+.entry--major .entry-line { margin-top: var(--s2); }
 .entry--major .entry-head > .mark { width: 68px; height: 68px; }
 
 .entry--minor { padding: var(--s4) 0; }
 .entry--minor .entry-name { font-size: clamp(24px, 2.6vw, 30px); }
 .entry--minor .entry-desc { font-size: 15px; }
-.entry--minor .entry-line { margin-top: var(--s1); }
 .entry--minor .entry-head > .mark { width: 36px; height: 36px; }
 
 /* ------------------------------------------------------------
@@ -864,10 +875,15 @@ p, dd, .entry-desc {
 /* ------------------------------------------------------------
    Third lane — kept from the screenshot era: each entry head
    reserves a slim right-hand lane; the marks occupy it now.
+   The lane is fixed at the largest mark rather than sized to
+   each one, so the main lane ends at the same x on every entry
+   and the scan row's status and toggle hold a straight rail
+   down the page. Marks stay flush right, so they do not move.
    ------------------------------------------------------------ */
 .entry-head {
-  grid-template-columns: 230px 1fr auto;
+  grid-template-columns: 230px 1fr 68px;
 }
+.entry-head > .mark { justify-self: end; }
 
 /* labs rows keep their copy-beside-lane grid too */
 .labs-row {
@@ -891,3 +907,40 @@ p, dd, .entry-desc {
 @media (max-width: 760px) {
   .entry-head > .labs { grid-column: auto; }
 }
+
+/* ------------------------------------------------------------
+   Layer 1 on a phone. The lane is too narrow to carry descriptor,
+   status and toggle side by side, and at 360 the longest name
+   could not hold one line either. So the row dissolves into the
+   entry head's own grid (entry-main and entry-line both go
+   display:contents): status and toggle ride up to sit with the
+   position and the mini axis, and the name and the descriptor
+   each take the full width underneath. Same seven parts, same
+   reading order, same right-hand rail.
+
+   Last in the file on purpose: it has to land after the 760px
+   entry-head rules it overrides.
+   ------------------------------------------------------------ */
+@media (max-width: 560px) {
+  .entry-head {
+    grid-template-columns: 1fr auto 28px;
+    column-gap: var(--s2);
+    row-gap: var(--s2);
+    align-items: baseline;
+  }
+  .entry-main,
+  .entry-line { display: contents; }
+
+  .entry-meta   { grid-column: 1;    grid-row: 1; }
+  .entry-status { grid-column: 2;    grid-row: 1; justify-self: end; }
+  .entry-toggle { grid-column: 3;    grid-row: 1; justify-self: end; }
+  .entry-name   { grid-column: 1/-1; grid-row: 2; }
+  .entry-desc {
+    grid-column: 1/-1;
+    grid-row: 3;
+    margin-top: 0;
+    max-width: none;
+  }
+  .entry-head > .mark { grid-column: 1/-1; grid-row: 4; }
+}
+
