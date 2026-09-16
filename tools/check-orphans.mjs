@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // Renders the page in headless Chrome and fails if any line of visible
-// copy ends with a single word on its own. Runs each width twice, once
-// collapsed and once with "Expand all" on, so the briefs are covered.
+// copy ends with a single word on its own. Runs each width three times,
+// once per layer: the collapsed scan rows, then "Expand all" for every
+// summary, then every "Full brief" open so layer 3 is covered too.
 // Run after every copy change:  node tools/check-orphans.mjs
 //
 //   --shots <dir>   also write hero + full-page screenshots there
@@ -200,11 +201,20 @@ for (const width of WIDTHS) {
 
   const hits = (await page.evaluate(auditOrphans)).map((h) => ({ ...h, state: "collapsed" }));
 
-  // again with every brief open — most of the copy lives in there
+  // again with every summary open — layer 2
   await page.evaluate(() => document.querySelector(".expand-all")?.click());
   await new Promise((r) => setTimeout(r, 900));
+  if (SHOTS) await page.screenshot({ path: path.join(SHOTS, `summary-${width}.png`), fullPage: true });
+  hits.push(...(await page.evaluate(auditOrphans)).map((h) => ({ ...h, state: "layer 2" })));
+
+  // and once more with every full brief open — layer 3, where most of
+  // the copy actually lives
+  await page.evaluate(() =>
+    document.querySelectorAll(".entry-more .more-toggle").forEach((b) => b.click()),
+  );
+  await new Promise((r) => setTimeout(r, 900));
   if (SHOTS) await page.screenshot({ path: path.join(SHOTS, `full-${width}.png`), fullPage: true });
-  hits.push(...(await page.evaluate(auditOrphans)).map((h) => ({ ...h, state: "expanded" })));
+  hits.push(...(await page.evaluate(auditOrphans)).map((h) => ({ ...h, state: "layer 3" })));
 
   if (!hits.length) console.log("ok    no orphans");
   for (const h of hits) {
@@ -221,7 +231,7 @@ server?.close();
 console.log(
   failures
     ? `\n${failures} orphan${failures === 1 ? "" : "s"}. Rewrite the line so the last line carries two words or more.`
-    : `\nNo orphans at ${WIDTHS.join("px, ")}px, collapsed or expanded.`,
+    : `\nNo orphans at ${WIDTHS.join("px, ")}px, in all three layers.`,
 );
 if (SHOTS) console.log(`Screenshots in ${SHOTS}`);
 process.exit(failures ? 1 : 0);

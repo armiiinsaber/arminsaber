@@ -218,6 +218,8 @@
       entry.classList.add("is-open");
     } else {
       entry.classList.remove("is-open");
+      // layer 3 never survives its summary closing
+      entry.querySelector(".entry-more")?.__close?.(true);
       // restore searchable-hidden once the collapse has finished
       hideTimers.set(entry, setTimeout(() => {
         if (!entry.classList.contains("is-open")) {
@@ -299,4 +301,64 @@
       setTimeout(remeasure, 520);
     }
   });
+})();
+
+/* ============================================================
+   Layer 3: the full brief, behind its own control.
+   Deliberately independent of layer 2 — "Expand all" and deep
+   links open summaries and never this. Same reveal mechanism as
+   layer 2, so the fields stay findable while shut:
+   hidden="until-found" on the panel, beforematch opens it before
+   the browser scrolls to the match. Entries with no brief have
+   no control in the markup at all, so there is no empty state.
+   ============================================================ */
+(() => {
+  "use strict";
+
+  for (const more of document.querySelectorAll(".entry-more")) {
+    const btn = more.querySelector(".more-toggle");
+    const inner = more.querySelector(".more-panel-inner");
+    const label = more.querySelector(".more-label");
+    if (!btn || !inner) continue;
+    let hideTimer = 0;
+
+    function set(open, instant = false) {
+      clearTimeout(hideTimer);
+      if (instant) {
+        more.classList.add("no-anim");
+        requestAnimationFrame(() => more.classList.remove("no-anim"));
+      }
+      if (open) {
+        inner.removeAttribute("hidden");
+        more.classList.add("is-open");
+      } else {
+        more.classList.remove("is-open");
+        hideTimer = setTimeout(() => {
+          if (!more.classList.contains("is-open")) {
+            inner.setAttribute("hidden", "until-found");
+          }
+        }, instant ? 0 : 500);
+      }
+      btn.setAttribute("aria-expanded", String(open));
+      if (label) label.textContent = open ? "Hide brief" : "Full brief";
+      setTimeout(() => {
+        window.__spectrum.measure();
+        window.__spectrum.wake();
+      }, instant ? 0 : 520);
+    }
+
+    // the entries controller calls this when a summary closes
+    more.__close = (instant) => {
+      if (more.classList.contains("is-open")) set(false, instant);
+    };
+
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      set(!more.classList.contains("is-open"));
+    });
+
+    // browser find (Cmd+F) landed in a shut brief: open it instantly so
+    // the scroll-to-match has a layout to scroll to
+    inner.addEventListener("beforematch", () => set(true, true));
+  }
 })();
