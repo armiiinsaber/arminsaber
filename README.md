@@ -23,13 +23,22 @@ summary and never the brief.
 
 ## House rules
 
-Two constraints hold across any redesign of this site, and both are
-enforced rather than remembered:
+Three constraints hold across any redesign of this site. All three are
+enforced by a tool rather than remembered, and all three run before
+every push:
 
-- **Typography.** `tools/check-orphans.mjs` fails the build on four
-  line-breaking faults at every width, in every layer. See
-  [Before every push](#before-every-push) for all four.
+- **Typography.** `tools/check-orphans.mjs` fails on four
+  line-breaking faults at every width, in every layer.
+- **Visual consistency.** `tools/check-consistency.mjs` fails when a
+  repeated role drifts: type, spacing, colour or alignment.
 - **Links.** `tools/check-links.mjs` requests every outbound link.
+
+The first two are design constraints, not lint. They are written to
+survive a redesign: a new type scale, a new layout and new copy all
+still have to satisfy them. If a change cannot, the change is wrong,
+not the rule. Where something is deliberately inconsistent it goes in
+that tool's exception list with a reason and a bound, so the list
+itself can be read and argued with.
 
 ## Filling in the blanks
 
@@ -114,6 +123,46 @@ It needs a local Chrome and a copy of `puppeteer-core`; set
 `--shots <dir>` also writes hero, summary and full page screenshots at
 each width, `--width <n>` checks one width instead of three, `--url
 <url>` audits a running site instead of the working tree.
+
+```sh
+node tools/check-consistency.mjs
+```
+
+The design consistency auditor. Where the line auditor watches how copy
+breaks, this one watches whether the page is still one design. Same
+three widths, same three layers, and it prints every value side by side
+so an outlier is obvious.
+
+**1. Type.** Thirteen repeated roles, from product titles down to
+facts labels and outbound links. For each it reports family, weight,
+size, tracking, line height, variable axis values and case, for every
+instance. A role whose instances disagree fails.
+
+**2. Spacing.** Entry vertical rhythm, padding inside rows, the gaps in
+the facts and labs rows, checked against the `--s` scale. A value off
+the scale fails however many times it is repeated: four uses of a wrong
+number is still a wrong number.
+
+**3. Colour.** Every colour declaration in `styles.css`, plus every
+colour resolved on the page. A literal outside `:root` fails, because
+`:root` is where tokens are defined and everywhere else should be a
+token or a `color-mix` derived from one.
+
+**4. Alignment.** The meta lane, the main lane and the mark lane, left
+edges across all seven entries. Any entry out of line fails.
+
+Nothing is silently allowed. A deliberate difference goes in the
+`ALLOWED` list at the top of the file with a reason, and it is still
+bounded rather than waived. The spectrum rules are the main case: the
+display face shifts weight, `SOFT`, `WONK` and tracking with `--st`, so
+each is given a maximum spread and the tool fails if a future change
+widens it. That is not hypothetical. The titles once ran `wght`
+580 to 460 and `WONK` 0 to 1, which made the first and last read as
+two different fonts, and nothing caught it. The bound is now 40 units
+and 0.15.
+
+`--verbose` prints every role table rather than only the failing ones,
+`--width <n>` checks one width instead of three.
 
 ## Developing
 
