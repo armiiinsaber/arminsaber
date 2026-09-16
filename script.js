@@ -90,8 +90,22 @@
   let rendered = -1;
   let rafId = 0;
 
+  // seven colour stops at the entries' own positions; the accent walks
+  // them piecewise so it is exactly the entry's colour when it is in view
+  const STOPS = sections.map((s) => s.t);
+  function applyAccent(t) {
+    let i = 0;
+    while (i < STOPS.length - 2 && t > STOPS[i + 1]) i++;
+    const a = STOPS[i], b = STOPS[i + 1];
+    const f = clamp((t - a) / (b - a), 0, 1);
+    docEl.style.setProperty("--acc-a", `var(--c${i + 1})`);
+    docEl.style.setProperty("--acc-b", `var(--c${i + 2})`);
+    docEl.style.setProperty("--acc-f", f.toFixed(4));
+  }
+
   function apply(t) {
     docEl.style.setProperty("--t", t.toFixed(4));
+    applyAccent(t);
     thumb.style.transform = `translateX(${(t * track.clientWidth).toFixed(1)}px)`;
     for (let i = 0; i < sections.length; i++) {
       ticks[i].classList.toggle("is-lit", t >= sections[i].t - 0.005);
