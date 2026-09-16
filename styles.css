@@ -1226,3 +1226,47 @@ p, dd, .entry-desc {
 #echoes,             [data-target="echoes"]             { --mc: var(--c5); }
 #melomania,          [data-target="melomania"]          { --mc: var(--c6); }
 #live-sets,          [data-target="live-sets"]          { --mc: var(--c7); }
+
+/* ============================================================
+   SPRAY TREATMENT ON TYPE
+   The mockup's main move: type that is sprayed rather than set.
+   Two things make it, and they are deliberately separate because
+   they cost very different amounts.
+
+   The bloom is text-shadow in currentColor. Three stacked haloes,
+   no blur filter, no extra layer: it is the cheapest light the
+   browser can throw and it is what gives each word its coloured
+   halo.
+
+   The erosion is an SVG filter, feTurbulence into feDisplacementMap,
+   which pushes the glyph outline around so the edge breaks up like
+   paint off a nozzle. This is the expensive half, so it is applied
+   only to display type and mono labels, never to body copy.
+
+   The text goes through both as live text. A filter changes how a
+   thing paints, not what it is, so it stays selectable and stays
+   findable by browser search.
+   ============================================================ */
+
+.fx { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+.display {
+  filter: url(#spray-display);
+  /* four haloes, each roughly triple the last, so the light falls off
+     the way overspray does instead of stopping at a rim */
+  text-shadow:
+    0 0 0.05em color-mix(in oklab, currentColor 55%, transparent),
+    0 0 0.18em color-mix(in oklab, currentColor 30%, transparent),
+    0 0 0.55em color-mix(in oklab, currentColor 16%, transparent);
+}
+
+.mono {
+  filter: url(#spray-mono);
+  text-shadow:
+    0 0 0.12em color-mix(in oklab, currentColor 50%, transparent),
+    0 0 0.7em  color-mix(in oklab, currentColor 24%, transparent);
+}
+
+/* Body copy is left alone. At 15 and 17px the displacement costs more
+   than it shows, and prose is the one thing on the page that has to
+   stay easy to read rather than interesting to look at. */

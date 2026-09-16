@@ -37,6 +37,36 @@
 
 <div class="edge" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
+<svg class="fx" aria-hidden="true" focusable="false"><defs>
+  <!-- The sprayed edge, in two passes. First a fine turbulence
+       displaces the glyph outline so the edge breaks up the way paint
+       does off a nozzle. Then a second, coarser noise is turned into an
+       alpha field and composited in, which mottles the inside of the
+       letter rather than only its rim: without it the type reads as a
+       clean shape with a ragged border instead of as sprayed paint.
+       A little blur takes the last of the vector crispness off.
+
+       Live text goes in and comes out. A filter changes how a thing
+       paints, never what it is, so this stays selectable and findable. -->
+  <filter id="spray-display" x="-15%" y="-15%" width="130%" height="130%" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="11" result="edge"/>
+    <feDisplacementMap in="SourceGraphic" in2="edge" scale="3.1" xChannelSelector="R" yChannelSelector="G" result="d"/>
+    <feTurbulence type="fractalNoise" baseFrequency="0.42" numOctaves="3" seed="4" result="fill"/>
+    <feColorMatrix in="fill" type="matrix" result="fillA"
+      values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.85 0.62"/>
+    <feComposite in="d" in2="fillA" operator="in" result="speckled"/>
+    <feGaussianBlur in="speckled" stdDeviation="0.42"/>
+  </filter>
+
+  <!-- the same hand, much lighter: at 10px a 2px displacement eats the
+       letter, so mono gets edge break-up only and no fill mottling -->
+  <filter id="spray-mono" x="-35%" y="-35%" width="170%" height="170%" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="1.6" numOctaves="2" seed="5" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="0.85" xChannelSelector="R" yChannelSelector="G" result="d"/>
+    <feGaussianBlur in="d" stdDeviation="0.24"/>
+  </filter>
+</defs></svg>
+
 
 <header class="ribbon" aria-label="Spectrum position">
   <span class="ribbon-label ribbon-label--logic" aria-hidden="true">Logic</span>
