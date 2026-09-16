@@ -23,6 +23,14 @@
 //   4. alignment   The meta lane, the main lane and the mark lane, left
 //                  edges across all seven entries. Any entry out of
 //                  line fails.
+//   5. cross-role  Every element on the page grouped by the face it uses,
+//                  not by its role. One face, one weight, one tracking,
+//                  one line height, one set of axis values, across the
+//                  whole family. Size is the only thing allowed to vary
+//                  by role. Checks 1 to 4 compare instances of a role
+//                  against each other, which is how .sum-labs-name sat
+//                  there setting its own weight and tracking and passed:
+//                  all three of its instances agreed with each other.
 //
 // Nothing is silently allowed. A difference that is deliberate goes in
 // ALLOWED below with a reason, and is still bounded: a spectrum rule is
@@ -126,6 +134,12 @@ const ALLOWED = [
   //   minor by its name size, its mark and its padding.
   // mono trackEm, six roles. Fixed at 0.09em site-wide.
 ];
+
+/* Cross-role allowances. A role whose weight, tracking, line height or
+   axes differ from the rest of its face needs a line here saying why.
+   Size is not in scope: roles are meant to differ in size. */
+
+const CROSS_ALLOWED = [];
 
 /* Spacing values that are deliberately off the --s scale. Anything not
    on the scale and not listed here fails, however many times it is
@@ -234,6 +248,45 @@ function auditPage(roles, props) {
     }
   }
 
+  /* 5. cross-role: every element grouped by the face it uses --------- */
+  const FACES = { display: "Fraunces", mono: "Martian Mono", body: "Instrument Sans" };
+  const TEXT = "p, h1, h2, h3, dd, dt, li, span, a, button, mark, em, strong, figcaption";
+  const families = { display: [], mono: [], body: [] };
+  // An element counts if it directly contains text of its own. Using
+  // "has no child in TEXT" instead would skip .sum-labs-name, which wraps
+  // an arrow span, and measure the arrow instead of the product name.
+  const ownText = (el) =>
+    [...el.childNodes].some((n) => n.nodeType === 3 && n.nodeValue.trim());
+  for (const el of document.querySelectorAll(TEXT)) {
+    if (!visible(el)) continue;
+    // decorative glyphs are not type: the +/x toggles, the arrows on links
+    if (el.closest('[aria-hidden="true"]')) continue;
+    if (!ownText(el)) continue;
+    const cs = getComputedStyle(el);
+    const fam = cs.fontFamily.split(",")[0].replace(/["']/g, "");
+    const face = Object.keys(FACES).find((k) => FACES[k] === fam);
+    if (!face) continue;
+    const size = num(cs.fontSize);
+    const axes = {};
+    for (const m of (cs.fontVariationSettings || "").matchAll(/"(\w+)"\s*([\d.-]+)/g)) {
+      axes[m[1]] = parseFloat(m[2]);
+    }
+    // name it by its most specific class, falling back to the tag
+    const cls = String(el.className).trim().split(/\s+/)
+      .filter((c) => c && c !== "mono" && c !== "display" && c !== "nowrap");
+    const parent = el.parentElement ? String(el.parentElement.className).trim().split(/\s+/)[0] : "";
+    families[face].push({
+      role: cls[0] || (parent ? `${parent} ${el.tagName.toLowerCase()}` : el.tagName.toLowerCase()),
+      weight: Math.round(num(cs.fontWeight) * 100) / 100,
+      trackEm: cs.letterSpacing === "normal" ? 0 : Math.round((num(cs.letterSpacing) / size) * 10000) / 10000,
+      lineRatio: Math.round((num(cs.lineHeight) / size) * 1000) / 1000,
+      axes: Object.keys(axes).length
+        ? Object.entries(axes).map(([k, n]) => `${k} ${n}`).join(", ")
+        : "none",
+      sizePx: size,
+    });
+  }
+
   /* 4. alignment -------------------------------------------------- */
   const lanes = [];
   for (const entry of document.querySelectorAll(".entry")) {
@@ -253,7 +306,7 @@ function auditPage(roles, props) {
     });
   }
 
-  return { type, spacing, scale, tokens, colours: Object.values(seen), lanes };
+  return { type, spacing, scale, tokens, colours: Object.values(seen), lanes, families };
 }
 
 /* ---------- static colour check over the stylesheet ---------- */
@@ -579,6 +632,48 @@ for (const width of WIDTHS) {
     if (VERBOSE) {
       for (const c of res.colours.sort((a, b) => b.count - a.count)) {
         console.log(`      ${String(c.count).padStart(4)}x  ${c.value.padEnd(26)} ${c.sample}`);
+      }
+    }
+
+    /* 5. cross-role: one face, one weight, one tracking, one line height */
+    for (const [face, rows] of Object.entries(res.families)) {
+      if (rows.length < 2) continue;
+      for (const prop of ["weight", "trackEm", "lineRatio", "axes"]) {
+        // which roles hold which value
+        const byValue = new Map();
+        for (const r of rows) {
+          const k = String(r[prop]);
+          if (!byValue.has(k)) byValue.set(k, new Set());
+          byValue.get(k).add(r.role);
+        }
+        if (byValue.size < 2) continue;
+        // the value held by the most roles is the family's; the rest are outliers
+        const ranked = [...byValue.entries()].sort((a, b) => b[1].size - a[1].size);
+        const [mainValue, mainRoles] = ranked[0];
+        console.log(`  cross-role ${face} · ${prop}: ${byValue.size} values in this face`);
+        for (const [v, roles] of ranked) {
+          const mark = v === mainValue ? "      " : "  OUT ";
+          console.log(`${mark}  ${String(v).padEnd(12)} ${roles.size} role(s): ${[...roles].join(", ")}`);
+        }
+        for (const [v, roles] of ranked.slice(1)) {
+          for (const role of roles) {
+            const ex = CROSS_ALLOWED.find(
+              (a) => a.face === face && a.prop === prop && a.role === role,
+            );
+            if (ex) {
+              notes.push(`${face} · ${prop} · ${role}: differs, allowed — ${ex.why}`);
+              continue;
+            }
+            problems.push({
+              kind: "cross-role",
+              label: `${face} face`,
+              prop,
+              detail: `${role} uses ${v} where the rest of the face uses ${mainValue} (${mainRoles.size} roles)`,
+              where: tag,
+            });
+            console.log(`  FAIL  cross-role  ${face} · ${prop}: ${role} uses ${v}, the face uses ${mainValue}`);
+          }
+        }
       }
     }
 
