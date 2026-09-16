@@ -582,7 +582,13 @@
   };
   for (const [sel, prop] of [[".hero-portrait img", "--hero-bg"], [".closer-art img", "--closer-bg"]]) {
     const img = document.querySelector(sel); if (!img) continue;
-    const done = () => { const c = sample(img); if (c) document.documentElement.style.setProperty(prop, c); };
+    const done = () => {
+      const c = sample(img); if (!c) return;
+      document.documentElement.style.setProperty(prop, c);
+      // the last room and the closer are one field: until Live sets has a
+      // picture of its own, its room takes the leopard's sampled ground
+      if (prop === "--closer-bg") { const last = document.querySelector("#live-sets"); if (last && !last.querySelector(".entry-art img")) last.style.setProperty("--art-bg", c); }
+    };
     if (img.complete && img.naturalWidth) done(); else img.addEventListener("load", done, { once: true });
   }
 })();

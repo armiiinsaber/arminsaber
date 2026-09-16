@@ -1498,20 +1498,27 @@ html { overflow-x: clip; }
    end, the leopard at the feeling end. The lip leaves one and
    lands on the other.
    ============================================================ */
+/* The feeling end is one colour: the leopard's own ground, sampled from
+   the picture, painted edge to edge from where the last room ends to
+   the bottom of the picture. The last room takes the same sample, so
+   there is no shift where it meets the closer, and the picture's side
+   and top edges fade into the field so its grain cannot draw a line. */
 .closer {
-  max-width: var(--page-max);
-  margin: var(--s6) auto 0;
-  padding: 0 var(--pad-x);
+  max-width: none;
+  margin: 0;
+  padding: 0 max(var(--pad-x), calc(50% - var(--page-max) / 2 + var(--pad-x)));
+  background: var(--closer-bg, var(--c7));
 }
 .closer-art {
-  margin: 0;
+  margin: 0 auto;
   aspect-ratio: 4 / 5;
   max-height: 92vh;
-  background: var(--closer-bg, var(--c7));
   overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent), linear-gradient(180deg, transparent, #000 10%);
+  mask-composite: intersect;
 }
 .closer-art img { display: block; width: 100%; height: 100%; object-fit: cover; }
-@media (max-width: 760px) { .closer { margin-top: var(--s5); } }
+.entries { padding-bottom: 0; }
 
 /* ============================================================
    THE TRAVELLING LIP
@@ -1667,3 +1674,8 @@ html[data-copy="panel"] .entry-head::after {
    room starts */
 .sum { padding-bottom: var(--s4); }
 .more-panel-inner { padding-bottom: var(--s4); }
+
+/* the placeholder's own grain overlay reads as a lighter rectangle once
+   the figure stands in a field of the same colour; the page grain
+   already covers it, and real pictures carry their grain baked in */
+.entry-art::after { content: none; }
