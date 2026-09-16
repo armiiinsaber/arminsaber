@@ -1530,7 +1530,8 @@ html { overflow-x: clip; }
   width: 64px;
   pointer-events: none;
   opacity: 0;
-  transform-origin: 50% 50%;
+  /* the controller places the top-left corner and scales from it */
+  transform-origin: 0 0;
   will-change: transform;
   transition: opacity 400ms var(--ease-out);
 }

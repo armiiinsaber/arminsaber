@@ -430,22 +430,39 @@
    Same engine as the spectrum: scroll wakes a rAF loop, the loop
    eases toward a target and stops on arrival. Nothing reads layout
    in a scroll handler; only transform and opacity are written.
-   Waypoints are measured on load, resize and after a layer toggle.
+   Waypoints are measured on load, resize, after a layer toggle and
+   whenever the page changes height (fonts landing, images arriving),
+   against the box the image's pixels actually occupy, so a figure
+   that crops its image with object-fit still gives the true mouth.
 
    Reduced motion: it does not travel. It sits on the portrait's
-   mouth, in the page, where it was painted. The leopard keeps its
-   own painted lip. Nothing moves and nothing is missing.
+   mouth, in the page, where it was painted, and a second copy sits
+   on the leopard's mouth so the ending still reads. Nothing moves
+   and nothing is missing.
    ============================================================ */
 (() => {
   "use strict";
   const lip = document.querySelector("[data-lip]");
   if (!lip) return;
   const reduce = matchMedia("(prefers-reduced-motion: reduce)");
-  const LIP_ASPECT = 1;   // set from the image once it loads
+  let LIP_ASPECT = 0.53;  // height over width; read from the image once it loads
 
   let targets = [], cur = null, tgt = null, rafId = 0, settled = true;
 
   const focusOf = (el) => (el.dataset.focus || "50 50").split(/\s+/).map(Number);
+  // the box the image's pixels occupy: a figure capped in one dimension
+  // crops its image with object-fit: cover, and the percentages belong to
+  // the picture, not the crop. Falls back to the width/height attributes
+  // before a lazy image has loaded.
+  const drawnRect = (img) => {
+    const r = img.getBoundingClientRect();
+    const nw = img.naturalWidth || Number(img.getAttribute("width"));
+    const nh = img.naturalHeight || Number(img.getAttribute("height"));
+    if (!nw || !nh || !r.width || !r.height) return r;
+    const k = Math.max(r.width / nw, r.height / nh);
+    const w = nw * k, h = nh * k;
+    return { left: r.left + (r.width - w) / 2, top: r.top + (r.height - h) / 2, width: w, height: h };
+  };
   const measure = () => {
     const out = [];
     // depart: the portrait's mouth. The lip's width there is the painted
@@ -453,7 +470,7 @@
     const hero = document.querySelector(".hero-portrait");
     const heroImg = hero && hero.querySelector("img");
     if (hero && heroImg) {
-      const r = heroImg.getBoundingClientRect();
+      const r = drawnRect(heroImg);
       const [fx, fy] = focusOf(hero);
       out.push({ y: r.top + scrollY + r.height * fy / 100, x: r.left + r.width * fx / 100,
                  size: r.width * (Number(hero.dataset.lipWidth) || 6.4) / 100, depart: true });
@@ -467,7 +484,7 @@
     const closer = document.querySelector(".closer-art");
     const closerImg = closer && closer.querySelector("img");
     if (closer && closerImg) {
-      const r = closerImg.getBoundingClientRect();
+      const r = drawnRect(closerImg);
       const [fx, fy] = focusOf(closer);
       out.push({ y: r.top + scrollY + r.height * fy / 100, x: r.left + r.width * fx / 100,
                  size: r.width * (Number(closer.dataset.lipWidth) || 7.5) / 100, rest: true });
@@ -497,13 +514,22 @@
     if (near) { rafId = 0; settled = true; } else { settled = false; rafId = requestAnimationFrame(frame); }
   };
 
+  let restCopy = null;
   const rest = () => {
-    const t = targets.find((x) => x.depart) || targets[0]; if (!t) return;
-    lip.classList.add("is-static");
-    lip.style.transform = "none";
-    lip.style.width = `${t.size.toFixed(1)}px`;
-    lip.style.left = `${(t.x - t.size / 2).toFixed(1)}px`;
-    lip.style.top = `${(t.y - (t.size * LIP_ASPECT) / 2).toFixed(1)}px`;
+    const d = targets.find((x) => x.depart) || targets[0]; if (!d) return;
+    const put = (el, t) => {
+      el.classList.add("is-static", "is-on");
+      el.style.transform = "none";
+      el.style.width = `${t.size.toFixed(1)}px`;
+      el.style.left = `${(t.x - t.size / 2).toFixed(1)}px`;
+      el.style.top = `${(t.y - (t.size * LIP_ASPECT) / 2).toFixed(1)}px`;
+    };
+    put(lip, d);
+    const r = targets.find((x) => x.rest);
+    if (r) {
+      if (!restCopy) { restCopy = lip.cloneNode(true); restCopy.removeAttribute("data-lip"); lip.after(restCopy); }
+      put(restCopy, r);
+    }
   };
 
   const wake = () => {
@@ -515,10 +541,18 @@
   addEventListener("scroll", wake, { passive: true });
   addEventListener("resize", () => { measure(); wake(); });
   document.addEventListener("click", () => setTimeout(() => { measure(); wake(); }, 560), true);
-  reduce.addEventListener("change", () => { lip.classList.remove("is-static"); lip.style.cssText = ""; cur = null; measure(); wake(); });
+  reduce.addEventListener("change", () => {
+    lip.classList.remove("is-static"); lip.style.cssText = ""; cur = null;
+    if (restCopy) { restCopy.remove(); restCopy = null; }
+    measure(); wake();
+  });
+  if ("ResizeObserver" in window) new ResizeObserver(() => { measure(); wake(); }).observe(document.body);
 
-  const start = () => { measure(); cur = null; wake(); requestAnimationFrame(() => lip.classList.add("is-on")); };
   const img = lip.querySelector("img");
+  const start = () => {
+    if (img && img.naturalWidth) LIP_ASPECT = img.naturalHeight / img.naturalWidth;
+    measure(); cur = null; wake(); requestAnimationFrame(() => lip.classList.add("is-on"));
+  };
   if (img && !img.complete) img.addEventListener("load", start, { once: true }); else start();
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { measure(); wake(); });
   addEventListener("load", () => { measure(); wake(); });
