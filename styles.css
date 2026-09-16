@@ -916,6 +916,8 @@ p, dd, .entry-desc {
   text-wrap: pretty;
 }
 
+.brief-row dd, .sum-lede { text-wrap: balance; }
+
 /* balance would centre-out the lede unevenly; pretty + a capped
    measure keeps its rag tight instead */
 

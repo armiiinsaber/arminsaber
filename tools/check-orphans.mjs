@@ -15,6 +15,10 @@
 //   3. over-three   No text block runs past three lines in the scan layer
 //                   or in a facts value. Layer 2 ledes and layer 3 brief
 //                   fields are exempt, they are meant to be prose.
+// Two things are not copy and are never audited: anything inside an
+// aria-hidden element (the +/- toggles, the ↗ on links) and mark.ph,
+// the to-fill placeholders.
+//
 //   4. orphan/runt  The last line must not be a single word, and must not
 //                   be shorter than a quarter of the line above it. A two
 //                   word runt is the same fault as a one word orphan.
@@ -156,10 +160,26 @@ function auditPage() {
   const BALANCE = 1 / 3;  // shortest line against the longest
 
   const found = [];
+  const deferred = [];
 
   for (const el of document.querySelectorAll(SEL)) {
     if (el.querySelector(SEL)) continue;
     if (el.closest("[hidden]")) continue;
+
+    // A field still holding a to-fill placeholder is scaffolding. The
+    // browser breaks the whole string including the placeholder, so its
+    // rag says nothing about the copy that will land there, and binding
+    // it now would leave a stale break behind once it is filled. Report
+    // it as deferred rather than passing it silently or failing it.
+    if (el.querySelector("mark.ph")) {
+      const ph = el.closest(".entry");
+      deferred.push({
+        where: [ph && `#${ph.id}`, el.closest(".brief-row, .fact")?.querySelector("dt")?.textContent.trim()]
+          .filter(Boolean)
+          .join(" "),
+      });
+      continue;
+    }
     const cs = getComputedStyle(el);
     if (cs.display === "none" || cs.visibility === "hidden") continue;
     if (!el.getClientRects().length) continue;
@@ -257,7 +277,7 @@ function auditPage() {
     }
   }
 
-  return found;
+  return { found, deferred };
 }
 
 /* ---------- run ---------- */
@@ -285,13 +305,17 @@ for (const width of WIDTHS) {
   console.log(`\n=== ${width}px ===`);
   if (SHOTS) await page.screenshot({ path: path.join(SHOTS, `hero-${width}.png`) });
 
-  const hits = (await page.evaluate(auditPage)).map((h) => ({ ...h, state: "collapsed" }));
+  let scan = await page.evaluate(auditPage);
+  const hits = scan.found.map((h) => ({ ...h, state: "collapsed" }));
+  const skipped = new Map(scan.deferred.map((d) => [d.where, true]));
 
   // again with every summary open — layer 2
   await page.evaluate(() => document.querySelector(".expand-all")?.click());
   await new Promise((r) => setTimeout(r, 900));
   if (SHOTS) await page.screenshot({ path: path.join(SHOTS, `summary-${width}.png`), fullPage: true });
-  hits.push(...(await page.evaluate(auditPage)).map((h) => ({ ...h, state: "layer 2" })));
+  scan = await page.evaluate(auditPage);
+  hits.push(...scan.found.map((h) => ({ ...h, state: "layer 2" })));
+  scan.deferred.forEach((d) => skipped.set(d.where, true));
 
   // and once more with every full brief open — layer 3, where most of
   // the copy actually lives
@@ -300,9 +324,14 @@ for (const width of WIDTHS) {
   );
   await new Promise((r) => setTimeout(r, 900));
   if (SHOTS) await page.screenshot({ path: path.join(SHOTS, `full-${width}.png`), fullPage: true });
-  hits.push(...(await page.evaluate(auditPage)).map((h) => ({ ...h, state: "layer 3" })));
+  scan = await page.evaluate(auditPage);
+  hits.push(...scan.found.map((h) => ({ ...h, state: "layer 3" })));
+  scan.deferred.forEach((d) => skipped.set(d.where, true));
 
   if (!hits.length) console.log("ok    all four rules pass in every layer");
+  for (const where of skipped.keys()) {
+    console.log(`defer ${where} — still holds a placeholder, audited once it is filled`);
+  }
   for (const h of hits) {
     failures++;
     byRule[h.rule] = (byRule[h.rule] || 0) + 1;
