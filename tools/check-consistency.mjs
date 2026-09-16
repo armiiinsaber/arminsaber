@@ -154,19 +154,14 @@ const ALLOWED = [
       why: "Display register shift.",
     },
   ]),
-  // and on every role set in the mono face
-  ...["status tag", "position label", "facts label", "brief label", "outbound link", "brief toggle"].map(
-    (role) => ({
-      role,
-      prop: "trackEm",
-      kind: "bounded",
-      max: 0.055,
-      why:
-        "Mono tracking opens with --st, the same spectrum rule as the display " +
-        "face. At 10px this reads as the page warming rather than as a " +
-        "different font, so it is allowed a wider band than the titles.",
-    }),
-  ),
+  // Mono tracking is deliberately NOT in this list. It used to ramp
+  // 0.06em to 0.11em with --st and was allowed a 0.055em band here. It
+  // is now fixed at 0.09em for every mono role on the page, so the
+  // exception is gone rather than widened: at 10px the ramp read as the
+  // same label set two different ways, and the spectrum is already
+  // carried by colour, position, the marks and the Fraunces register
+  // without the label face joining in. If a mono role ever differs
+  // again, that is drift and this tool will say so.
   {
     role: "outbound link",
     prop: "lineRatio",

@@ -126,12 +126,27 @@ button {
 }
 
 /* Martian Mono runs wide and dark; every mono role drops a step
-   in size, weight and tracking so nothing crowds its lane */
+   in size, weight and tracking so nothing crowds its lane.
+
+   Tracking is fixed at 0.09em and does not move with --st. It used
+   to ramp 0.06em to 0.11em down the page, and at 10px that is the
+   kind of difference a reader registers as wrong without being able
+   to name it: the same label set two ways. The spectrum is already
+   carried by colour, by position, by the marks and by the Fraunces
+   register, and the label face does not need to carry it as well.
+   0.09em is the midpoint of the old ramp and the value that holds
+   up best across every role: past about 0.1em the long labels, WHAT
+   BLOCKED IT and BY MELOMANIAC STUDIOS, start losing word cohesion,
+   and Martian Mono is wide enough already that it needs less
+   tracking than a narrower mono would.
+
+   Every other mono role on the page is pinned to the same number,
+   so there is one tracking value site-wide, not four. */
 .mono {
   font-family: var(--font-mono);
   font-weight: 400;
   font-size: 10px;
-  letter-spacing: calc(0.06em + var(--st, 0) * 0.05em);
+  letter-spacing: 0.09em;
   text-transform: uppercase;
 }
 
@@ -165,7 +180,7 @@ button {
   font-family: var(--font-mono);
   font-weight: 400;
   font-size: 10px;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
   flex: none;
   user-select: none;
@@ -226,7 +241,7 @@ button {
   padding: 5px 9px;
   font-family: var(--font-mono);
   font-size: 9px;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
   white-space: nowrap;
   color: var(--ink);
@@ -275,7 +290,7 @@ main {
 @media (max-width: 640px) {
   :root { --ribbon-h: 48px; }
   .ribbon { gap: var(--s1); }
-  .ribbon-label { font-size: 8px; letter-spacing: 0.08em; }
+  .ribbon-label { font-size: 8px; letter-spacing: 0.09em; }
   .ribbon-tick::after { display: none; }
 }
 
@@ -383,7 +398,7 @@ main {
   justify-content: space-between;
   margin-top: var(--s1);
 }
-.plot-pole { font-size: 11px; letter-spacing: 0.1em; }
+.plot-pole { font-size: 11px; letter-spacing: 0.09em; }
 .plot-pole--logic { color: var(--logic); }
 .plot-pole--feel  { color: var(--feel); }
 
