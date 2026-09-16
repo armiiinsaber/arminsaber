@@ -571,12 +571,43 @@ main {
   margin-top: var(--s1);
   color: var(--muted);
 }
-.sum-links {
-  margin-top: var(--s3);
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: var(--s2) var(--s4);
+
+/* ------------------------------------------------------------
+   Layer 2, the summary. Two sentences and a short row of facts:
+   who it is for, what stage it is at, one outcome where there
+   is one, and where it lives. No more than four, all of it
+   compressed from the brief below it.
+   ------------------------------------------------------------ */
+.sum-facts {
+  margin-top: var(--s4);
+  padding-top: var(--s3);
+  border-top: 1px solid var(--hair);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: var(--s3);
+  row-gap: var(--s3);
+}
+.fact dt { color: var(--muted); }
+.fact dd {
+  margin-top: 6px;
+  font-size: 15px;
+  line-height: 1.45;
+  color: color-mix(in oklab, var(--ink) 86%, var(--muted));
+}
+/* the link fact keeps the page's link register rather than the body
+   type of the values beside it, and never breaks before its arrow */
+.fact dd .entry-link {
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+/* a fixed four so the columns line up entry to entry; entries with
+   fewer facts leave the trailing cells empty rather than stretching */
+@media (max-width: 900px) {
+  .sum-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 420px) {
+  .sum-facts { grid-template-columns: minmax(0, 1fr); }
 }
 
 .brief {
