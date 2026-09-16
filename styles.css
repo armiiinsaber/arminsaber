@@ -95,15 +95,33 @@ button {
    type is set by where a thing SITS on the spectrum, while
    accents follow where the READER is. Display type tightens
    at the logic end; softens, loosens and goes slightly wonky
-   at the feeling end. Felt, not announced. */
+   at the feeling end. Felt, not announced.
+
+   The ranges are deliberately narrow. Driven across the full
+   axis the way they first were, wght 580..460, SOFT 0..100 and
+   WONK 0..1, the seven product titles stopped reading as one
+   family: Rentletter came out crisp and high contrast while
+   Live sets came out light and soft, and side by side they
+   looked like two fonts rather than one register shifting.
+   Every range below is about a quarter of that, anchored at
+   the logic end so the hero and the first entries are
+   unchanged and the feeling end moves up to meet them.
+
+   Spreads across the whole page, logic to feeling:
+     wght   575 to 545     (was 580 to 460)
+     SOFT   0 to 28        (was 0 to 100)
+     WONK   0 to 0.12      (was 0 to 1)
+     track  -0.032 to -0.018em  (was -0.034 to 0.008em)
+   tools/check-consistency.mjs holds these as bounds and fails
+   if a future change widens them again. */
 .display {
   font-family: var(--font-display);
   font-variation-settings:
-    "SOFT" calc(var(--st, 0) * 100),
-    "WONK" var(--st, 0);
-  font-weight: calc(580 - var(--st, 0) * 120);
-  letter-spacing: calc(-0.034em + var(--st, 0) * 0.042em);
-  line-height: calc(1.02 + var(--st, 0) * 0.14);
+    "SOFT" calc(var(--st, 0) * 28),
+    "WONK" calc(var(--st, 0) * 0.12);
+  font-weight: calc(575 - var(--st, 0) * 30);
+  letter-spacing: calc(-0.032em + var(--st, 0) * 0.014em);
+  line-height: calc(1.02 + var(--st, 0) * 0.07);
 }
 
 /* Martian Mono runs wide and dark; every mono role drops a step
