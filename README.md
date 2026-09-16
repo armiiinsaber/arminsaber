@@ -286,6 +286,31 @@ was planted and confirmed to slip through:
 Seven entry artworks, one per project, plus the portrait. Everything
 below is what the page needs in order not to have to guess.
 
+### How the page uses them
+
+Each entry's scan row is a **room**: the entry's colour runs edge to
+edge, the artwork stands on the right of the room and blends into it,
+the copy sits on the left. The hero works the same way with the
+portrait. So the picture is never shown as a rectangle. Its ground
+**is** the room, and the page fades the picture's left, top and bottom
+edges into the room so no edge can ever show.
+
+That has one consequence for what you shoot or paint, and it is the
+most important line in this section:
+
+> **The subject has to float in flat colour.** The ground around the
+> subject must be the entry's colour, flat, on at least the left, top
+> and bottom of the frame. A subject that fills the frame, or a busy
+> background, cannot blend into the room: the fade turns it into a
+> soft-edged rectangle sitting on the wall, a photo pasted up rather
+> than a figure in the room. The references (the cap on teal, the desk
+> on blue, the leopard on vermilion) are exactly right: one subject,
+> flat ground, grain over everything.
+
+If a project's picture has to be busy, say so and it gets a different
+treatment (a framed slot on the room's colour), but it will look like
+the odd one out, so shoot for the float where you can.
+
 ### Naming
 
 ```
@@ -297,7 +322,7 @@ reference/                     the style references, not shipped
   mockup-homepage.png
 
 img/art/                       the shipped artwork, one per entry
-  01-rentletter.png            master, 2400x1200
+  01-rentletter.png            master, 1600x2000
   02-easymonee.png
   03-klenz.png
   04-melomaniac-studios.png
@@ -319,62 +344,81 @@ you for new exports.
 
 | | |
 |---|---|
-| Aspect | **2:1** for the seven, **4:5** for the portrait |
-| Master size | **2400 × 1200** for the seven, **1600 × 2000** for the portrait |
+| Aspect | **4:5**, portrait, all eight pictures |
+| Master size | **1600 × 2000** |
 | Format | **PNG**, lossless |
 | Grain | **baked in**, at the scale you want it seen |
+| Subject | one thing, floating in the flat ground, off the left edge |
 
 The ground is part of the picture, not a cutout on transparency. In the
 references the flat colour is the sky, or the room: the environment is
 the photograph and cutting the subject out of it would throw away most
-of the image.
+of the image. Keep the subject clear of the left edge, where the fade
+into the room is widest, and clear of the top and bottom by a little.
 
 ### Colour, and this is the part that matters
 
-Each artwork's flat ground must be **exactly** its entry's hex, because
-the same colour is on that entry's dot, its mini axis and its accent.
-Colour is what encodes position on the spectrum here, so an artwork
-whose ground is a different red is an artwork that disagrees with its
-own entry.
+Each artwork's flat ground must be **exactly** its entry's hex. The
+room is painted that hex, the picture sits in the room, and any
+difference between the two is a rectangle the eye finds at once. The
+same colour is also on that entry's dot, its mini axis and its accent:
+colour is what encodes position on the spectrum here.
 
-| entry | ground |
-|---|---|
-| 01 Rentletter | `#1E3FE6` |
-| 02 easymonee | `#1D8BE6` |
-| 03 Klenz | `#0FA893` |
-| 04 Melomaniac Studios | `#6DA85C` |
-| 05 Echoes | `#E6A21D` |
-| 06 MELOMANIA | `#EE6A1F` |
-| 07 Live sets | `#E3341C` |
+| entry | ground | |
+|---|---|---|
+| 01 Rentletter | `#1E3FE6` | cobalt |
+| 02 easymonee | `#1D8BE6` | cerulean |
+| 03 Klenz | `#0FA893` | teal |
+| 04 Melomaniac Studios | `#6DA85C` | sage |
+| 05 Echoes | `#E6A21D` | ochre |
+| 06 MELOMANIA | `#EE6A1F` | orange |
+| 07 Live sets | `#E3341C` | vermilion |
+| the portrait (hero) | `#E3341C` | vermilion |
 
-**Export sRGB, with the profile embedded.** Not Display P3, not Adobe
-RGB. `#E3341C` in P3 is a different colour once the browser converts
-it, and it will miss the token by more than the eye tolerates next to a
-flat swatch of the real thing. If the editor offers "convert to sRGB"
-rather than "assign", take convert.
+Three rules, none optional:
 
-Fill the ground as a flat layer at that hex **before** the grain goes
-on. Grain over the top is fine and expected; grain underneath shifts
-the base colour.
+1. **Ground first.** Fill the whole canvas as a flat layer at that hex
+   before anything else goes on. Grain, texture and the subject go
+   over it. Grain underneath, or a gradient, or a "nearly" hex, shifts
+   the base and the room will not match.
+2. **sRGB, profile embedded.** Not Display P3, not Adobe RGB. `#E3341C`
+   in P3 is a different colour once the browser converts it, and it
+   misses the token by more than the eye tolerates next to a flat
+   swatch of the real thing. If the editor offers "convert to sRGB"
+   rather than "assign", take convert. Check the exported file's
+   profile before sending it; an unembedded profile is a guess.
+3. **Check a corner.** Sample a pixel in the top left of the export. It
+   should read the hex in the table, or within grain of it. If it does
+   not, the ground was not laid first.
 
 The page samples a pixel from inside each image's own ground on load
-and paints the slot that exact value, so a small drift will not show as
-a seam. That is a safety net, not permission: it hides the edge, it
-cannot make a wrong hue mean the right thing.
+and paints the room that exact value, so a small drift will not show as
+a seam. That is a safety net, not permission: the room then disagrees
+with the entry's dot and axis instead of with the picture.
 
 ### Focal point
 
-Each artwork carries the point the travelling lip should land on:
+The travelling lip visits each room on the way down and rests on
+something in the picture. Each artwork carries that point:
 
 ```html
-<figure class="entry-art" data-focus="61 28">
+<figure class="entry-art" data-focus="61 28" data-lip-width="7">
 ```
 
-Two numbers, **x then y, as percentages of the image**, from the top
-left. `50 50` is the middle. Supply one per artwork, as the eye, the
-hand, the face, whatever the picture is actually about. Without it the
-lip lands in the centre of a rectangle, which is a weaker idea than
+`data-focus` is two numbers, **x then y, as percentages of the image**,
+from the top left; `50 50` is the middle. Supply one per artwork, as
+the place a mouth would go: the face if there is one, otherwise the
+point of contact, the rim of the cup, the peak of the cap. Without it
+the lip lands in the centre of the picture, which is a weaker idea than
 landing on something.
+
+`data-lip-width` is optional: the lip's width as a percentage of the
+image's width, so it can be sized to what it lands on. The portrait's
+own lip is 6.24; the default is 7. The lip is measured against the
+picture's real pixels, not the slot, so the point holds at every width.
+
+The values in `index.html` now are `50 50` for all seven, which is the
+centre of the placeholder marks. Replace them with the picture.
 
 ## Developing
 

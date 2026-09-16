@@ -1550,3 +1550,120 @@ html { overflow-x: clip; }
    ink until they clear AA; the tokens themselves do not change. */
 .hero .w-logic, .hero .plot-pole--logic { color: color-mix(in oklab, var(--c1) 44%, var(--ink)); }
 .hero .w-feel,  .hero .plot-pole--feel  { color: color-mix(in oklab, var(--c7) 56%, var(--ink)); }
+
+/* ============================================================
+   THE ROOMS
+   Treatment 04. Each entry's scan row is a coloured room: its
+   ground runs edge to edge, the artwork stands on the right and
+   blends into the ground, the copy sits on the left, the way the
+   hero works. Seven rooms, cool to warm. Only layer 1 is the room;
+   layers 2 and 3 open beneath it on the page ground, so reading
+   still happens on the dark surface.
+
+   The copy needs its own ground on colour. Two versions live here:
+   the soft scrim the hero uses (default) and a solid ink panel,
+   switched with data-copy="panel" on <html> for comparison.
+   ============================================================ */
+.entry { border-top: 0; padding: 0; }
+.entry-head {
+  position: relative;
+  align-content: center;
+  min-height: 52vh;
+  padding-block: var(--s5);
+  --ground: var(--art-bg, var(--mc, var(--accent)));
+}
+/* above the phone grid the copy keeps its two lanes, placed explicitly,
+   since the copy's ground is a grid item too and must not push the copy
+   along. Wide, a fourth column is the room the artwork stands in. */
+@media (min-width: 561px) {
+  .entry-head { grid-template-columns: 200px minmax(0, 1fr); }
+  .entry-meta { grid-column: 1; grid-row: 1; }
+  .entry-main { grid-column: 2; grid-row: 1; }
+}
+@media (min-width: 761px) {
+  .entry-head { grid-template-columns: 230px minmax(0, 1fr) 68px; }
+}
+/* wide enough for the artwork beside the copy: the main lane holds the
+   longest name on one line at the pinned title size, the meta lane
+   narrows to what the position and the mini axis need, and the fourth
+   column is the room the artwork stands in */
+@media (min-width: 1280px) {
+  .entry-head { grid-template-columns: 160px minmax(0, 520px) 68px 1fr; min-height: 48vh; }
+}
+.entry-head::before {
+  content: "";
+  position: absolute;
+  inset: 0 calc(50% - 50vw);
+  background: var(--ground);
+  z-index: 0;
+}
+/* the copy above its ground; on the phone grid main and line are
+   display: contents, so their children need the lift themselves */
+.entry-head > *, .entry-main > *, .entry-line > * { position: relative; z-index: 1; }
+
+/* the artwork: 4:5, full room height, blended into the ground */
+.entry-art {
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  bottom: 0;
+  right: calc(50% - 50vw + 4vw);
+  width: auto;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  margin: 0;
+  background: none;
+  mask-image: linear-gradient(90deg, transparent, #000 14%), linear-gradient(180deg, transparent, #000 10%, #000 90%, transparent);
+  mask-composite: intersect;
+}
+
+/* the copy's ground. A grid item spanning the meta and main lanes,
+   under the copy, over the room. Default: the hero's soft scrim, a
+   dark ellipse blurred into a cloud, grown past the copy so the
+   words sit in its dense middle. */
+.entry-head::after {
+  content: "";
+  grid-column: 1 / 3;
+  grid-row: 1;
+  align-self: stretch;
+  z-index: 0;
+  pointer-events: none;
+  margin-block: calc(-1 * var(--s5));
+  margin-inline: calc(-1 * min(var(--s5), var(--pad-x)));   /* never past the gutter */
+  border-radius: 50%;
+  background: color-mix(in oklab, var(--bg) 84%, transparent);
+  filter: blur(40px);
+}
+html[data-copy="panel"] .entry-head::after {
+  margin-block: calc(-1 * var(--s3));
+  margin-inline: calc(-1 * min(var(--s4), var(--pad-x)));
+  border-radius: 0;
+  background: var(--bg);
+  filter: none;
+}
+
+/* on colour, the meta and controls take the ink rather than the accent */
+.entry-head .entry-pos { color: var(--ink); }
+.entry-head .entry-status { color: color-mix(in oklab, var(--ink) 74%, transparent); }
+.entry-head .entry-toggle { color: var(--ink); }
+
+/* between the phone grid and a wide desktop there is no room beside
+   the copy, so the artwork sits below it, bottom right */
+@media (max-width: 1279px) {
+  .entry-head { min-height: 70vh; align-content: start; padding-bottom: calc(40vh + var(--s4)); }
+  .entry-art { top: auto; bottom: 0; height: 44%; }
+}
+@media (max-width: 760px) {
+  .entry-head { min-height: 66svh; padding-bottom: calc(46svh - var(--s4)); }
+  .entry-art { right: calc(50% - 50vw); height: 48%; }
+}
+/* the phone grid: the ground spans the three copy rows */
+@media (max-width: 560px) {
+  .entry-head::after { grid-column: 1 / -1; grid-row: 1 / 4; }
+}
+
+/* open layers sit on the page ground under the room; with the entry's
+   own padding gone they carry their own breathing room before the next
+   room starts */
+.sum { padding-bottom: var(--s4); }
+.more-panel-inner { padding-bottom: var(--s4); }

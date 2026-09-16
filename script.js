@@ -410,7 +410,7 @@
   for (const img of document.querySelectorAll(".entry-art img")) {
     const done = () => {
       const c = sample(img);
-      if (c) img.closest(".entry-art").style.setProperty("--art-bg", c);
+      if (c) img.closest(".entry").style.setProperty("--art-bg", c);   // the room takes the picture's ground
       img.classList.add("is-loaded");
     };
     if (img.complete && img.naturalWidth) done();
@@ -476,9 +476,12 @@
                  size: r.width * (Number(hero.dataset.lipWidth) || 6.4) / 100, depart: true });
     }
     for (const fig of document.querySelectorAll(".entry-art")) {
-      const r = fig.getBoundingClientRect();
+      const im = fig.querySelector("img");
+      const r = im ? drawnRect(im) : fig.getBoundingClientRect();
       const [fx, fy] = focusOf(fig);
-      out.push({ y: r.top + scrollY + r.height * fy / 100, x: r.left + r.width * fx / 100, size: 60 });
+      // the lip's width is the picture's share, like the portrait; never smaller than a thumb
+      out.push({ y: r.top + scrollY + r.height * fy / 100, x: r.left + r.width * fx / 100,
+                 size: Math.max(28, r.width * (Number(fig.dataset.lipWidth) || 7) / 100) });
     }
     // rest: the leopard's mouth
     const closer = document.querySelector(".closer-art");
