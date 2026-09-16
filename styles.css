@@ -108,21 +108,30 @@ button {
    the logic end so the hero and the first entries are
    unchanged and the feeling end moves up to meet them.
 
-   Spreads across the whole page, logic to feeling:
+   SOFT and WONK are gone entirely. Narrowed to a range that read
+   as one face, they stopped doing anything at all: titles set with
+   them and with both pinned to zero are indistinguishable at 34px
+   and at 56px, the largest on the page. They were the axes that
+   caused the original break, and they were buying nothing, so they
+   are not worth an exception in the auditor.
+
+   Line height is pinned too. Titles hold one line by rule, so it
+   only ever changed the height of the box, which is spacing
+   wearing a type rule's clothes.
+
+   What is left, logic to feeling:
      wght   575 to 545     (was 580 to 460)
-     SOFT   0 to 28        (was 0 to 100)
-     WONK   0 to 0.12      (was 0 to 1)
      track  -0.032 to -0.018em  (was -0.034 to 0.008em)
-   tools/check-consistency.mjs holds these as bounds and fails
-   if a future change widens them again. */
+   Both are close to invisible at this magnitude, which is an open
+   question rather than a settled one: either they widen until they
+   do visible work, or they are pinned like the rest.
+   tools/check-consistency.mjs holds them at 30 and 0.015em and
+   fails if a future change widens them past that. */
 .display {
   font-family: var(--font-display);
-  font-variation-settings:
-    "SOFT" calc(var(--st, 0) * 28),
-    "WONK" calc(var(--st, 0) * 0.12);
   font-weight: calc(575 - var(--st, 0) * 30);
   letter-spacing: calc(-0.032em + var(--st, 0) * 0.014em);
-  line-height: calc(1.02 + var(--st, 0) * 0.07);
+  line-height: 1.02;
 }
 
 /* Martian Mono runs wide and dark; every mono role drops a step
@@ -804,7 +813,6 @@ mark.ph {
 
 .entry--minor { padding: var(--s4) 0; }
 .entry--minor .entry-name { font-size: clamp(24px, 2.6vw, 30px); }
-.entry--minor .entry-desc { font-size: 15px; }
 .entry--minor .entry-head > .mark { width: 36px; height: 36px; }
 
 /* ------------------------------------------------------------

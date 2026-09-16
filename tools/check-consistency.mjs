@@ -95,35 +95,20 @@ const ALLOWED = [
     role: "product title",
     prop: "weight",
     kind: "bounded",
-    max: 40,
+    max: 30,
     why:
-      "Display weight shifts with --st, heavier at the logic end. Capped at 40 " +
-      "units across the page: at 107 the first and last titles stopped reading " +
-      "as the same face, which is what this whole tool exists to catch.",
-  },
-  {
-    role: "product title",
-    prop: "axes",
-    kind: "axisBounds",
-    max: { SOFT: 30, WONK: 0.15 },
-    why:
-      "SOFT and WONK shift with --st. WONK swaps in alternate letter shapes, " +
-      "so it is held to 0.15 of its 0..1 range; at 0.89 the titles were not " +
-      "even the same glyphs. SOFT is held to 30 of 100.",
+      "Display weight shifts with --st, heavier at the logic end. Held at 30 " +
+      "units across the whole page. It once ran 107, which made the first and " +
+      "last titles read as two different fonts. Honest caveat: at 26.5 it is " +
+      "close to invisible, so this either widens until it does visible work or " +
+      "gets pinned like the rest. It is not settled.",
   },
   {
     role: "product title",
     prop: "trackEm",
     kind: "bounded",
-    max: 0.02,
-    why: "Tracking loosens with --st, part of the same register shift.",
-  },
-  {
-    role: "product title",
-    prop: "lineRatio",
-    kind: "bounded",
-    max: 0.09,
-    why: "Line height opens with --st, part of the same register shift.",
+    max: 0.015,
+    why: "Tracking tightens with --st, the other half of the same register shift.",
   },
   {
     role: "product title",
@@ -131,45 +116,29 @@ const ALLOWED = [
     kind: "grouped",
     groupBy: "weightClass",
     why:
-      "The three entry weights are deliberate: the work that matters most gets " +
-      "a larger name. One size per weight class, and no variation inside a class.",
+      "The three entry weights are deliberate and asked for: the work that " +
+      "matters most gets a larger name. One size per weight class, no variation " +
+      "inside a class. This is the only exception that is unambiguously earning " +
+      "its place, because removing it would flatten the page on purpose.",
   },
-  {
-    role: "descriptor",
-    prop: "sizePx",
-    kind: "grouped",
-    groupBy: "weightClass",
-    why: "Minor entries carry a smaller descriptor, same three-weight rule.",
-  },
-  // the same register shift, on every role set in the display face
-  ...["labs name, brief"].flatMap((role) => [
-    { role, prop: "weight", kind: "bounded", max: 40, why: "Display register shift." },
-    { role, prop: "trackEm", kind: "bounded", max: 0.02, why: "Display register shift." },
-    { role, prop: "lineRatio", kind: "bounded", max: 0.09, why: "Display register shift." },
-    {
-      role,
-      prop: "axes",
-      kind: "axisBounds",
-      max: { SOFT: 30, WONK: 0.15 },
-      why: "Display register shift.",
-    },
-  ]),
-  // Mono tracking is deliberately NOT in this list. It used to ramp
-  // 0.06em to 0.11em with --st and was allowed a 0.055em band here. It
-  // is now fixed at 0.09em for every mono role on the page, so the
-  // exception is gone rather than widened: at 10px the ramp read as the
-  // same label set two different ways, and the spectrum is already
-  // carried by colour, position, the marks and the Fraunces register
-  // without the label face joining in. If a mono role ever differs
-  // again, that is drift and this tool will say so.
-  {
-    role: "outbound link",
-    prop: "lineRatio",
-    kind: "free",
-    why:
-      "The link inside a facts value is given the body line height so it sits " +
-      "on the same baseline as the values beside it.",
-  },
+
+  // Removed, and why, so the list is a record rather than just a state:
+  //
+  // product title axes SOFT and WONK. Gone from the stylesheet entirely.
+  //   Narrowed enough to read as one face they did nothing at all: pinned to
+  //   zero the titles are indistinguishable at 34px and 56px.
+  // product title lineRatio. Pinned. Titles hold one line by rule, so line
+  //   height only changed the box, which is spacing, not type.
+  // labs name weight, tracking, lineRatio, axes. All three labs names live in
+  //   one entry and share one --st, so the measured spread was zero on every
+  //   one. Four exceptions guarding drift that could not happen.
+  // outbound link lineRatio. Every link measures 1.6 once the facts override
+  //   is applied, so there was nothing to allow.
+  // descriptor sizePx. Minor entries set their descriptor at 15px against
+  //   17px elsewhere. The scan column should read as one list, and a minor
+  //   entry is already marked as minor by its name size, its mark and its
+  //   padding. A fourth signal was not earning a two-size column.
+  // mono trackEm, six roles. Mono tracking is fixed at 0.09em site-wide.
 ];
 
 /* Spacing values that are deliberately off the --s scale. Anything not
