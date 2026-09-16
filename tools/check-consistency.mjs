@@ -93,52 +93,38 @@ const PROPS = [
 const ALLOWED = [
   {
     role: "product title",
-    prop: "weight",
-    kind: "bounded",
-    max: 30,
-    why:
-      "Display weight shifts with --st, heavier at the logic end. Held at 30 " +
-      "units across the whole page. It once ran 107, which made the first and " +
-      "last titles read as two different fonts. Honest caveat: at 26.5 it is " +
-      "close to invisible, so this either widens until it does visible work or " +
-      "gets pinned like the rest. It is not settled.",
-  },
-  {
-    role: "product title",
-    prop: "trackEm",
-    kind: "bounded",
-    max: 0.015,
-    why: "Tracking tightens with --st, the other half of the same register shift.",
-  },
-  {
-    role: "product title",
     prop: "sizePx",
     kind: "grouped",
     groupBy: "weightClass",
     why:
       "The three entry weights are deliberate and asked for: the work that " +
       "matters most gets a larger name. One size per weight class, no variation " +
-      "inside a class. This is the only exception that is unambiguously earning " +
-      "its place, because removing it would flatten the page on purpose.",
+      "inside a class. This is the only difference on the page that is clearly " +
+      "earning an exception, because removing it would flatten the page on " +
+      "purpose rather than by drift.",
   },
 
-  // Removed, and why, so the list is a record rather than just a state:
+  // Everything that used to be here, and why it went. The list is a record,
+  // not just a state, so a future change that wants one of these back has to
+  // argue with the reason rather than rediscover it.
   //
-  // product title axes SOFT and WONK. Gone from the stylesheet entirely.
-  //   Narrowed enough to read as one face they did nothing at all: pinned to
-  //   zero the titles are indistinguishable at 34px and 56px.
-  // product title lineRatio. Pinned. Titles hold one line by rule, so line
-  //   height only changed the box, which is spacing, not type.
-  // labs name weight, tracking, lineRatio, axes. All three labs names live in
-  //   one entry and share one --st, so the measured spread was zero on every
+  // product title weight and trackEm. The display register is now fixed at
+  //   575 and -0.032em everywhere. Narrowed enough to read as one family it
+  //   was doing no visible work: titles set with the ramp and with it pinned
+  //   are indistinguishable at 34px and 56px. --st, which drove it, is gone
+  //   from the stylesheet and the markup.
+  // product title axes SOFT and WONK. Same finding, same fate, and these two
+  //   were what broke it originally by swapping in alternate letter shapes.
+  // product title lineRatio. Pinned at 1.02. Titles hold one line by rule, so
+  //   line height only ever changed the height of the box, which is spacing.
+  // labs name weight, tracking, lineRatio, axes. All three labs names sit in
+  //   one entry and shared one --st, so the measured spread was zero on every
   //   one. Four exceptions guarding drift that could not happen.
-  // outbound link lineRatio. Every link measures 1.6 once the facts override
-  //   is applied, so there was nothing to allow.
-  // descriptor sizePx. Minor entries set their descriptor at 15px against
-  //   17px elsewhere. The scan column should read as one list, and a minor
-  //   entry is already marked as minor by its name size, its mark and its
-  //   padding. A fourth signal was not earning a two-size column.
-  // mono trackEm, six roles. Mono tracking is fixed at 0.09em site-wide.
+  // outbound link lineRatio. Unbounded, and every link already measures 1.6.
+  // descriptor sizePx. Minor entries set 15px against 17px elsewhere. The scan
+  //   column should read as one list, and a minor entry is already marked as
+  //   minor by its name size, its mark and its padding.
+  // mono trackEm, six roles. Fixed at 0.09em site-wide.
 ];
 
 /* Spacing values that are deliberately off the --s scale. Anything not

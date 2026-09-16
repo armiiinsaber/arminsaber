@@ -92,53 +92,40 @@ button {
   border-radius: 1px;
 }
 
-/* Sections carry their own fixed register via --st (0..1):
-   type is set by where a thing SITS on the spectrum, while
-   accents follow where the READER is. Display type tightens
-   at the logic end; softens, loosens and goes slightly wonky
-   at the feeling end. Felt, not announced.
+/* Display type is one register, fixed. Weight 575, tracking
+   -0.032em, line height 1.02, everywhere it is used: the hero
+   headline, the seven product titles, the Labs names.
 
-   The ranges are deliberately narrow. Driven across the full
-   axis the way they first were, wght 580..460, SOFT 0..100 and
-   WONK 0..1, the seven product titles stopped reading as one
-   family: Rentletter came out crisp and high contrast while
-   Live sets came out light and soft, and side by side they
-   looked like two fonts rather than one register shifting.
-   Every range below is about a quarter of that, anchored at
-   the logic end so the hero and the first entries are
-   unchanged and the feeling end moves up to meet them.
+   It used to shift with a per-section --st, 0 at the logic end to
+   1 at the feeling end, on the theory that type should be set by
+   where a thing sits on the spectrum. Driven hard, wght 580..460
+   with SOFT 0..100 and WONK 0..1, that stopped reading as one
+   family: the first and last titles were not the same glyphs.
+   Narrowed until they were one family again, it stopped doing
+   anything at all. Titles set with the ramp and with it pinned are
+   indistinguishable at 34px and at 56px, which makes it drift
+   wearing a design's clothes rather than design.
 
-   SOFT and WONK are gone entirely. Narrowed to a range that read
-   as one face, they stopped doing anything at all: titles set with
-   them and with both pinned to zero are indistinguishable at 34px
-   and at 56px, the largest on the page. They were the axes that
-   caused the original break, and they were buying nothing, so they
-   are not worth an exception in the auditor.
+   So it is pinned at the values the logic end already used, which
+   means the hero did not move at all and the titles moved by an
+   amount nobody can see. --st is gone from the stylesheet and from
+   the markup rather than left sitting there unread.
 
-   Line height is pinned too. Titles hold one line by rule, so it
-   only ever changed the height of the box, which is spacing
-   wearing a type rule's clothes.
-
-   What is left, logic to feeling:
-     wght   575 to 545     (was 580 to 460)
-     track  -0.032 to -0.018em  (was -0.034 to 0.008em)
-   Both are close to invisible at this magnitude, which is an open
-   question rather than a settled one: either they widen until they
-   do visible work, or they are pinned like the rest.
-   tools/check-consistency.mjs holds them at 30 and 0.015em and
-   fails if a future change widens them past that. */
+   The spectrum is carried by colour, by position, by the mini axes
+   and by the marks. --t, the scroll-driven accent, is untouched and
+   still does all of that work. */
 .display {
   font-family: var(--font-display);
-  font-weight: calc(575 - var(--st, 0) * 30);
-  letter-spacing: calc(-0.032em + var(--st, 0) * 0.014em);
+  font-weight: 575;
+  letter-spacing: -0.032em;
   line-height: 1.02;
 }
 
 /* Martian Mono runs wide and dark; every mono role drops a step
    in size, weight and tracking so nothing crowds its lane.
 
-   Tracking is fixed at 0.09em and does not move with --st. It used
-   to ramp 0.06em to 0.11em down the page, and at 10px that is the
+   Tracking is fixed at 0.09em and does not move down the page. It
+   used to ramp 0.06em to 0.11em, and at 10px that is the
    kind of difference a reader registers as wrong without being able
    to name it: the same label set two ways. The spectrum is already
    carried by colour, by position, by the marks and by the Fraunces

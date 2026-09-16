@@ -10,9 +10,12 @@ Personal site. Static, vanilla HTML/CSS/JS, no build step.
 > used to mention are all filled in.
 
 One page, one axis: logic at the top, feeling at the bottom. Scroll
-position drives `--t`; the accent colour and the typographic register
-cool from indigo to chartreuse as you descend. The sticky ribbon plots
-every project on that axis and tracks where you are.
+position drives `--t`; the accent colour cools from indigo to
+chartreuse as you descend. The sticky ribbon plots every project on
+that axis and tracks where you are.
+
+The type does not move with it. Both faces are fixed: see
+[the consistency auditor](#before-every-push) for why.
 
 Each project reads in three layers. The collapsed row is the scan: a
 mark, a position, a mini axis, the name, a descriptor of six words or
@@ -152,14 +155,32 @@ token or a `color-mix` derived from one.
 edges across all seven entries. Any entry out of line fails.
 
 Nothing is silently allowed. A deliberate difference goes in the
-`ALLOWED` list at the top of the file with a reason, and it is still
-bounded rather than waived. The spectrum rules are the main case: the
-display face shifts weight, `SOFT`, `WONK` and tracking with `--st`, so
-each is given a maximum spread and the tool fails if a future change
-widens it. That is not hypothetical. The titles once ran `wght`
-580 to 460 and `WONK` 0 to 1, which made the first and last read as
-two different fonts, and nothing caught it. The bound is now 40 units
-and 0.15.
+`ALLOWED` list at the top of the file with a reason. There is exactly
+one left: product titles come in three sizes, one per entry weight
+class, because the three weights are deliberate.
+
+Everything else that used to be in that list is recorded there too,
+with the reason it went, so a future change that wants one back has to
+argue with the reason rather than rediscover it. The largest was the
+**title register**, and it is worth knowing why it is gone.
+
+Display type was set by where a thing sat on the spectrum, via a
+per-section `--st`: `wght` 580 to 460, `SOFT` 0 to 100, `WONK` 0 to 1
+and tracking across 0.042em, logic end to feeling end. Driven that hard
+it stopped reading as one family. `WONK` swaps in alternate letter
+shapes, so the first and last titles were not even the same glyphs, and
+nothing on the site caught it. Narrowed until they read as one family
+again, it stopped doing anything at all: titles set with the ramp and
+with it pinned are indistinguishable at 34px and at 56px.
+
+So the register is **fixed by rule**: weight 575, tracking -0.032em,
+line height 1.02, everywhere display type is used. Mono tracking is
+fixed the same way, at 0.09em for every mono role. `--st` is gone from
+the stylesheet and the markup rather than left sitting there unread.
+
+None of that touches `--t`. The scroll-driven accent, the ribbon, the
+hero plot and the mini axes are unchanged. The spectrum is carried by
+colour, by position and by the marks, and that is enough.
 
 `--verbose` prints every role table rather than only the failing ones,
 `--width <n>` checks one width instead of three.
