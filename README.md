@@ -35,6 +35,9 @@ every push:
 - **Visual consistency.** `tools/check-consistency.mjs` fails when a
   repeated role drifts: type, spacing, colour or alignment.
 - **Links.** `tools/check-links.mjs` requests every outbound link.
+- **The auditors themselves.** `tools/check-auditors.mjs` plants ten
+  known faults and confirms each one is caught. A green run from the
+  first two proves nothing unless this passes too.
 
 The first two are design constraints, not lint. They are written to
 survive a redesign: a new type scale, a new layout and new copy all
@@ -78,10 +81,15 @@ their custom domains are broken — search `index.html` for
 node tools/check-orphans.mjs
 ```
 
-The typographic auditor. Renders the page in headless Chrome at 1440,
-390 and 360, three times per width, once per layer: the collapsed scan
-rows, then every summary open, then every full brief open. It measures
-where each word actually sits and fails on four faults.
+The typographic auditor. Renders the page in headless Chrome at nine
+widths, three times each, once per layer: the collapsed scan rows, then
+every summary open, then every full brief open. It measures where each
+word actually sits and fails on four faults.
+
+The widths are every layout boundary in `styles.css` plus the extremes:
+1440, 1024, 900, 760, 640, 560, 430, 390, 360. It used to check three,
+1440, 390 and 360, and the page was failing at 1024, 900, 768, 640 and
+560 the whole time with nobody the wiser.
 
 **1. No wrapped headings or product names.** `h1`, `h2`, `h3` and
 `.sum-labs-name` hold one line. A name that breaks in two reads as two
@@ -132,8 +140,8 @@ node tools/check-consistency.mjs
 ```
 
 The design consistency auditor. Where the line auditor watches how copy
-breaks, this one watches whether the page is still one design. Same
-three widths, same three layers, and it prints every value side by side
+breaks, this one watches whether the page is still one design. Same nine
+widths, same three layers, and it prints every value side by side
 so an outlier is obvious.
 
 **1. Type, within a role.** Thirteen repeated roles, from product
@@ -211,6 +219,53 @@ colour, by position and by the marks, and that is enough.
 
 `--verbose` prints every role table rather than only the failing ones,
 `--width <n>` checks one width instead of three.
+
+```sh
+node tools/check-auditors.mjs
+node tools/check-auditors.mjs --control
+```
+
+The auditor self-test. Plants a known fault, runs the auditor that
+should catch it, confirms the right check fired, reverts. Ten faults,
+one per class of thing the other two tools claim to see: a weight
+change on one title, a tracking change on one mono role, a swapped
+font family, a hard-coded colour in a single-line rule, a one word
+final line, a name forced to wrap, a misaligned lane, an off-scale
+spacing value, a nested element inside one that also holds text, and
+an element that is visually hidden but still in the DOM.
+
+**Why this exists.** Both auditors have shipped bugs where the check
+silently failed to see the thing it was written to catch: stylesheet
+line numbers pointing at a comment-stripped copy, a colour scan blind
+to every single-line rule, leaf detection that measured a decorative
+arrow instead of the product name beside it, `aria-hidden` glyphs
+counted as type. Four separate times, a passing run meant nothing. So
+the tools are not trusted on their own say-so.
+
+`--control` runs the patterns against a **clean** tree and fails if any
+of them match. That is not ceremony. The first version of this harness
+looked for `/orphan/` and `/alignment/`, both of which appear in the
+*passing* output, so two faults reported CAUGHT while catching
+nothing. A self-test that cannot fail is worse than none.
+
+## What the auditors cannot see
+
+Stated plainly, because a green run is easy to over-read. Each of these
+was planted and confirmed to slip through:
+
+- **Hover, focus and any other state.** Everything is measured in its
+  resting state. `.entry-name:hover { font-weight: 300 }` passes.
+- **Widths between the nine checked**, and anything below 360, which is
+  the declared floor. 341 and 320 do fail today; they are out of scope,
+  not secretly clean.
+- **The marks.** SVG geometry is not audited at all. A mark given nine
+  times the stroke width of its siblings passes.
+- **Contrast and legibility.** Colour is checked for being a token, not
+  for being readable. `.entry-desc { color: var(--bg) }` makes the
+  descriptors invisible and passes every check.
+- **Whether any of it is any good.** Rhythm, hierarchy, whether the
+  copy earns its place, whether the page means what it says. No tool
+  here has an opinion, and someone still has to look at the page.
 
 ## Developing
 

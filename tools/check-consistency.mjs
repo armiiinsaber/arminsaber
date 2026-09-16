@@ -60,7 +60,13 @@ const widths = argv.reduce(
   (acc, a, i) => (a === "--width" ? [...acc, Number(argv[i + 1])] : acc),
   [],
 );
-const WIDTHS = widths.length ? widths : [1440, 390, 360];
+// Widths: every layout boundary in styles.css plus the extremes. The
+// first version of this checked 1440, 390 and 360 only, and the page was
+// failing at 1024, 900, 768, 640 and 560 the whole time without anyone
+// knowing. 360 is the declared floor, the narrowest mainstream phone.
+// Below it the page does have faults (341 and 320 both fail) and they
+// are deliberately out of scope rather than silently unchecked.
+const WIDTHS = widths.length ? widths : [1440, 1024, 900, 760, 640, 560, 430, 390, 360];
 
 /* ---------- roles ----------
    Every repeated thing on the page that should look like itself
@@ -257,6 +263,34 @@ function auditPage(roles, props) {
   // an arrow span, and measure the arrow instead of the product name.
   const ownText = (el) =>
     [...el.childNodes].some((n) => n.nodeType === 3 && n.nodeValue.trim());
+  // ::before and ::after that carry real text are type too, and
+  // querySelectorAll cannot reach them. The ribbon tick's hover tooltip
+  // is one: a mono role that no other check could see.
+  const pseudos = [];
+  for (const el of document.querySelectorAll("body *")) {
+    for (const pe of ["::before", "::after"]) {
+      const cs = getComputedStyle(el, pe);
+      const c = cs.content;
+      if (!c || c === "none" || c === "normal" || c === '""') continue;
+      const fam = cs.fontFamily.split(",")[0].replace(/["']/g, "");
+      const face = Object.keys(FACES).find((k) => FACES[k] === fam);
+      if (!face) continue;
+      const size = num(cs.fontSize);
+      pseudos.push({ face, cs, size,
+        role: `${String(el.className).trim().split(/\s+/)[0] || el.tagName.toLowerCase()}${pe}` });
+    }
+  }
+  for (const { face, cs, size, role } of pseudos) {
+    families[face].push({
+      role,
+      weight: Math.round(num(cs.fontWeight) * 100) / 100,
+      trackEm: cs.letterSpacing === "normal" ? 0 : Math.round((num(cs.letterSpacing) / size) * 10000) / 10000,
+      lineRatio: Math.round((num(cs.lineHeight) / size) * 1000) / 1000,
+      axes: "none",
+      sizePx: size,
+    });
+  }
+
   for (const el of document.querySelectorAll(TEXT)) {
     if (!visible(el)) continue;
     // decorative glyphs are not type: the +/x toggles, the arrows on links

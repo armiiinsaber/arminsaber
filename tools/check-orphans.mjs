@@ -52,7 +52,13 @@ const widths = argv.reduce(
   (acc, a, i) => (a === "--width" ? [...acc, Number(argv[i + 1])] : acc),
   [],
 );
-const WIDTHS = widths.length ? widths : [1440, 390, 360];
+// Widths: every layout boundary in styles.css plus the extremes. The
+// first version of this checked 1440, 390 and 360 only, and the page was
+// failing at 1024, 900, 768, 640 and 560 the whole time without anyone
+// knowing. 360 is the declared floor, the narrowest mainstream phone.
+// Below it the page does have faults (341 and 320 both fail) and they
+// are deliberately out of scope rather than silently unchecked.
+const WIDTHS = widths.length ? widths : [1440, 1024, 900, 760, 640, 560, 430, 390, 360];
 const SHOTS = flag("--shots");
 const EXTERNAL = flag("--url");
 
