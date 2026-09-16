@@ -916,7 +916,12 @@ p, dd, .entry-desc {
   text-wrap: pretty;
 }
 
-.brief-row dd, .sum-lede { text-wrap: balance; }
+/* Brief fields fill to the measure and leave the remainder on the last
+   line, which is how runts happen. Balance spreads the words instead.
+   Ledes are deliberately not in here: at fifteen words a sentence they
+   no longer rag badly on their own, and balance sets them narrower
+   than the facts row beneath them, which leaves a gutter at 360. */
+.brief-row dd { text-wrap: balance; }
 
 /* balance would centre-out the lede unevenly; pretty + a capped
    measure keeps its rag tight instead */
