@@ -39,6 +39,7 @@
   --c6: #EE6A1F;   /* orange      melomania   .80 */
   --c7: #E3341C;   /* vermilion   live sets   .95 */
   --spot: #141414; /* the black spots in the reference */
+  --lip:  #1B3FFF; /* the electric blue that recurs across the art */
   --cream: #F2ECE1;
   --art-grain: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27200%27%20height%3D%27200%27%3E%3Cfilter%20id%3D%27g%27%3E%3CfeTurbulence%20type%3D%27fractalNoise%27%20baseFrequency%3D%270.7%27%20numOctaves%3D%273%27%20stitchTiles%3D%27stitch%27%2F%3E%3CfeColorMatrix%20type%3D%27saturate%27%20values%3D%270%27%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%27200%27%20height%3D%27200%27%20filter%3D%27url%28%23g%29%27%2F%3E%3C%2Fsvg%3E");
   --logic: var(--c1);
@@ -1331,3 +1332,173 @@ p, dd, .entry-desc {
 .entry-head { grid-template-columns: 230px 1fr; }
 @media (max-width: 760px) { .entry-head { grid-template-columns: 1fr; } }
 @media (max-width: 560px) { .entry-head { grid-template-columns: 1fr auto 28px; } }
+
+/* ============================================================
+   JOB 3: THE REST OF THE TEXTURE
+   Everything the mockup carries besides the type, on the seven
+   colour palette rather than the two pole one.
+   ============================================================ */
+
+/* Dots and ticks glow in their own colour. box-shadow rather than a
+   filter: it composites on the GPU and costs nothing, where a blur
+   filter on nine separate elements would each need their own layer. */
+/* the glow goes on ::before, which is the dot. On the button itself it
+   lit the 30x44 hit area and read as a rectangle. */
+.plot-dot::before {
+  box-shadow:
+    0 0 6px color-mix(in oklab, var(--mc, var(--accent)) 70%, transparent),
+    0 0 18px color-mix(in oklab, var(--mc, var(--accent)) 38%, transparent);
+}
+.plot-dot.is-active::before,
+.plot-dot:hover::before {
+  box-shadow:
+    0 0 8px  color-mix(in oklab, var(--mc, var(--accent)) 90%, transparent),
+    0 0 26px color-mix(in oklab, var(--mc, var(--accent)) 55%, transparent);
+}
+.ribbon-thumb {
+  box-shadow:
+    0 0 7px  color-mix(in oklab, var(--accent) 85%, transparent),
+    0 0 20px color-mix(in oklab, var(--accent) 45%, transparent);
+}
+.ribbon-tick.is-lit::before {
+  box-shadow: 0 0 6px color-mix(in oklab, var(--accent) 70%, transparent);
+}
+.entry-axis i {
+  box-shadow:
+    0 0 0 3px var(--bg),
+    0 0 7px color-mix(in oklab, var(--mc, var(--accent)) 75%, transparent);
+}
+
+/* Sprayed pill controls, as the mockup has them. The toggle stops being
+   a bare glyph and becomes an object you can see the edge of. */
+.entry-toggle,
+.more-toggle,
+.expand-all {
+  border: 1px solid color-mix(in oklab, currentColor 40%, transparent);
+  border-radius: 999px;
+  box-shadow:
+    0 0 10px color-mix(in oklab, currentColor 16%, transparent),
+    inset 0 0 10px color-mix(in oklab, currentColor 8%, transparent);
+  transition: border-color var(--dur-fast) linear, box-shadow var(--dur-fast) linear;
+}
+.entry-toggle { width: 34px; height: 34px; }
+.more-toggle,
+.expand-all { padding: 7px var(--s2); gap: 10px; }
+.entry-toggle:hover,
+.more-toggle:hover,
+.expand-all:hover {
+  border-color: color-mix(in oklab, currentColor 72%, transparent);
+  box-shadow:
+    0 0 16px color-mix(in oklab, currentColor 30%, transparent),
+    inset 0 0 12px color-mix(in oklab, currentColor 14%, transparent);
+}
+
+/* the page grain, lifted for the louder ground this direction carries */
+.grain { opacity: 0.085; }
+
+/* ============================================================
+   JOB 4: THE SEAM
+   The artwork grounds are baked, so the slot colour behind an
+   image and the image's own ground will not match exactly. Rather
+   than hide the difference, the slot removes it: once the image
+   has loaded, script.js samples a pixel from inside its own
+   ground and paints the slot that exact value. The two colours
+   cannot differ because there is only one colour.
+
+   Until then the token shows, which is approximately right, so
+   there is no flash of dark and no layout shift either way.
+   ============================================================ */
+.entry-art { background: var(--art-bg, var(--mc, var(--accent))); }
+.entry-art img { opacity: 0; transition: opacity var(--dur-med) linear; }
+.entry-art img.is-loaded { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .entry-art img { transition: none; }
+}
+
+/* ============================================================
+   JOB 7: THE PORTRAIT, TWO OPTIONS
+   Both are built. html.opt-a and html.opt-b pick one; A is the
+   default. Whichever survives, the other comes out.
+   ============================================================ */
+
+/* shared */
+.hero-portrait, .closer { display: none; }
+.hero-portrait img, .closer-art img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+/* --- A: the portrait shares the first screen -------------------- */
+.opt-a .hero { position: relative; }
+.opt-a .hero-portrait {
+  display: block;
+  margin: 0;
+  position: absolute;
+  top: 0;
+  right: calc(var(--pad-x) * -1);
+  width: 38vw;
+  max-width: 560px;
+  height: 100%;
+  background: var(--c7);
+}
+.opt-a .hero-copy { position: relative; z-index: 1; max-width: min(58%, 620px); padding-right: var(--s4); }
+.opt-a .plot { position: relative; z-index: 1; max-width: 58%; }
+
+@media (max-width: 900px) {
+  .opt-a .hero-portrait {
+    position: relative;
+    right: auto;
+    width: auto;
+    max-width: none;
+    height: 54vh;
+    margin: 0 calc(var(--pad-x) * -1) var(--s4);
+  }
+  .opt-a .hero-copy, .opt-a .plot { max-width: none; }
+}
+
+/* --- B: the portrait closes the page ---------------------------- */
+.opt-b .closer { display: block; }
+.opt-b .closer-art {
+  margin: var(--s6) 0 0;
+  aspect-ratio: 4 / 5;
+  max-height: 92vh;
+  background: var(--c7);
+  overflow: hidden;
+}
+@media (max-width: 760px) {
+  .opt-b .closer-art { margin-top: var(--s5); aspect-ratio: 4 / 5; }
+}
+
+/* ============================================================
+   JOB 6: THE TRAVELLING LIP, PROTOTYPE
+   One object, fixed to the viewport, that moves down the page
+   with you and settles on whatever is worth looking at, ending on
+   the figure's mouth.
+
+   transform and opacity only. Position is written once per frame
+   from a rAF loop that eases toward a target, which is the same
+   machinery the spectrum engine already uses, so it never reads
+   layout during a scroll event and never forces a reflow.
+   ============================================================ */
+.lip {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 35;
+  width: 64px;
+  pointer-events: none;
+  opacity: 0;
+  will-change: transform;
+  transition: opacity 600ms var(--ease-out);
+}
+.lip svg { display: block; width: 100%; height: auto; }
+.lip path { fill: var(--lip); }
+.lip.is-on { opacity: 1; }
+
+/* it is a sprayed object like everything else here */
+.lip svg { filter: blur(0.6px) drop-shadow(0 0 10px color-mix(in oklab, var(--lip) 55%, transparent)); }
+
+/* Reduced motion: it stops travelling and simply sits on the mouth it
+   was always heading for. Static and sensible rather than absent, and
+   the page still gets the motif. */
+@media (prefers-reduced-motion: reduce) {
+  .lip { transition: none; }
+}
+.lip.is-static { position: absolute; will-change: auto; }

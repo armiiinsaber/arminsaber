@@ -376,3 +376,149 @@
     inner.addEventListener("beforematch", () => set(true, true));
   }
 })();
+
+/* ============================================================
+   The artwork seam. Each canvas is painted the entry's token
+   colour up front, which is close but not exact: the photograph's
+   ground is baked and will drift a few percent off. Once the
+   image decodes, one pixel is sampled from inside its own ground
+   and the slot is painted that value, so the two colours are the
+   same colour and there is no edge to see.
+
+   A hue that is properly wrong is a different problem and this
+   does not pretend to fix it: the seam goes, but the artwork
+   stops agreeing with the dot, the axis and the accent, which is
+   what carries meaning. That one needs a regrade, not CSS.
+   ============================================================ */
+(() => {
+  "use strict";
+  const sample = (img) => {
+    try {
+      const c = document.createElement("canvas");
+      c.width = c.height = 1;
+      const ctx = c.getContext("2d", { willReadFrequently: true });
+      // a few pixels in from the top left, inside the ground rather than
+      // on the edge, where resampling has softened it
+      const i = Math.max(2, Math.round(img.naturalWidth * 0.02));
+      ctx.drawImage(img, i, i, 1, 1, 0, 0, 1, 1);
+      const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
+      return `rgb(${r} ${g} ${b})`;
+    } catch {
+      return null;                   // tainted or not decodable: keep the token
+    }
+  };
+  for (const img of document.querySelectorAll(".entry-art img")) {
+    const done = () => {
+      const c = sample(img);
+      if (c) img.closest(".entry-art").style.setProperty("--art-bg", c);
+      img.classList.add("is-loaded");
+    };
+    if (img.complete && img.naturalWidth) done();
+    else img.addEventListener("load", done, { once: true });
+  }
+})();
+
+/* ============================================================
+   The travelling lip, prototype.
+
+   A single object that moves with the scroll and lands on the
+   thing worth looking at, finishing on the figure's mouth.
+
+   Built the same way as the spectrum engine: scroll only wakes a
+   rAF loop, the loop eases the current position toward a target
+   and stops when it arrives. Nothing measures layout inside a
+   scroll handler, and only transform and opacity are written, so
+   there is no reflow and no repaint, just compositing.
+
+   Targets are measured once and re-measured on resize and on
+   layer changes, never per frame.
+   ============================================================ */
+(() => {
+  "use strict";
+  const lip = document.querySelector("[data-lip]");
+  if (!lip) return;
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)");
+
+  let targets = [];
+  let cur = null, tgt = null, rafId = 0, settled = true;
+
+  function measure() {
+    const out = [];
+    // every artwork gets a waypoint at its own centre
+    for (const fig of document.querySelectorAll(".entry-art")) {
+      const r = fig.getBoundingClientRect();
+      out.push({ y: r.top + scrollY + r.height / 2, x: r.left + r.width * 0.5, size: 56 });
+    }
+    // and the mouth of the figure, which is where it comes to rest.
+    // The face sits about 17% down and 53% across the portrait crop.
+    const face = document.querySelector(".opt-a .hero-portrait img, .opt-b .closer-art img");
+    if (face) {
+      const r = face.getBoundingClientRect();
+      out.push({ y: r.top + scrollY + r.height * 0.175, x: r.left + r.width * 0.535, size: 30, rest: true });
+    }
+    targets = out.sort((a, b) => a.y - b.y);
+  }
+
+  function pick() {
+    // the waypoint nearest the middle of what is currently on screen
+    const mid = scrollY + innerHeight / 2;
+    let best = targets[0], d = Infinity;
+    for (const t of targets) {
+      const dist = Math.abs(t.y - mid);
+      if (dist < d) { d = dist; best = t; }
+    }
+    return best;
+  }
+
+  // Reduced motion does not mean a faster version of the same thing. A
+  // lip that teleports between waypoints as you scroll is worse than one
+  // that travels. So it stops travelling altogether and sits where it was
+  // always heading: on the mouth, placed in the page rather than pinned
+  // to the viewport. Static, and the motif still lands.
+  function rest() {
+    const t = targets.find((x) => x.rest) || targets[targets.length - 1];
+    if (!t) return;
+    lip.classList.add("is-static");
+    lip.style.transform = "none";
+    lip.style.left = `${(t.x - t.size / 2).toFixed(1)}px`;
+    lip.style.top = `${(t.y - t.size / 2).toFixed(1)}px`;
+    lip.style.width = `${t.size}px`;
+  }
+
+  function frame() {
+    const t = tgt;
+    if (!t) { rafId = 0; return; }
+    const want = { x: t.x - 32, y: t.y - scrollY - 15, s: t.size / 64 };
+    if (!cur) cur = { ...want };
+    const k = 0.12;
+    cur.x += (want.x - cur.x) * k;
+    cur.y += (want.y - cur.y) * k;
+    cur.s += (want.s - cur.s) * k;
+    lip.style.transform =
+      `translate3d(${cur.x.toFixed(1)}px, ${cur.y.toFixed(1)}px, 0) scale(${cur.s.toFixed(3)})`;
+    const near = Math.abs(want.x - cur.x) < 0.4 && Math.abs(want.y - cur.y) < 0.4;
+    if (near) { rafId = 0; settled = true; }
+    else { settled = false; rafId = requestAnimationFrame(frame); }
+  }
+
+  function wake() {
+    if (reduce.matches) { rest(); return; }
+    tgt = pick();
+    if (!rafId) rafId = requestAnimationFrame(frame);
+  }
+
+  addEventListener("scroll", wake, { passive: true });
+  addEventListener("resize", () => { measure(); wake(); });
+  // layer changes move the waypoints, so re-measure after a toggle settles
+  document.addEventListener("click", () => setTimeout(() => { measure(); wake(); }, 560), true);
+
+  measure();
+  wake();
+  reduce.addEventListener("change", () => { lip.classList.remove("is-static"); lip.style.cssText = ""; measure(); wake(); });
+  requestAnimationFrame(() => lip.classList.add("is-on"));
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => { measure(); wake(); });
+  }
+  addEventListener("load", () => { measure(); wake(); });
+  window.__lip = { measure, wake, targets: () => targets, settled: () => settled };
+})();

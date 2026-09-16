@@ -17,6 +17,9 @@
 //                  rows, the gaps in the facts and labs rows. Values
 //                  off the --s scale that appear exactly once are
 //                  flagged as one-offs.
+//                  filter and backdrop-filter are scanned too: drop-shadow
+//                  takes a colour, and a literal hidden inside a filter is
+//                  still a literal.
 //   3. colour      Every colour declaration in the stylesheet, plus
 //                  every colour resolved on the page. A literal that is
 //                  not a token and not derived from one fails.
@@ -346,7 +349,7 @@ function auditStylesheet(css) {
   // is, not at a stripped copy. :root is where tokens are defined, so a
   // literal there is the definition, not drift.
   const COLOUR_PROP =
-    /^\s*(color|background|background-color|border[a-z-]*|outline[a-z-]*|fill|stroke|box-shadow|text-shadow)\s*:/;
+    /^\s*(color|background|background-color|border[a-z-]*|outline[a-z-]*|fill|stroke|box-shadow|text-shadow|filter|backdrop-filter)\s*:/;
   const out = [];
   let inComment = false;
   let inRoot = false;
