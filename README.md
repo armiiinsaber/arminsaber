@@ -136,10 +136,10 @@ breaks, this one watches whether the page is still one design. Same
 three widths, same three layers, and it prints every value side by side
 so an outlier is obvious.
 
-**1. Type.** Thirteen repeated roles, from product titles down to
-facts labels and outbound links. For each it reports family, weight,
-size, tracking, line height, variable axis values and case, for every
-instance. A role whose instances disagree fails.
+**1. Type, within a role.** Thirteen repeated roles, from product
+titles down to facts labels and outbound links. For each it reports
+family, weight, size, tracking, line height, variable axis values and
+case, for every instance. A role whose instances disagree fails.
 
 **2. Spacing.** Entry vertical rhythm, padding inside rows, the gaps in
 the facts and labs rows, checked against the `--s` scale. A value off
@@ -153,6 +153,20 @@ token or a `color-mix` derived from one.
 
 **4. Alignment.** The meta lane, the main lane and the mark lane, left
 edges across all seven entries. Any entry out of line fails.
+
+**5. Type, across the whole face.** Every element on the page grouped
+by the face it computes to rather than by its role, and compared as
+one family. **One face, one weight, one tracking, one line height, one
+set of axis values. Size varies by role. Everything else needs an
+exception with a reason.**
+
+Check 1 compares instances of a role against each other, so a role
+that is internally consistent passes even when it disagrees with every
+other role sharing its typeface. That is exactly how `.sum-labs-name`
+sat there setting weight 480 and tracking -0.012em against a face
+running 575 and -0.032em: all three of its instances agreed with each
+other, so nothing complained. Check 5 is what catches that. A value
+held by fewer roles than the family's is an outlier and fails.
 
 Nothing is silently allowed. A deliberate difference goes in the
 `ALLOWED` list at the top of the file with a reason. There is exactly
@@ -174,9 +188,22 @@ again, it stopped doing anything at all: titles set with the ramp and
 with it pinned are indistinguishable at 34px and at 56px.
 
 So the register is **fixed by rule**: weight 575, tracking -0.032em,
-line height 1.02, everywhere display type is used. Mono tracking is
-fixed the same way, at 0.09em for every mono role. `--st` is gone from
-the stylesheet and the markup rather than left sitting there unread.
+line height 1.02, everywhere display type is used. Mono is fixed the
+same way at 400 / 0.09em / 1.6, and body at 400 / 0 / 1.6. `--st` is
+gone from the stylesheet and the markup rather than left sitting there
+unread.
+
+The current families, all uniform:
+
+| face | roles | weight | tracking | line height | sizes |
+|---|---|---|---|---|---|
+| Fraunces | 7 | 575 | -0.032em | 1.02 | 88 / 52.8 / 22 / 20px |
+| Martian Mono | 16 | 400 | 0.09em | 1.6 | 10px, 12.24px |
+| Instrument Sans | 6 | 400 | 0 | 1.6 | 17 / 15px |
+
+Those size columns are the only place variation is expected. If a
+weight, tracking or line height column ever shows two numbers, the
+auditor fails and one of them is wrong.
 
 None of that touches `--t`. The scroll-driven accent, the ribbon, the
 hero plot and the mini axes are unchanged. The spectrum is carried by
