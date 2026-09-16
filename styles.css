@@ -583,7 +583,7 @@ main {
   padding-top: var(--s3);
   border-top: 1px solid var(--hair);
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr)) max-content;
   column-gap: var(--s3);
   row-gap: var(--s3);
 }
@@ -594,6 +594,64 @@ main {
   line-height: 1.45;
   color: color-mix(in oklab, var(--ink) 86%, var(--muted));
 }
+/* Labs rides up into the summary as names only: a scanner learns the
+   studio holds products without reading a word of description. The
+   descriptions stay with the brief in layer 3. */
+.sum-labs {
+  margin-top: var(--s3);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--s1) var(--s3);
+}
+.sum-labs-label {
+  color: var(--muted);
+  margin-right: var(--s1);
+}
+.sum-labs-name {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 480;
+  letter-spacing: -0.012em;
+  text-decoration: none;
+  color: color-mix(in oklab, var(--ink) 86%, var(--muted));
+  transition: color var(--dur-fast) linear;
+}
+.sum-labs-name:hover { color: var(--accent); }
+.sum-labs-name .ext {
+  font-size: 0.5em;
+  vertical-align: 0.5em;
+  margin-left: 2px;
+  color: var(--muted);
+}
+
+/* minor entries ask for no third interaction: their two fields sit in
+   the summary itself, flat and always visible, in a tighter register
+   than the full brief they would otherwise hide behind a control */
+.brief--flat {
+  margin-top: var(--s4);
+  padding-top: var(--s2);
+  border-top: 1px solid var(--hair);
+}
+.brief--flat .brief-row {
+  grid-template-columns: 150px 1fr;
+  column-gap: var(--s3);
+  padding: var(--s2) 0;
+  border-top: 0;
+}
+.brief--flat .brief-row + .brief-row {
+  border-top: 1px dashed color-mix(in oklab, var(--hair) 72%, var(--muted));
+}
+.brief--flat .brief-row dd { font-size: 15px; }
+
+/* the main lane is too narrow for a label column below the wide range */
+@media (max-width: 1023px) {
+  .brief--flat .brief-row {
+    grid-template-columns: 1fr;
+    row-gap: var(--s1);
+  }
+}
+
 /* the link fact keeps the page's link register rather than the body
    type of the values beside it, and never breaks before its arrow */
 .fact dd .entry-link {
@@ -601,13 +659,40 @@ main {
   white-space: nowrap;
 }
 
-/* a fixed four so the columns line up entry to entry; entries with
-   fewer facts leave the trailing cells empty rather than stretching */
+/* Three equal columns and a fourth sized to its content: a URL is one
+   unbreakable token, and in an equal quarter the longer ones ran past
+   the lane. Pinned to the last column and the first row so the link
+   sits in the same place on every entry, however many facts precede
+   it. Entries with fewer facts leave the cells between empty rather
+   than stretching. */
+.fact--link {
+  grid-column: 4;
+  grid-row: 1;
+}
+
 @media (max-width: 900px) {
   .sum-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .fact--link {
+    grid-column: 1 / -1;
+    grid-row: auto;
+  }
 }
-@media (max-width: 420px) {
+/* two columns hold down to 390, where each is about as wide as the
+   four are at 1440 and the values were written to that measure. At
+   360 the pair drops to 148px and the values start breaking, so it
+   goes to one column there. */
+@media (max-width: 380px) {
   .sum-facts { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* the label stops sharing a line with the names once they wrap, so a
+   trailing name never sits alone beside it */
+@media (max-width: 760px) {
+  .sum-labs { row-gap: var(--s2); }
+  .sum-labs-label {
+    flex: 0 0 100%;
+    margin-right: 0;
+  }
 }
 
 .brief {
