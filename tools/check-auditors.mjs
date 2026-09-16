@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Auditor self-test. Plants a known fault, runs the auditor that should
-// catch it, confirms the right check fired, reverts. Ten faults, one per
-// class of thing the other two tools claim to see.
+// catch it, confirms the right check fired, reverts. Eleven faults, one
+// per class of thing the other two tools claim to see.
 //
 // This exists because both auditors have shipped bugs where the check
 // silently failed to see the thing it was written to catch: line numbers
@@ -70,6 +70,9 @@ const FAULTS = [
     css: ".probe-nested { font-weight: 700; }",
     html: ["which is the only bar.", "which is the <span class=\"probe-nested\">only</span> bar."],
     tool: "consistency", want: /FAIL {2}cross-role {2}body · weight/ },
+  { n: 11, what: "size change on one product title only",
+    css: "#klenz .entry-name { font-size: 34px; }",
+    tool: "consistency", want: /FAIL  product title · sizePx/ },
   { n: 10, what: "element visually hidden but still in the DOM",
     css: ".probe-hidden { opacity: 0; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.3em; }",
     html: ["<h2 class=\"display entry-name\">Echoes</h2>",

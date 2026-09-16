@@ -105,41 +105,37 @@ const PROPS = [
    a group. Nothing else may differ. */
 
 const ALLOWED = [
-  {
-    role: "product title",
-    prop: "sizePx",
-    kind: "grouped",
-    groupBy: "weightClass",
-    why:
-      "The three entry weights are deliberate and asked for: the work that " +
-      "matters most gets a larger name. One size per weight class, no variation " +
-      "inside a class. This is the only difference on the page that is clearly " +
-      "earning an exception, because removing it would flatten the page on " +
-      "purpose rather than by drift.",
-  },
-
-  // Everything that used to be here, and why it went. The list is a record,
-  // not just a state, so a future change that wants one of these back has to
-  // argue with the reason rather than rediscover it.
+  // Empty, and that is the point. Every value in every face is uniform:
+  // one family, one weight, one tracking, one line height, one set of
+  // axis values, and now one size for the product titles too. Nothing
+  // on this page differs from its family without being a bug.
   //
-  // product title weight and trackEm. The display register is now fixed at
-  //   575 and -0.032em everywhere. Narrowed enough to read as one family it
-  //   was doing no visible work: titles set with the ramp and with it pinned
-  //   are indistinguishable at 34px and 56px. --st, which drove it, is gone
-  //   from the stylesheet and the markup.
-  // product title axes SOFT and WONK. Same finding, same fate, and these two
-  //   were what broke it originally by swapping in alternate letter shapes.
-  // product title lineRatio. Pinned at 1.02. Titles hold one line by rule, so
-  //   line height only ever changed the height of the box, which is spacing.
-  // labs name weight, tracking, lineRatio, axes. All three labs names sit in
-  //   one entry and shared one --st, so the measured spread was zero on every
-  //   one. Four exceptions guarding drift that could not happen.
-  // outbound link lineRatio. Unbounded, and every link already measures 1.6.
-  // descriptor sizePx. Minor entries set 15px against 17px elsewhere. The scan
-  //   column should read as one list, and a minor entry is already marked as
-  //   minor by its name size, its mark and its padding.
+  // Everything that used to sit here, and why it went, so a change that
+  // wants one back argues with the reason rather than rediscovering it:
+  //
+  // product title sizePx. Three sizes, one per entry weight class,
+  //   56/46/30 at 1440. Entry weight is already carried by the mark, by
+  //   the padding, and by how many fields the brief holds. As a fourth
+  //   signal the size steps did not read as hierarchy, they read as a
+  //   page that had lost track of itself. All seven titles are now
+  //   clamp(30px, 4vw, 56px), which holds at all nine audited widths.
+  // product title weight and trackEm. The display register is fixed at
+  //   575 and -0.032em. Narrowed enough to read as one family it did no
+  //   visible work: titles with the ramp and with it pinned are
+  //   indistinguishable at 34px and 56px. --st went with it.
+  // product title axes SOFT and WONK. Same finding, and these two were
+  //   what broke it originally by swapping in alternate letter shapes.
+  // product title lineRatio. Pinned at 1.02. Titles hold one line by
+  //   rule, so line height only ever changed the height of the box.
+  // labs name weight, tracking, lineRatio, axes. All three labs names
+  //   sit in one entry and shared one --st, so the spread was zero.
+  //   Four exceptions guarding drift that could not happen.
+  // outbound link lineRatio. Unbounded, and every link measures 1.6.
+  // descriptor sizePx. Minor entries set 15px against 17px elsewhere.
+  //   The scan column should read as one list.
   // mono trackEm, six roles. Fixed at 0.09em site-wide.
 ];
+
 
 /* Cross-role allowances. A role whose weight, tracking, line height or
    axes differ from the rest of its face needs a line here saying why.
@@ -751,8 +747,14 @@ for (const width of WIDTHS) {
 await browser.close();
 server.close();
 
-console.log("\n=== allowed differences, all bounded ===");
-for (const n of [...new Set(notes)].sort()) console.log(`  ${n}`);
+const allowed = [...new Set(notes)].sort();
+console.log("\n=== allowed differences ===");
+if (!allowed.length) {
+  console.log("  none. ALLOWED is empty: every value in every face is uniform,");
+  console.log("  and the only thing that varies is the page's own spacing scale.");
+} else {
+  for (const n of allowed) console.log(`  ${n}`);
+}
 
 const byKind = {};
 for (const p of problems) byKind[p.kind] = (byKind[p.kind] || 0) + 1;

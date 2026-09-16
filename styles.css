@@ -500,8 +500,15 @@ main {
 }
 
 /* main column */
+/* One size for every product title. The three size steps were the
+   third way entry weight was being expressed, after the mark and the
+   number of fields in the brief, and next to those two it did not read
+   as hierarchy, it read as a mistake: seven names down a page at 56,
+   46 and 30px look like a page that lost track of itself rather than
+   one making a point. Weight is still carried by the mark, by the
+   padding around the entry, and by how much brief there is to open. */
 .entry-name {
-  font-size: clamp(30px, 3.8vw, 46px);
+  font-size: clamp(30px, 4vw, 56px);
 }
 
 /* ------------------------------------------------------------
@@ -793,12 +800,10 @@ mark.ph {
    smaller name, a smaller mark and tighter everything.
    ------------------------------------------------------------ */
 .entry--major { padding: var(--s6) 0; }
-.entry--major .entry-name { font-size: clamp(30px, 4vw, 56px); }
 .entry--major .entry-line { margin-top: var(--s2); }
 .entry--major .entry-head > .mark { width: 68px; height: 68px; }
 
 .entry--minor { padding: var(--s4) 0; }
-.entry--minor .entry-name { font-size: clamp(24px, 2.6vw, 30px); }
 .entry--minor .entry-head > .mark { width: 36px; height: 36px; }
 
 /* ------------------------------------------------------------

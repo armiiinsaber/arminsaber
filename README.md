@@ -165,8 +165,9 @@ edges across all seven entries. Any entry out of line fails.
 **5. Type, across the whole face.** Every element on the page grouped
 by the face it computes to rather than by its role, and compared as
 one family. **One face, one weight, one tracking, one line height, one
-set of axis values. Size varies by role. Everything else needs an
-exception with a reason.**
+set of axis values. Size varies by role and never within one.
+Everything else would need an exception with a reason, and there are
+no exceptions left.**
 
 Check 1 compares instances of a role against each other, so a role
 that is internally consistent passes even when it disagrees with every
@@ -177,14 +178,15 @@ other, so nothing complained. Check 5 is what catches that. A value
 held by fewer roles than the family's is an outlier and fails.
 
 Nothing is silently allowed. A deliberate difference goes in the
-`ALLOWED` list at the top of the file with a reason. There is exactly
-one left: product titles come in three sizes, one per entry weight
-class, because the three weights are deliberate.
+`ALLOWED` list at the top of the file with a reason. **That list is now
+empty.** Every value in every face is uniform, and the only thing that
+varies across the page is its own spacing scale. Nothing here differs
+from its family without being a bug.
 
-Everything else that used to be in that list is recorded there too,
-with the reason it went, so a future change that wants one back has to
-argue with the reason rather than rediscover it. The largest was the
-**title register**, and it is worth knowing why it is gone.
+Everything that was once in that list is recorded there, with the
+reason it went, so a change that wants one back has to argue with the
+reason rather than rediscover it. Two are worth knowing about: the
+**title register** and the **title sizes**.
 
 Display type was set by where a thing sat on the spectrum, via a
 per-section `--st`: `wght` 580 to 460, `SOFT` 0 to 100, `WONK` 0 to 1
@@ -203,19 +205,30 @@ unread.
 
 The current families, all uniform:
 
-| face | roles | weight | tracking | line height | sizes |
+| face | roles | weight | tracking | line height | sizes at 1440 |
 |---|---|---|---|---|---|
-| Fraunces | 7 | 575 | -0.032em | 1.02 | 88 / 52.8 / 22 / 20px |
+| Fraunces | 7 | 575 | -0.032em | 1.02 | 88 / 56 / 22 / 20px |
 | Martian Mono | 16 | 400 | 0.09em | 1.6 | 10px, 12.24px |
 | Instrument Sans | 6 | 400 | 0 | 1.6 | 17 / 15px |
 
-Those size columns are the only place variation is expected. If a
-weight, tracking or line height column ever shows two numbers, the
-auditor fails and one of them is wrong.
+The size column is the only place variation is expected, and it varies
+by role, never within one: all seven product titles are 56px, all
+sixteen mono roles are 10px bar the placeholder. If a weight, tracking
+or line height column ever shows two numbers, the auditor fails and one
+of them is wrong.
 
 None of that touches `--t`. The scroll-driven accent, the ribbon, the
 hero plot and the mini axes are unchanged. The spectrum is carried by
 colour, by position and by the marks, and that is enough.
+
+The title sizes went the same way and for the same kind of reason.
+Product titles came in three sizes, 56 / 46 / 30px at 1440, one per
+entry weight class. But entry weight is already carried by the mark,
+by the padding around the entry, and by how many fields its brief
+holds. As a fourth signal on top of those, the size steps did not read
+as hierarchy; seven names running down a page at three sizes read as a
+page that had lost track of itself. All seven are now
+`clamp(30px, 4vw, 56px)`, checked at all nine audited widths.
 
 `--verbose` prints every role table rather than only the failing ones,
 `--width <n>` checks one width instead of three.
@@ -226,13 +239,14 @@ node tools/check-auditors.mjs --control
 ```
 
 The auditor self-test. Plants a known fault, runs the auditor that
-should catch it, confirms the right check fired, reverts. Ten faults,
-one per class of thing the other two tools claim to see: a weight
-change on one title, a tracking change on one mono role, a swapped
-font family, a hard-coded colour in a single-line rule, a one word
-final line, a name forced to wrap, a misaligned lane, an off-scale
-spacing value, a nested element inside one that also holds text, and
-an element that is visually hidden but still in the DOM.
+should catch it, confirms the right check fired, reverts. Eleven
+faults, one per class of thing the other two tools claim to see: a
+weight change on one title, a size change on one title, a tracking
+change on one mono role, a swapped font family, a hard-coded colour in
+a single-line rule, a one word final line, a name forced to wrap, a
+misaligned lane, an off-scale spacing value, a nested element inside
+one that also holds text, and an element that is visually hidden but
+still in the DOM.
 
 **Why this exists.** Both auditors have shipped bugs where the check
 silently failed to see the thing it was written to catch: stylesheet
