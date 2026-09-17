@@ -451,9 +451,25 @@
       const n = parseInt(g.slice(1), 16), lum = 0.2126 * (n >> 16) + 0.7152 * ((n >> 8) & 255) + 0.0722 * (n & 255);
       if (lum > 140) entry.classList.add("entry--light");
     }
-    const im = fig.querySelector("img"); const [fx, fy] = (fig.dataset.focus || "50 50").split(/\s+/);
-    if (im) im.style.objectPosition = `${fx}% ${fy}%`;   // the crop window keeps the focal point in view
   }
+  // the crop window keeps the focal point in view; in a photo room on a
+  // wide screen it is placed in the right part of the room, clear of the
+  // copy, so the lip never lands on the title
+  const placeCrops = () => {
+    for (const fig of document.querySelectorAll(".entry-art[data-focus]")) {
+      const im = fig.querySelector("img"); if (!im) continue;
+      const [fx, fy] = fig.dataset.focus.split(/\s+/).map(Number);
+      let px = fx;
+      if (fig.closest(".entry--photo") && innerWidth >= 1280) {
+        const r = fig.getBoundingClientRect(), nw = im.naturalWidth || Number(im.getAttribute("width")), nh = im.naturalHeight || Number(im.getAttribute("height"));
+        const k = Math.max(r.width / nw, r.height / nh), w = nw * k;
+        if (w > r.width + 1) px = Math.max(0, Math.min(100, (r.width * 0.72 - w * fx / 100) / (r.width - w) * 100));
+      }
+      im.style.objectPosition = `${px.toFixed(2)}% ${fy}%`;
+    }
+  };
+  placeCrops();
+  addEventListener("resize", () => { placeCrops(); if (window.__lip) window.__lip.measure(); });
   const gate = "IntersectionObserver" in window ? new IntersectionObserver((es) => { for (const e of es) if (e.isIntersecting) { const im = e.target; if (im.dataset.src) { im.src = im.dataset.src; delete im.dataset.src; } gate.unobserve(im); } }, { rootMargin: "0px 0px -15% 0px" }) : null;
   for (const im of document.querySelectorAll(".entry-art img[data-src]")) { if (gate) gate.observe(im); else { im.src = im.dataset.src; } }
   for (const img of document.querySelectorAll(".entry-art img")) {
