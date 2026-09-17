@@ -443,31 +443,20 @@
   // each figure declares its picture's ground, measured at build time, so
   // the room has its colour before any picture arrives; "none" means the
   // picture has no ground and becomes the room itself
-  for (const fig of document.querySelectorAll(".entry-art[data-ground]")) {
-    const entry = fig.closest(".entry"), g = fig.dataset.ground;
-    if (g === "none") entry.classList.add("entry--photo"); else {
-      entry.style.setProperty("--art-bg", g);
-      // a light ground needs a denser scrim under the copy
-      const n = parseInt(g.slice(1), 16), lum = 0.2126 * (n >> 16) + 0.7152 * ((n >> 8) & 255) + 0.0722 * (n & 255);
-      if (lum > 140) entry.classList.add("entry--light");
-    }
+  for (const el of document.querySelectorAll(".entry[data-ground], .entry-art[data-ground]")) {
+    const entry = el.closest(".entry"), g = el.dataset.ground;
+    entry.style.setProperty("--art-bg", g);
+    if (el.dataset.field) entry.style.setProperty("--field", `url("${el.dataset.field}")`);
+    // a light ground needs a denser scrim under the copy
+    const n = parseInt(g.slice(1), 16), lum = 0.2126 * (n >> 16) + 0.7152 * ((n >> 8) & 255) + 0.0722 * (n & 255);
+    if (lum > 140) entry.classList.add("entry--light");
   }
-  // the crop window keeps the focal point in view, and in a wide photo
-  // room keeps it clear of the copy
+  // the crop window keeps the focal point in view
   const placeCrops = () => {
     for (const fig of document.querySelectorAll(".entry-art[data-focus]")) {
       const im = fig.querySelector("img"); if (!im) continue;
       const [fx, fy] = fig.dataset.focus.split(/\s+/).map(Number);
-      let py = fy;
-      // a wide photo room is covered by width, so the picture has no
-      // horizontal slack; the copy sits at the bottom there and the crop
-      // is anchored so the focal point lands in the upper third
-      if (fig.closest(".entry--photo") && innerWidth >= 1280) {
-        const r = fig.getBoundingClientRect(), nw = im.naturalWidth || Number(im.getAttribute("width")), nh = im.naturalHeight || Number(im.getAttribute("height"));
-        const k = Math.max(r.width / nw, r.height / nh), h = nh * k;
-        if (h > r.height + 1) py = Math.max(0, Math.min(100, (r.height * 0.32 - h * fy / 100) / (r.height - h) * 100));
-      }
-      im.style.objectPosition = `${fx}% ${py.toFixed(2)}%`;
+      im.style.objectPosition = `${fx}% ${fy}%`;
     }
   };
   placeCrops();

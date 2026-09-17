@@ -1604,7 +1604,12 @@ html { overflow-x: clip; }
   content: "";
   position: absolute;
   inset: 0 calc(50% - 50vw);
-  background: var(--ground);
+  background-color: var(--ground);
+  /* the field: the picture itself, tiny and pre-blurred, scaled to cover
+     the room, so the room is made of the picture's own colours */
+  background-image: var(--field, none);
+  background-size: cover;
+  background-position: center;
   z-index: 0;
 }
 /* the copy above its ground; on the phone grid main and line are
@@ -1617,13 +1622,14 @@ html { overflow-x: clip; }
   z-index: 0;
   top: 0;
   bottom: 0;
-  right: calc(50% - 50vw);
+  right: calc(50% - 50vw + 4vw);
   width: auto;
   height: auto;
   aspect-ratio: 4 / 5;
   margin: 0;
   background: none;
-  mask-image: linear-gradient(90deg, transparent, #000 14%), linear-gradient(180deg, transparent, #000 10%, #000 90%, transparent);
+  /* all four edges feather into the field */
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent), linear-gradient(180deg, transparent, #000 10%, #000 90%, transparent);
   mask-composite: intersect;
 }
 
@@ -1665,7 +1671,7 @@ html[data-copy="panel"] .entry-head::after {
 }
 @media (max-width: 760px) {
   .entry-head { min-height: 84svh; padding-bottom: calc(60svh - var(--s4)); }
-  .entry-art { right: calc(50% - 50vw); height: 62%; }
+  .entry-art { right: calc(50% - 50vw + 4vw); height: 62%; }
 }
 /* the phone grid: the ground spans the three copy rows */
 @media (max-width: 560px) {
@@ -1730,23 +1736,6 @@ html[data-copy="panel"] .entry-head::after {
 .ribbon { --accent: color-mix(in oklch, var(--acc-a) calc((1 - var(--acc-f)) * 100%), var(--acc-b)); }
 .ribbon-thumb { will-change: transform; }
 
-/* ============================================================
-   PHOTO ROOMS
-   A picture with no ground of its own cannot float in a room, so the
-   photograph is the room: edge to edge behind the copy, its crop
-   window anchored on the focal point, the copy on its scrim.
-   ============================================================ */
-.entry--photo .entry-art {
-  top: 0;
-  bottom: 0;
-  left: calc(50% - 50vw);
-  right: calc(50% - 50vw);
-  width: auto;
-  height: auto;
-  aspect-ratio: auto;
-  mask-image: none;
-}
-.entry--photo .entry-art img { object-fit: cover; }
 
 /* a light ground (cream, white) needs the copy's cloud denser and
    wider than the colour rooms do; measured on rendered pixels */
@@ -1754,5 +1743,3 @@ html[data-copy="panel"] .entry-head::after {
   background: color-mix(in oklab, var(--bg) 96%, transparent);
   margin-block: calc(-1 * var(--s6));
 }
-/* wide: the copy sits at the foot of a photo room, the focal point above it */
-@media (min-width: 1280px) { .entry--photo .entry-head { align-content: end; } }
