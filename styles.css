@@ -1510,7 +1510,7 @@ html { overflow-x: clip; }
   max-width: none;
   margin: 0;
   padding: 0 max(var(--pad-x), calc(50% - var(--page-max) / 2 + var(--pad-x)));
-  background: var(--closer-bg, var(--c7));
+  background: var(--c7);   /* the leopard is exported on this hex; nothing is sampled */
 }
 .closer-art {
   margin: 0 auto;
@@ -1580,7 +1580,7 @@ html { overflow-x: clip; }
   align-content: center;
   min-height: 52vh;
   padding-block: var(--s5);
-  --ground: var(--art-bg, var(--mc, var(--accent)));
+  --ground: var(--mc, var(--accent));   /* the token, never a sampled colour: a picture that is off shows as off */
 }
 /* above the phone grid the copy keeps its two lanes, placed explicitly,
    since the copy's ground is a grid item too and must not push the copy

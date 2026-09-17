@@ -436,10 +436,16 @@
       return null;                   // tainted or not decodable: keep the token
     }
   };
+  // the room pictures are fetched once their room is a little way up the
+  // screen, not when its top edge grazes the fold: the browser's own lazy
+  // margin is over a screen ahead and pulled three of them into the
+  // first view. They fade in as they land.
+  const gate = "IntersectionObserver" in window ? new IntersectionObserver((es) => { for (const e of es) if (e.isIntersecting) { const im = e.target; if (im.dataset.src) { im.src = im.dataset.src; delete im.dataset.src; } gate.unobserve(im); } }, { rootMargin: "0px 0px -15% 0px" }) : null;
+  for (const im of document.querySelectorAll(".entry-art img[data-src]")) { if (gate) gate.observe(im); else { im.src = im.dataset.src; } }
   for (const img of document.querySelectorAll(".entry-art img")) {
     const done = () => {
       const c = sample(img);
-      if (c) img.closest(".entry").style.setProperty("--art-bg", c);   // the room takes the picture's ground
+      if (c) img.closest(".entry").dataset.ground = c;   // recorded for the auditors and reports; the room keeps its token
       img.classList.add("is-loaded");
     };
     if (img.complete && img.naturalWidth) done();
@@ -616,14 +622,14 @@
       return `rgb(${r} ${g} ${b})`;
     } catch { return null; }
   };
-  for (const [sel, prop] of [[".hero-portrait img", "--hero-bg"], [".closer-art img", "--closer-bg"]]) {
+  for (const [sel, prop] of [[".hero-portrait img", "--hero-bg"], [".closer-art img", "--closer-bg"]]) {   // the hero still takes its sample: the portrait is not on the token yet
     const img = document.querySelector(sel); if (!img) continue;
     const done = () => {
       const c = sample(img); if (!c) return;
       document.documentElement.style.setProperty(prop, c);
       // the last room and the closer are one field: until Live sets has a
       // picture of its own, its room takes the leopard's sampled ground
-      if (prop === "--closer-bg") { const last = document.querySelector("#live-sets"); if (last && !last.querySelector(".entry-art img")) last.style.setProperty("--art-bg", c); }
+      if (prop === "--closer-bg") document.documentElement.dataset.closerGround = c;   // recorded only; the closer is painted with the token
     };
     if (img.complete && img.naturalWidth) done(); else img.addEventListener("load", done, { once: true });
   }

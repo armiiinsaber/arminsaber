@@ -321,16 +321,27 @@ reference/                     the style references, not shipped
   style-03-leopard-vermilion.png
   mockup-homepage.png
 
-img/art/                       the shipped artwork, one per entry
-  01-rentletter.png            master, 1600x2000
+reference/masters/             the masters, not shipped, not in git
+  01-rentletter.png            1600x2000
   02-easymonee.png
   03-klenz.png
   04-melomaniac-studios.png
   05-echoes.png
   06-melomania.png
   07-live-sets.png
-  portrait.png                 master, 1600x2000, the hero
+  portrait.png                 the hero
+
+img/art/                       what the page ships, generated from the masters
+  01-rentletter.webp ... 07-live-sets.webp   960px tall
+  portrait-hero.webp, leopard.webp, lip.png
 ```
+
+Drop the masters into `reference/masters/` with exactly these names (the
+first batch arrived in `reference/` named `img:art:01-rentletter.png.PNG`
+and so on, and nothing picked them up). The page samples each picture's
+ground on load and records it on the entry as `data-ground`, so an
+export that is off its token can be read straight off the DOM; the room
+itself is always painted with the token.
 
 The number is the entry's position and the slug is its `id` in
 `index.html`. Both are in the name so a file can never land in the
