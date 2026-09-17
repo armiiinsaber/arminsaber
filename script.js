@@ -100,38 +100,53 @@
   // painting did. So the root is written only when a value moves a step
   // the eye could see: the accent in 24 steps between neighbouring hues,
   // t at two decimals. The thumb is a transform, which costs nothing.
-  let trackW = 0, lastAcc = "", lastT = "";
-  function applyAccent(t) {
+  // While scrolling, the accent is written on the ribbon alone (which
+  // redeclares --accent for itself), a recalc of twenty elements. The
+  // root, which every element inherits from, is written once when the
+  // scroll settles. Profiled: each root write recalculated 425 elements,
+  // and there were 260 of them in one scroll. --t is written with it, at
+  // rest only; nothing in the stylesheet reads it, but it is the page's
+  // stated position for anything that wants it.
+  let trackW = 0, lastAcc = "", rootAcc = "";
+  const ribbon = document.querySelector(".ribbon") || docEl;
+  function accentOf(t) {
     let i = 0;
     while (i < STOPS.length - 2 && t > STOPS[i + 1]) i++;
     const a = STOPS[i], b = STOPS[i + 1];
-    const f = Math.round(clamp((t - a) / (b - a), 0, 1) * 24) / 24;
-    const key = `${i}:${f}`;
-    if (key === lastAcc) return;
-    lastAcc = key;
-    docEl.style.setProperty("--acc-a", `var(--c${i + 1})`);
-    docEl.style.setProperty("--acc-b", `var(--c${i + 2})`);
-    docEl.style.setProperty("--acc-f", f.toFixed(4));
+    const f = Math.round(clamp((t - a) / (b - a), 0, 1) * 16) / 16;
+    return { i, f, key: `${i}:${f}` };
+  }
+  function writeAccent(el, acc) {
+    el.style.setProperty("--acc-a", `var(--c${acc.i + 1})`);
+    el.style.setProperty("--acc-b", `var(--c${acc.i + 2})`);
+    el.style.setProperty("--acc-f", acc.f.toFixed(4));
+  }
+  function applyAccent(t, settled) {
+    const acc = accentOf(t);
+    if (acc.key !== lastAcc) { lastAcc = acc.key; writeAccent(ribbon, acc); }
+    if (settled && acc.key !== rootAcc) { rootAcc = acc.key; writeAccent(docEl, acc); docEl.style.setProperty("--t", t.toFixed(4)); }
   }
 
-  function apply(t) {
-    const tq = t.toFixed(2);
-    if (tq !== lastT) { lastT = tq; docEl.style.setProperty("--t", tq); }
-    applyAccent(t);
+  function apply(t, settled) {
+    applyAccent(t, settled);
     thumb.style.transform = `translateX(${(t * trackW).toFixed(1)}px)`;
     for (let i = 0; i < sections.length; i++) {
       ticks[i].classList.toggle("is-lit", t >= sections[i].t - 0.005);
     }
   }
 
+  // the scroll position is taken in the scroll event, where it is free;
+  // reading it inside the frame would force layout on whatever the last
+  // frame left dirty
+  let sy = window.scrollY;
   function frame() {
-    const target = targetT(window.scrollY);
+    const target = targetT(sy);
     current = reduceMotion.matches
       ? target
       : current + (target - current) * 0.16;
     if (Math.abs(target - current) < 0.0004) current = target;
     if (current !== rendered) {
-      apply(current);
+      apply(current, current === target);
       rendered = current;
       rafId = requestAnimationFrame(frame);
     } else {
@@ -140,6 +155,7 @@
   }
 
   function wake() {
+    sy = window.scrollY;
     if (!rafId) rafId = requestAnimationFrame(frame);
   }
 
@@ -147,8 +163,9 @@
   addEventListener("resize", () => { measure(); wake(); });
 
   measure();
-  current = targetT(window.scrollY); // no lerp-in on load / deep link
-  apply(current);
+  sy = window.scrollY;
+  current = targetT(sy); // no lerp-in on load / deep link
+  apply(current, true);
 
   // re-measure once fonts have settled layout
   if (document.fonts && document.fonts.ready) {
@@ -508,16 +525,17 @@
     targets = out.sort((a, b) => a.y - b.y);
   };
 
+  let sy = scrollY, vh = innerHeight;   // taken in the scroll and resize events, never in the frame
   const pick = () => {
-    const mid = scrollY + innerHeight * 0.45;
+    const mid = sy + vh * 0.45;
     // before anything else is in view the lip stays on the mouth
-    if (scrollY < 8 && targets[0] && targets[0].depart) return targets[0];
+    if (sy < 8 && targets[0] && targets[0].depart) return targets[0];
     let best = targets[0], d = Infinity;
     for (const t of targets) { const dist = Math.abs(t.y - mid); if (dist < d) { d = dist; best = t; } }
     return best;
   };
 
-  const place = (t) => { const box = t.size * LIP_PAD; return { x: t.x - box / 2, y: t.y - scrollY - (box * LIP_ASPECT) / 2, s: box / 64 }; };
+  const place = (t) => { const box = t.size * LIP_PAD; return { x: t.x - box / 2, y: t.y - sy - (box * LIP_ASPECT) / 2, s: box / 64 }; };
 
   const frame = () => {
     const t = tgt; if (!t) { rafId = 0; return; }
@@ -550,11 +568,12 @@
   };
 
   const wake = () => {
+    sy = scrollY; vh = innerHeight;
     if (reduce.matches) { rest(); return; }
     tgt = pick();
     // at the top of the page the lip is on the mouth, full stop: a
     // re-measure after fonts or images land must not be seen as travel
-    if (scrollY < 8 && tgt.depart) cur = null;
+    if (sy < 8 && tgt.depart) cur = null;
     if (!rafId) rafId = requestAnimationFrame(frame);
   };
 

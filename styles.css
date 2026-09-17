@@ -250,7 +250,9 @@ button {
   width: 2px;
   height: 12px;
   background: color-mix(in srgb, var(--hair) 66%, var(--muted));
-  transition: background var(--dur-fast) linear, height var(--dur-fast) var(--ease-out);
+  /* height only: the colour follows the accent in small steps while
+     scrolling, and easing each step ran seven transitions per step */
+  transition: height var(--dur-fast) var(--ease-out);
 }
 .ribbon-tick.is-lit::before {
   background: var(--accent);
@@ -1718,3 +1720,12 @@ html[data-copy="panel"] .entry-head::after {
      fall under 3:1; they take the ink, the dots keep the colours */
   .hero .plot-pole--logic, .hero .plot-pole--feel, .plot-hint { color: var(--ink); }
 }
+
+/* ============================================================
+   SCROLL COST
+   The accent walks the spectrum while you scroll. The ribbon carries
+   its own copy of the mix so the engine can write it there, twenty
+   elements, and leave the root alone until the scroll settles.
+   ============================================================ */
+.ribbon { --accent: color-mix(in oklch, var(--acc-a) calc((1 - var(--acc-f)) * 100%), var(--acc-b)); }
+.ribbon-thumb { will-change: transform; }
