@@ -61,11 +61,6 @@
 
   <!-- the same hand, much lighter: at 10px a 2px displacement eats the
        letter, so mono gets edge break-up only and no fill mottling -->
-  <filter id="spray-mono" x="-35%" y="-35%" width="170%" height="170%" color-interpolation-filters="sRGB">
-    <feTurbulence type="fractalNoise" baseFrequency="1.6" numOctaves="2" seed="5" result="n"/>
-    <feDisplacementMap in="SourceGraphic" in2="n" scale="0.85" xChannelSelector="R" yChannelSelector="G" result="d"/>
-    <feGaussianBlur in="d" stdDeviation="0.24"/>
-  </filter>
 </defs></svg>
 
 

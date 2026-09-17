@@ -49,6 +49,7 @@
   let maxScroll = 1;
 
   function measure() {
+    trackW = track.clientWidth;   // read once here, never in the frame loop
     const vh = window.innerHeight;
     maxScroll = Math.max(1, docEl.scrollHeight - vh);
     for (const s of sections) {
@@ -93,20 +94,31 @@
   // seven colour stops at the entries' own positions; the accent walks
   // them piecewise so it is exactly the entry's colour when it is in view
   const STOPS = sections.map((s) => s.t);
+  // Every custom property written on the root invalidates the style of
+  // everything that inherits it, which is the whole page, and profiling a
+  // scroll showed that recalc plus a forced layout costing more than the
+  // painting did. So the root is written only when a value moves a step
+  // the eye could see: the accent in 24 steps between neighbouring hues,
+  // t at two decimals. The thumb is a transform, which costs nothing.
+  let trackW = 0, lastAcc = "", lastT = "";
   function applyAccent(t) {
     let i = 0;
     while (i < STOPS.length - 2 && t > STOPS[i + 1]) i++;
     const a = STOPS[i], b = STOPS[i + 1];
-    const f = clamp((t - a) / (b - a), 0, 1);
+    const f = Math.round(clamp((t - a) / (b - a), 0, 1) * 24) / 24;
+    const key = `${i}:${f}`;
+    if (key === lastAcc) return;
+    lastAcc = key;
     docEl.style.setProperty("--acc-a", `var(--c${i + 1})`);
     docEl.style.setProperty("--acc-b", `var(--c${i + 2})`);
     docEl.style.setProperty("--acc-f", f.toFixed(4));
   }
 
   function apply(t) {
-    docEl.style.setProperty("--t", t.toFixed(4));
+    const tq = t.toFixed(2);
+    if (tq !== lastT) { lastT = tq; docEl.style.setProperty("--t", tq); }
     applyAccent(t);
-    thumb.style.transform = `translateX(${(t * track.clientWidth).toFixed(1)}px)`;
+    thumb.style.transform = `translateX(${(t * trackW).toFixed(1)}px)`;
     for (let i = 0; i < sections.length; i++) {
       ticks[i].classList.toggle("is-lit", t >= sections[i].t - 0.005);
     }
@@ -445,7 +457,8 @@
   const lip = document.querySelector("[data-lip]");
   if (!lip) return;
   const reduce = matchMedia("(prefers-reduced-motion: reduce)");
-  let LIP_ASPECT = 0.53;  // height over width; read from the image once it loads
+  let LIP_ASPECT = 0.63;  // height over width; read from the image once it loads
+  const LIP_PAD = 90 / 70; // the image is the painted lip plus 10px of baked glow each side
 
   let targets = [], cur = null, tgt = null, rafId = 0, settled = true;
 
@@ -504,7 +517,7 @@
     return best;
   };
 
-  const place = (t) => ({ x: t.x - t.size / 2, y: t.y - scrollY - (t.size * LIP_ASPECT) / 2, s: t.size / 64 });
+  const place = (t) => { const box = t.size * LIP_PAD; return { x: t.x - box / 2, y: t.y - scrollY - (box * LIP_ASPECT) / 2, s: box / 64 }; };
 
   const frame = () => {
     const t = tgt; if (!t) { rafId = 0; return; }
@@ -521,11 +534,12 @@
   const rest = () => {
     const d = targets.find((x) => x.depart) || targets[0]; if (!d) return;
     const put = (el, t) => {
+      const box = t.size * LIP_PAD;
       el.classList.add("is-static", "is-on");
       el.style.transform = "none";
-      el.style.width = `${t.size.toFixed(1)}px`;
-      el.style.left = `${(t.x - t.size / 2).toFixed(1)}px`;
-      el.style.top = `${(t.y - (t.size * LIP_ASPECT) / 2).toFixed(1)}px`;
+      el.style.width = `${box.toFixed(1)}px`;
+      el.style.left = `${(t.x - box / 2).toFixed(1)}px`;
+      el.style.top = `${(t.y - (box * LIP_ASPECT) / 2).toFixed(1)}px`;
     };
     put(lip, d);
     const r = targets.find((x) => x.rest);
@@ -538,6 +552,9 @@
   const wake = () => {
     if (reduce.matches) { rest(); return; }
     tgt = pick();
+    // at the top of the page the lip is on the mouth, full stop: a
+    // re-measure after fonts or images land must not be seen as travel
+    if (scrollY < 8 && tgt.depart) cur = null;
     if (!rafId) rafId = requestAnimationFrame(frame);
   };
 
