@@ -1754,3 +1754,5 @@ html[data-copy="panel"] .entry-head::after {
   background: color-mix(in oklab, var(--bg) 96%, transparent);
   margin-block: calc(-1 * var(--s6));
 }
+/* wide: the copy sits at the foot of a photo room, the focal point above it */
+@media (min-width: 1280px) { .entry--photo .entry-head { align-content: end; } }

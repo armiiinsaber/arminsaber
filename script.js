@@ -452,20 +452,22 @@
       if (lum > 140) entry.classList.add("entry--light");
     }
   }
-  // the crop window keeps the focal point in view; in a photo room on a
-  // wide screen it is placed in the right part of the room, clear of the
-  // copy, so the lip never lands on the title
+  // the crop window keeps the focal point in view, and in a wide photo
+  // room keeps it clear of the copy
   const placeCrops = () => {
     for (const fig of document.querySelectorAll(".entry-art[data-focus]")) {
       const im = fig.querySelector("img"); if (!im) continue;
       const [fx, fy] = fig.dataset.focus.split(/\s+/).map(Number);
-      let px = fx;
+      let py = fy;
+      // a wide photo room is covered by width, so the picture has no
+      // horizontal slack; the copy sits at the bottom there and the crop
+      // is anchored so the focal point lands in the upper third
       if (fig.closest(".entry--photo") && innerWidth >= 1280) {
         const r = fig.getBoundingClientRect(), nw = im.naturalWidth || Number(im.getAttribute("width")), nh = im.naturalHeight || Number(im.getAttribute("height"));
-        const k = Math.max(r.width / nw, r.height / nh), w = nw * k;
-        if (w > r.width + 1) px = Math.max(0, Math.min(100, (r.width * 0.72 - w * fx / 100) / (r.width - w) * 100));
+        const k = Math.max(r.width / nw, r.height / nh), h = nh * k;
+        if (h > r.height + 1) py = Math.max(0, Math.min(100, (r.height * 0.32 - h * fy / 100) / (r.height - h) * 100));
       }
-      im.style.objectPosition = `${px.toFixed(2)}% ${fy}%`;
+      im.style.objectPosition = `${fx}% ${py.toFixed(2)}%`;
     }
   };
   placeCrops();
