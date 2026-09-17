@@ -440,12 +440,26 @@
   // screen, not when its top edge grazes the fold: the browser's own lazy
   // margin is over a screen ahead and pulled three of them into the
   // first view. They fade in as they land.
+  // each figure declares its picture's ground, measured at build time, so
+  // the room has its colour before any picture arrives; "none" means the
+  // picture has no ground and becomes the room itself
+  for (const fig of document.querySelectorAll(".entry-art[data-ground]")) {
+    const entry = fig.closest(".entry"), g = fig.dataset.ground;
+    if (g === "none") entry.classList.add("entry--photo"); else {
+      entry.style.setProperty("--art-bg", g);
+      // a light ground needs a denser scrim under the copy
+      const n = parseInt(g.slice(1), 16), lum = 0.2126 * (n >> 16) + 0.7152 * ((n >> 8) & 255) + 0.0722 * (n & 255);
+      if (lum > 140) entry.classList.add("entry--light");
+    }
+    const im = fig.querySelector("img"); const [fx, fy] = (fig.dataset.focus || "50 50").split(/\s+/);
+    if (im) im.style.objectPosition = `${fx}% ${fy}%`;   // the crop window keeps the focal point in view
+  }
   const gate = "IntersectionObserver" in window ? new IntersectionObserver((es) => { for (const e of es) if (e.isIntersecting) { const im = e.target; if (im.dataset.src) { im.src = im.dataset.src; delete im.dataset.src; } gate.unobserve(im); } }, { rootMargin: "0px 0px -15% 0px" }) : null;
   for (const im of document.querySelectorAll(".entry-art img[data-src]")) { if (gate) gate.observe(im); else { im.src = im.dataset.src; } }
   for (const img of document.querySelectorAll(".entry-art img")) {
     const done = () => {
       const c = sample(img);
-      if (c) img.closest(".entry").dataset.ground = c;   // recorded for the auditors and reports; the room keeps its token
+      if (c) img.closest(".entry").dataset.sampled = c;   // recorded for reports; the room's ground comes from data-ground, set at build time
       img.classList.add("is-loaded");
     };
     if (img.complete && img.naturalWidth) done();
@@ -497,7 +511,10 @@
     if (!nw || !nh || !r.width || !r.height) return r;
     const k = Math.max(r.width / nw, r.height / nh);
     const w = nw * k, h = nh * k;
-    return { left: r.left + (r.width - w) / 2, top: r.top + (r.height - h) / 2, width: w, height: h };
+    // object-position decides which part of the picture the box shows
+    const op = (getComputedStyle(img).objectPosition || "50% 50%").split(/\s+/).map((v) => parseFloat(v) / 100);
+    const px = isNaN(op[0]) ? 0.5 : op[0], py = isNaN(op[1]) ? 0.5 : op[1];
+    return { left: r.left + (r.width - w) * px, top: r.top + (r.height - h) * py, width: w, height: h };
   };
   const measure = () => {
     const out = [];

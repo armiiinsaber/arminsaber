@@ -1580,7 +1580,7 @@ html { overflow-x: clip; }
   align-content: center;
   min-height: 52vh;
   padding-block: var(--s5);
-  --ground: var(--mc, var(--accent));   /* the token, never a sampled colour: a picture that is off shows as off */
+  --ground: var(--art-bg, var(--mc, var(--accent)));   /* the picture's own ground, read at build time into data-ground; the token until a picture arrives */
 }
 /* above the phone grid the copy keeps its two lanes, placed explicitly,
    since the copy's ground is a grid item too and must not push the copy
@@ -1598,7 +1598,7 @@ html { overflow-x: clip; }
    narrows to what the position and the mini axis need, and the fourth
    column is the room the artwork stands in */
 @media (min-width: 1280px) {
-  .entry-head { grid-template-columns: 160px minmax(0, 520px) 68px 1fr; min-height: 48vh; }
+  .entry-head { grid-template-columns: 160px minmax(0, 520px) 68px 1fr; min-height: 64vh; }
 }
 .entry-head::before {
   content: "";
@@ -1617,7 +1617,7 @@ html { overflow-x: clip; }
   z-index: 0;
   top: 0;
   bottom: 0;
-  right: calc(50% - 50vw + 4vw);
+  right: calc(50% - 50vw);
   width: auto;
   height: auto;
   aspect-ratio: 4 / 5;
@@ -1660,12 +1660,12 @@ html[data-copy="panel"] .entry-head::after {
 /* between the phone grid and a wide desktop there is no room beside
    the copy, so the artwork sits below it, bottom right */
 @media (max-width: 1279px) {
-  .entry-head { min-height: 70vh; align-content: start; padding-bottom: calc(40vh + var(--s4)); }
-  .entry-art { top: auto; bottom: 0; height: 44%; }
+  .entry-head { min-height: 82vh; align-content: start; padding-bottom: calc(54vh + var(--s4)); }
+  .entry-art { top: auto; bottom: 0; height: 60%; }
 }
 @media (max-width: 760px) {
-  .entry-head { min-height: 66svh; padding-bottom: calc(46svh - var(--s4)); }
-  .entry-art { right: calc(50% - 50vw); height: 48%; }
+  .entry-head { min-height: 84svh; padding-bottom: calc(60svh - var(--s4)); }
+  .entry-art { right: calc(50% - 50vw); height: 62%; }
 }
 /* the phone grid: the ground spans the three copy rows */
 @media (max-width: 560px) {
@@ -1729,3 +1729,28 @@ html[data-copy="panel"] .entry-head::after {
    ============================================================ */
 .ribbon { --accent: color-mix(in oklch, var(--acc-a) calc((1 - var(--acc-f)) * 100%), var(--acc-b)); }
 .ribbon-thumb { will-change: transform; }
+
+/* ============================================================
+   PHOTO ROOMS
+   A picture with no ground of its own cannot float in a room, so the
+   photograph is the room: edge to edge behind the copy, its crop
+   window anchored on the focal point, the copy on its scrim.
+   ============================================================ */
+.entry--photo .entry-art {
+  top: 0;
+  bottom: 0;
+  left: calc(50% - 50vw);
+  right: calc(50% - 50vw);
+  width: auto;
+  height: auto;
+  aspect-ratio: auto;
+  mask-image: none;
+}
+.entry--photo .entry-art img { object-fit: cover; }
+
+/* a light ground (cream, white) needs the copy's cloud denser and
+   wider than the colour rooms do; measured on rendered pixels */
+.entry--light .entry-head::after {
+  background: color-mix(in oklab, var(--bg) 96%, transparent);
+  margin-block: calc(-1 * var(--s6));
+}
