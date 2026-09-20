@@ -49,7 +49,6 @@
   --logic-lift: #4A78FF;
   --feel-lift:  #EA4020;
   --cream: #F2ECE1;
-  --art-grain: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27200%27%20height%3D%27200%27%3E%3Cfilter%20id%3D%27g%27%3E%3CfeTurbulence%20type%3D%27fractalNoise%27%20baseFrequency%3D%270.7%27%20numOctaves%3D%273%27%20stitchTiles%3D%27stitch%27%2F%3E%3CfeColorMatrix%20type%3D%27saturate%27%20values%3D%270%27%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%27200%27%20height%3D%27200%27%20filter%3D%27url%28%23g%29%27%2F%3E%3C%2Fsvg%3E");
   --logic: var(--c1);
   --feel:  var(--c7);
   --spectrum: linear-gradient(90deg,
@@ -841,10 +840,10 @@ mark.ph {
    ------------------------------------------------------------ */
 .entry--major { padding: var(--s6) 0; }
 .entry--major .entry-line { margin-top: var(--s2); }
-.entry--major .entry-head > .mark { width: 68px; height: 68px; }
+.entry--major .entry-head > .mark { --mark-scale: 1; }
 
 .entry--minor { padding: var(--s4) 0; }
-.entry--minor .entry-head > .mark { width: 36px; height: 36px; }
+.entry--minor .entry-head > .mark { --mark-scale: 0.72; }
 
 /* ------------------------------------------------------------
    Entries — stacked below 760px
@@ -853,7 +852,6 @@ mark.ph {
   .entry { padding: var(--s4) 0; }
   .entry--major { padding: var(--s5) 0; }
   .entry--minor { padding: var(--s3) 0; }
-  .entry--major .entry-head > .mark { width: 56px; height: 56px; }
   .entry-head,
   .sum,
   .entry-more,
@@ -1276,59 +1274,6 @@ p, dd, .entry-desc {
    than it shows, and prose is the one thing on the page that has to
    stay easy to read rather than interesting to look at. */
 
-/* ============================================================
-   THE ARTWORK SLOT
-   A canvas, not an icon in a lane: full width of the entry's
-   column, hard edged the way the reference paintings are, with
-   the entry's own colour as the ground underneath.
-
-   The colour is set here as well as being baked into the image.
-   That is deliberate. It means the slot is already right before
-   the photograph loads and if it never loads, and it means the
-   page's colour and the artwork's ground cannot drift apart: the
-   same token drives both.
-   ============================================================ */
-.entry-art {
-  grid-column: 1 / -1;
-  margin: 0 0 var(--s4);
-  aspect-ratio: 2 / 1;
-  background: var(--mc, var(--accent));
-  overflow: hidden;
-  position: relative;
-}
-.entry-art img,
-.entry-art-ph {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* placeholder: the entry's mark, sprayed in cream over its ground,
-   standing in for the photograph at the right size and treatment */
-.entry-art-ph { color: var(--cream); display: grid; place-items: center; }
-.entry-art-ph svg { width: 100%; height: 100%; filter: blur(2.2px); opacity: 0.9; }
-
-/* the whole canvas carries the reference's grain, baked into the real
-   images and faked here so the placeholder reads at the right texture */
-.entry-art::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background-image: inherit;
-  background: var(--art-grain);
-  background-size: 200px 200px;
-  opacity: 0.16;
-  mix-blend-mode: overlay;
-}
-
-/* below the phone breakpoint a 2:1 band is only 160px tall at 360, which
-   is not a canvas any more, so it opens up to 3:2 and the same master
-   crops to it */
-@media (max-width: 760px) {
-  .entry-art { aspect-ratio: 3 / 2; margin-bottom: var(--s3); }
-}
 
 /* the mark lane goes with the marks: the artwork spans the full column
    above the label, so the head is back to two lanes */
@@ -1411,13 +1356,6 @@ p, dd, .entry-desc {
    Until then the token shows, which is approximately right, so
    there is no flash of dark and no layout shift either way.
    ============================================================ */
-.entry-art { background: var(--mc, var(--accent)); }
-.entry-art img { opacity: 0; transition: opacity var(--dur-med) linear; }
-.entry-art img.is-loaded { opacity: 1; }
-@media (prefers-reduced-motion: reduce) {
-  .entry-art img { transition: none; }
-}
-
 /* ============================================================
    JOB 1 GUARD
    Nothing that is positioned off the column may widen the page.
@@ -1627,19 +1565,6 @@ html { overflow-x: clip; }
    display: contents, so their children need the lift themselves */
 .entry-head > *, .entry-main > *, .entry-line > * { position: relative; z-index: 1; }
 
-/* the artwork: 4:5, full room height, sharp to its own edges */
-.entry-art {
-  position: absolute;
-  z-index: 0;
-  top: 0;
-  bottom: 0;
-  right: calc(50% - 50vw + 4vw);
-  width: auto;
-  height: auto;
-  aspect-ratio: 4 / 5;
-  margin: 0;
-  background: none;
-}
 
 /* the copy's ground. A grid item spanning the meta and main lanes,
    under the copy, over the room. Default: the hero's soft scrim, a
@@ -1675,11 +1600,9 @@ html[data-copy="panel"] .entry-head::after {
    the copy, so the artwork sits below it, bottom right */
 @media (max-width: 1279px) {
   .entry-head { min-height: 82vh; align-content: start; padding-bottom: calc(54vh + var(--s4)); }
-  .entry-art { top: auto; bottom: 0; height: 60%; }
 }
 @media (max-width: 760px) {
   .entry-head { min-height: 84svh; padding-bottom: calc(60svh - var(--s4)); }
-  .entry-art { right: calc(50% - 50vw + 4vw); height: 62%; }
 }
 /* the phone grid: the ground spans the three copy rows */
 @media (max-width: 560px) {
@@ -1695,8 +1618,6 @@ html[data-copy="panel"] .entry-head::after {
 /* the placeholder's own grain overlay reads as a lighter rectangle once
    the figure stands in a field of the same colour; the page grain
    already covers it, and real pictures carry their grain baked in */
-.entry-art::after { content: none; }
-
 /* ============================================================
    THE HERO, WIDE
    Above the phone layout the statement runs across the whole hero
@@ -1753,4 +1674,54 @@ html[data-copy="panel"] .entry-head::after {
 .entry--light .entry-head::after {
   background: color-mix(in oklab, var(--bg) 96%, transparent);
   margin-block: calc(-1 * var(--s6));
+}
+
+/* ============================================================
+   THE MARK IN THE ROOM
+   The marks were drawn to sit beside a line of text in a list, at
+   52px. A room is a different shape: two thirds of a screen of the
+   entry's own colour with the copy on the left, so the mark stands
+   in it the way the photograph did, on the right, at room scale.
+   It is a gradient form with no edge, so it can be large without
+   shouting, and its own blur still scales with its position on the
+   spectrum: tight at the logic end, bleeding at the feeling end.
+   ============================================================ */
+.entry-head > .mark {
+  position: absolute;
+  z-index: 0;
+  /* the mark used to sit on the dark page in its entry's accent; the
+     room is now that accent, so the form would be invisible in it. It
+     takes the cream instead, which is what the placeholder did and what
+     the reference paintings do: one pale figure on a flat ground. */
+  color: var(--cream);
+  width: calc(var(--mark-size) * var(--mark-scale, 1));
+  height: calc(var(--mark-size) * var(--mark-scale, 1));
+  margin: 0;
+  /* inside the room, not bled to the viewport: the mark is a form with
+     a centre, so it wants space around it rather than an edge to run off */
+  right: 6%;
+  top: 50%;
+  transform: translateY(-50%);
+  --mark-size: 46vh;
+}
+/* below the side-by-side breakpoint the copy sits at the top of the
+   room, so the mark takes the space under it */
+@media (max-width: 1279px) {
+  .entry-head > .mark {
+    --mark-size: 40vh;
+    top: auto;
+    bottom: 7%;
+    transform: none;
+    right: 8%;
+  }
+}
+@media (max-width: 760px) {
+  .entry-head > .mark {
+    --mark-size: 42svh;
+    /* flush to the same edge as every other mark rather than centred:
+       the majors and minors are different sizes, so centring them would
+       land their edges in different places down the page */
+    right: 8%;
+    bottom: 9%;
+  }
 }

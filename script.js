@@ -436,10 +436,6 @@
       return null;                   // tainted or not decodable: keep the token
     }
   };
-  // the room pictures are fetched once their room is a little way up the
-  // screen, not when its top edge grazes the fold: the browser's own lazy
-  // margin is over a screen ahead and pulled three of them into the
-  // first view. They fade in as they land.
   // the room is its entry's token, flat. Sage and ochre are light enough
   // that the copy needs a denser cloud; the token is read from the entry
   // rather than listed here, so a palette change carries through.
@@ -452,23 +448,9 @@
     const n = parseInt(m[1], 16), lum = 0.2126 * (n >> 16) + 0.7152 * ((n >> 8) & 255) + 0.0722 * (n & 255);
     if (lum > 140) entry.classList.add("entry--light");
   }
-  // the crop window keeps the focal point in view
-  const placeCrops = () => {
-    for (const fig of document.querySelectorAll(".entry-art[data-focus]")) {
-      const im = fig.querySelector("img"); if (!im) continue;
-      const [fx, fy] = fig.dataset.focus.split(/\s+/).map(Number);
-      im.style.objectPosition = `${fx}% ${fy}%`;
-    }
-  };
-  placeCrops();
-  addEventListener("resize", () => { placeCrops(); if (window.__lip) window.__lip.measure(); });
-  const gate = "IntersectionObserver" in window ? new IntersectionObserver((es) => { for (const e of es) if (e.isIntersecting) { const im = e.target; if (im.dataset.src) { im.src = im.dataset.src; delete im.dataset.src; } gate.unobserve(im); } }, { rootMargin: "0px 0px -15% 0px" }) : null;
-  for (const im of document.querySelectorAll(".entry-art img[data-src]")) { if (gate) gate.observe(im); else { im.src = im.dataset.src; } }
-  for (const img of document.querySelectorAll(".entry-art img")) {
-    const done = () => { img.classList.add("is-loaded"); };
-    if (img.complete && img.naturalWidth) done();
-    else img.addEventListener("load", done, { once: true });
-  }
+  // the rooms hold drawn marks now, so there is nothing here to fetch,
+  // crop or fade in; the lip re-measures on resize because the marks move
+  addEventListener("resize", () => { if (window.__lip) window.__lip.measure(); });
 })();
 
 /* ============================================================
@@ -532,13 +514,14 @@
       out.push({ y: r.top + scrollY + r.height * fy / 100, x: r.left + r.width * fx / 100,
                  size: r.width * (Number(hero.dataset.lipWidth) || 6.4) / 100, depart: true });
     }
-    for (const fig of document.querySelectorAll(".entry-art")) {
-      const im = fig.querySelector("img");
-      const r = im ? drawnRect(im) : fig.getBoundingClientRect();
-      const [fx, fy] = focusOf(fig);
-      // the lip's width is the picture's share, like the portrait; never smaller than a thumb
+    // the marks: each carries the point its own form gathers around,
+    // measured from the drawn shape rather than taken as the box centre
+    for (const mk of document.querySelectorAll(".entry-head > .mark")) {
+      const r = mk.getBoundingClientRect();
+      if (!r.width) continue;
+      const [fx, fy] = focusOf(mk);
       out.push({ y: r.top + scrollY + r.height * fy / 100, x: r.left + r.width * fx / 100,
-                 size: Math.max(28, r.width * (Number(fig.dataset.lipWidth) || 7) / 100) });
+                 size: Math.max(26, r.width * (Number(mk.dataset.lipWidth) || 12) / 100) });
     }
     // rest: the leopard's mouth
     const closer = document.querySelector(".closer-art");
