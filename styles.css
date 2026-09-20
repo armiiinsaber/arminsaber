@@ -1411,7 +1411,7 @@ p, dd, .entry-desc {
    Until then the token shows, which is approximately right, so
    there is no flash of dark and no layout shift either way.
    ============================================================ */
-.entry-art { background: var(--art-bg, var(--mc, var(--accent))); }
+.entry-art { background: var(--mc, var(--accent)); }
 .entry-art img { opacity: 0; transition: opacity var(--dur-med) linear; }
 .entry-art img.is-loaded { opacity: 1; }
 @media (prefers-reduced-motion: reduce) {
@@ -1517,8 +1517,6 @@ html { overflow-x: clip; }
   aspect-ratio: 4 / 5;
   max-height: 92vh;
   overflow: hidden;
-  mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent), linear-gradient(180deg, transparent, #000 10%);
-  mask-composite: intersect;
 }
 .closer-art img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .entries { padding-bottom: 0; }
@@ -1580,7 +1578,7 @@ html { overflow-x: clip; }
   align-content: center;
   min-height: 52vh;
   padding-block: var(--s5);
-  --ground: var(--art-bg, var(--mc, var(--accent)));   /* the picture's own ground, read at build time into data-ground; the token until a picture arrives */
+  --ground: var(--mc, var(--accent));   /* the entry's token: the room is a flat colour, the picture a rectangle on it */
 }
 /* above the phone grid the copy keeps its two lanes, placed explicitly,
    since the copy's ground is a grid item too and must not push the copy
@@ -1605,18 +1603,13 @@ html { overflow-x: clip; }
   position: absolute;
   inset: 0 calc(50% - 50vw);
   background-color: var(--ground);
-  /* the field: the picture itself, tiny and pre-blurred, scaled to cover
-     the room, so the room is made of the picture's own colours */
-  background-image: var(--field, none);
-  background-size: cover;
-  background-position: center;
   z-index: 0;
 }
 /* the copy above its ground; on the phone grid main and line are
    display: contents, so their children need the lift themselves */
 .entry-head > *, .entry-main > *, .entry-line > * { position: relative; z-index: 1; }
 
-/* the artwork: 4:5, full room height, blended into the ground */
+/* the artwork: 4:5, full room height, sharp to its own edges */
 .entry-art {
   position: absolute;
   z-index: 0;
@@ -1628,9 +1621,6 @@ html { overflow-x: clip; }
   aspect-ratio: 4 / 5;
   margin: 0;
   background: none;
-  /* all four edges feather into the field */
-  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent), linear-gradient(180deg, transparent, #000 10%, #000 90%, transparent);
-  mask-composite: intersect;
 }
 
 /* the copy's ground. A grid item spanning the meta and main lanes,
@@ -1737,8 +1727,8 @@ html[data-copy="panel"] .entry-head::after {
 .ribbon-thumb { will-change: transform; }
 
 
-/* a light ground (cream, white) needs the copy's cloud denser and
-   wider than the colour rooms do; measured on rendered pixels */
+/* a light room (sage, ochre) needs the copy's cloud denser and wider
+   than the dark ones do; measured on rendered pixels */
 .entry--light .entry-head::after {
   background: color-mix(in oklab, var(--bg) 96%, transparent);
   margin-block: calc(-1 * var(--s6));

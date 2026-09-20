@@ -440,15 +440,16 @@
   // screen, not when its top edge grazes the fold: the browser's own lazy
   // margin is over a screen ahead and pulled three of them into the
   // first view. They fade in as they land.
-  // each figure declares its picture's ground, measured at build time, so
-  // the room has its colour before any picture arrives; "none" means the
-  // picture has no ground and becomes the room itself
-  for (const el of document.querySelectorAll(".entry[data-ground], .entry-art[data-ground]")) {
-    const entry = el.closest(".entry"), g = el.dataset.ground;
-    entry.style.setProperty("--art-bg", g);
-    if (el.dataset.field) entry.style.setProperty("--field", `url("${el.dataset.field}")`);
-    // a light ground needs a denser scrim under the copy
-    const n = parseInt(g.slice(1), 16), lum = 0.2126 * (n >> 16) + 0.7152 * ((n >> 8) & 255) + 0.0722 * (n & 255);
+  // the room is its entry's token, flat. Sage and ochre are light enough
+  // that the copy needs a denser cloud; the token is read from the entry
+  // rather than listed here, so a palette change carries through.
+  const probe = document.createElement("canvas").getContext("2d");
+  for (const entry of document.querySelectorAll(".entry")) {
+    const tok = getComputedStyle(entry).getPropertyValue("--mc").trim();
+    if (!tok) continue;
+    probe.fillStyle = "#000"; probe.fillStyle = tok;
+    const m = probe.fillStyle.match(/^#([0-9a-f]{6})$/i); if (!m) continue;
+    const n = parseInt(m[1], 16), lum = 0.2126 * (n >> 16) + 0.7152 * ((n >> 8) & 255) + 0.0722 * (n & 255);
     if (lum > 140) entry.classList.add("entry--light");
   }
   // the crop window keeps the focal point in view
@@ -464,11 +465,7 @@
   const gate = "IntersectionObserver" in window ? new IntersectionObserver((es) => { for (const e of es) if (e.isIntersecting) { const im = e.target; if (im.dataset.src) { im.src = im.dataset.src; delete im.dataset.src; } gate.unobserve(im); } }, { rootMargin: "0px 0px -15% 0px" }) : null;
   for (const im of document.querySelectorAll(".entry-art img[data-src]")) { if (gate) gate.observe(im); else { im.src = im.dataset.src; } }
   for (const img of document.querySelectorAll(".entry-art img")) {
-    const done = () => {
-      const c = sample(img);
-      if (c) img.closest(".entry").dataset.sampled = c;   // recorded for reports; the room's ground comes from data-ground, set at build time
-      img.classList.add("is-loaded");
-    };
+    const done = () => { img.classList.add("is-loaded"); };
     if (img.complete && img.naturalWidth) done();
     else img.addEventListener("load", done, { once: true });
   }
@@ -646,14 +643,13 @@
       return `rgb(${r} ${g} ${b})`;
     } catch { return null; }
   };
-  for (const [sel, prop] of [[".hero-portrait img", "--hero-bg"], [".closer-art img", "--closer-bg"]]) {   // the hero still takes its sample: the portrait is not on the token yet
+  for (const [sel, prop] of [[".hero-portrait img", "--hero-bg"]]) {   // the hero still takes its sample: the portrait is not on the token yet
     const img = document.querySelector(sel); if (!img) continue;
     const done = () => {
       const c = sample(img); if (!c) return;
       document.documentElement.style.setProperty(prop, c);
       // the last room and the closer are one field: until Live sets has a
       // picture of its own, its room takes the leopard's sampled ground
-      if (prop === "--closer-bg") document.documentElement.dataset.closerGround = c;   // recorded only; the closer is painted with the token
     };
     if (img.complete && img.naturalWidth) done(); else img.addEventListener("load", done, { once: true });
   }
