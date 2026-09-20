@@ -40,10 +40,14 @@
   --c7: #E3341C;   /* vermilion   live sets   .95 */
   --spot: #141414; /* the black spots in the reference */
   --lip:  #1B3FFF; /* the electric blue that recurs across the art */
-  /* cobalt lifted just far enough to clear 3:1 on the hero's ground while
-     holding the chroma of the plot dots: the token itself is too dark to
-     be read at size over anything this page puts behind it */
-  --logic-lift: #3C64FF;
+  /* The two pole colours, lifted. Same rule for both: hold the hue, hold
+     as much chroma as possible, and raise the lightness until the colour
+     clears 4.5:1 as 8 to 10px text on the page's own ground, which is the
+     hardest thing either of them has to do. The tokens themselves are too
+     dark for that: cobalt reads 2.65 and vermilion 4.38 on the ribbon.
+     Anywhere a pole colour has to carry text, it carries the lift. */
+  --logic-lift: #4A78FF;
+  --feel-lift:  #EA4020;
   --cream: #F2ECE1;
   --art-grain: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27200%27%20height%3D%27200%27%3E%3Cfilter%20id%3D%27g%27%3E%3CfeTurbulence%20type%3D%27fractalNoise%27%20baseFrequency%3D%270.7%27%20numOctaves%3D%273%27%20stitchTiles%3D%27stitch%27%2F%3E%3CfeColorMatrix%20type%3D%27saturate%27%20values%3D%270%27%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%27200%27%20height%3D%27200%27%20filter%3D%27url%28%23g%29%27%2F%3E%3C%2Fsvg%3E");
   --logic: var(--c1);
@@ -215,8 +219,8 @@ button {
   flex: none;
   user-select: none;
 }
-.ribbon-label--logic { color: var(--logic); }
-.ribbon-label--feel  { color: var(--feel); }
+.ribbon-label--logic { color: var(--logic-lift); }
+.ribbon-label--feel  { color: var(--feel-lift); }
 
 .ribbon-track {
   position: relative;
@@ -1568,7 +1572,7 @@ html { overflow-x: clip; }
    the lifted blue, which matches the plot dots' chroma and clears the
    3:1 the large type needs. */
 .hero .w-logic { color: var(--logic-lift); }
-.hero .w-feel  { color: var(--feel); }
+.hero .w-feel  { color: var(--feel-lift); }
 /* the pole labels are 11px mono, which needs 4.5:1, so they take the ink
    at every width and let the dots beneath them carry the colour */
 .hero .plot-pole--logic, .hero .plot-pole--feel { color: var(--ink); }
