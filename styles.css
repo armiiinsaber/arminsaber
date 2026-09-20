@@ -1402,32 +1402,9 @@ html { overflow-x: clip; }
           mask-composite: intersect;
 }
 .hero-portrait img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.hero-contact, .hero-copy, .plot { position: relative; z-index: 1; }
+.hero-contact, .hero-copy, .plot { position: relative; z-index: 2; }
 .hero-copy { max-width: min(58%, 620px); padding-right: var(--s4); }
 .plot { max-width: 58%; }
-/* the words keep their colours, and cobalt on red is not legible, so a
-   soft dark field sits behind the copy block only: the red stays red
-   everywhere the type is not */
-.hero-copy::before, .plot::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  inset: -40% -30% -40% -24%;
-  /* deep enough at the words, gone by its own edge: the saturated blue
-     and vermilion need the ground under them about a fifth darker than
-     the red to clear 3:1 at display size */
-  background: radial-gradient(ellipse at 42% 52%,
-    color-mix(in oklab, var(--bg) 94%, transparent) 0%,
-    color-mix(in oklab, var(--bg) 90%, transparent) 52%,
-    color-mix(in oklab, var(--bg) 44%, transparent) 70%,
-    transparent 84%);
-  pointer-events: none;
-}
-/* the plot sits above the copy in paint order, so its scrim must not
-   reach up into the headline: at phone widths a -60% top inset threw the
-   ellipse over the last line and dimmed every word in it, the cream one
-   included, which was most of why the colours looked washed on a phone */
-.plot::before { inset: -8% -30% -50% -24%; }
 
 @media (max-width: 900px) {
   .hero { min-height: 100svh; }
@@ -1437,7 +1414,6 @@ html { overflow-x: clip; }
     bottom: 0;
   }
   .hero-copy, .plot { max-width: none; padding-right: 0; }
-  .hero-copy::before { inset: -14% -8% -14% -8%; }
 }
 
 /* ============================================================
@@ -1455,13 +1431,26 @@ html { overflow-x: clip; }
   max-width: none;
   margin: 0;
   padding: 0 max(var(--pad-x), calc(50% - var(--page-max) / 2 + var(--pad-x)));
-  background: var(--c7);   /* the leopard is exported on this hex; nothing is sampled */
+  /* the leopard is exported with its ground landing on this same token,
+     measured back off the shipped file to within a third of a point, so
+     the last room, this field and the picture are one colour */
+  background: var(--c7);
 }
 .closer-art {
   margin: 0 auto;
   aspect-ratio: 4 / 5;
   max-height: 92vh;
   overflow: hidden;
+  /* The field is painted the picture's own mean, but the painted ground
+     is not flat: it is lit around the animal and falls off to the corners,
+     so at the frame edge it can sit a dozen points off the field and draw
+     a rectangle. A short feather on all four sides carries the local
+     value into the field instead of stepping to it. Only the closer takes
+     this: the rooms are flat colour and have nothing to blend. */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent), linear-gradient(180deg, transparent, #000 6%, #000 94%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent), linear-gradient(180deg, transparent, #000 6%, #000 94%, transparent);
+  -webkit-mask-composite: source-in;
+          mask-composite: intersect;
 }
 .closer-art img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .entries { padding-bottom: 0; }
@@ -1621,11 +1610,9 @@ html[data-copy="panel"] .entry-head::after {
 /* ============================================================
    THE HERO, WIDE
    Above the phone layout the statement runs across the whole hero
-   in two lines, in a dark band at the top that dissolves into the
-   red. The portrait stands lower right, the plot lower left. The
-   band is the copy's ground: edge to edge, no shape of its own, and
-   it lies over the portrait too, so the picture's flat ground never
-   shows as a rectangle against it.
+   in two lines. The portrait stands lower right, the plot lower
+   left. What darkens the upper left is the hero's own light, set
+   out below, not anything belonging to this block.
    ============================================================ */
 @media (min-width: 901px) {
   .hero { display: flex; flex-direction: column; }
@@ -1635,28 +1622,8 @@ html[data-copy="panel"] .entry-head::after {
     margin-inline: calc(-1 * (50vw - 50% - var(--pad-x)));
   }
   .hero-headline { font-size: clamp(34px, 5.4vw, 84px); max-width: none; margin-top: var(--s4); }
-  .hero-copy::before, .plot::before { content: none; }
-  .hero::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
-    /* the band holds full strength past the last line of the headline,
-       then goes; before, its third line sat in the fade and the two
-       coloured words lost their contrast there */
-    background: linear-gradient(180deg,
-      var(--bg) 0%,
-      color-mix(in oklab, var(--bg) 96%, transparent) 30%,
-      color-mix(in oklab, var(--bg) 74%, transparent) 44%,
-      transparent 60%);
-  }
-  .hero-contact, .hero-copy, .plot { z-index: 2; }
   .hero-portrait { height: 62%; }
   .plot { max-width: 46%; margin-top: auto; }
-  /* the plot sits on the bare red down here, where the tinted poles
-     fall under 3:1; they take the ink, the dots keep the colours */
-  .plot-hint { color: var(--ink); }
 }
 
 /* ============================================================
@@ -1725,3 +1692,34 @@ html[data-copy="panel"] .entry-head::after {
     bottom: 9%;
   }
 }
+
+/* ============================================================
+   THE HERO'S LIGHT
+   Not a scrim. The hero is lit from the figure and falls away from
+   him: one radial pass over the whole hero, the portrait included,
+   from fully clear where he stands to the page's own ground at the
+   far corner. Because it crosses the picture as well as the field
+   there is no boundary anywhere to read as a shape, and the
+   portrait's flat red cannot show as a rectangle against a darker
+   field the way it did when the darkening sat behind it.
+
+   This replaces three attempts that were all objects laid over the
+   red: a blurred ellipse behind the copy, a horizontal band across
+   the top, and softer versions of each.
+   ============================================================ */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(112% 108% at 84% 82%,
+    transparent 0%,
+    transparent 24%,
+    color-mix(in oklab, var(--bg) 38%, transparent) 40%,
+    color-mix(in oklab, var(--bg) 76%, transparent) 56%,
+    var(--bg) 76%);
+}
+/* the two small mono roles in the hero sat on bare red at 1.43:1; they
+   were leaning on scrims that no longer exist, so they take the ink */
+.hero-contact a, .plot-readout { color: var(--ink); }
