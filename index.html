@@ -38,30 +38,6 @@
 <div class="edge" aria-hidden="true"></div>
 <div class="lip" aria-hidden="true" data-lip><img src="img/art/lip.png" alt="" decoding="async"></div>
 <div class="grain" aria-hidden="true"></div>
-<svg class="fx" aria-hidden="true" focusable="false"><defs>
-  <!-- The sprayed edge, in two passes. First a fine turbulence
-       displaces the glyph outline so the edge breaks up the way paint
-       does off a nozzle. Then a second, coarser noise is turned into an
-       alpha field and composited in, which mottles the inside of the
-       letter rather than only its rim: without it the type reads as a
-       clean shape with a ragged border instead of as sprayed paint.
-       A little blur takes the last of the vector crispness off.
-
-       Live text goes in and comes out. A filter changes how a thing
-       paints, never what it is, so this stays selectable and findable. -->
-  <filter id="spray-display" x="-15%" y="-15%" width="130%" height="130%" color-interpolation-filters="sRGB">
-    <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="11" result="edge"/>
-    <feDisplacementMap in="SourceGraphic" in2="edge" scale="3.8" xChannelSelector="R" yChannelSelector="G" result="d"/>
-    <feTurbulence type="fractalNoise" baseFrequency="0.3" numOctaves="4" seed="4" result="fill"/>
-    <feColorMatrix in="fill" type="matrix" result="fillA"
-      values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1.25 0.48"/>
-    <feComposite in="d" in2="fillA" operator="in" result="speckled"/>
-    <feGaussianBlur in="speckled" stdDeviation="0.38"/>
-  </filter>
-
-  <!-- the same hand, much lighter: at 10px a 2px displacement eats the
-       letter, so mono gets edge break-up only and no fill mottling -->
-</defs></svg>
 
 
 <header class="ribbon" aria-label="Spectrum position">

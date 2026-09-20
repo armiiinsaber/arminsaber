@@ -40,6 +40,10 @@
   --c7: #E3341C;   /* vermilion   live sets   .95 */
   --spot: #141414; /* the black spots in the reference */
   --lip:  #1B3FFF; /* the electric blue that recurs across the art */
+  /* cobalt lifted just far enough to clear 3:1 on the hero's ground while
+     holding the chroma of the plot dots: the token itself is too dark to
+     be read at size over anything this page puts behind it */
+  --logic-lift: #3C64FF;
   --cream: #F2ECE1;
   --art-grain: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27200%27%20height%3D%27200%27%3E%3Cfilter%20id%3D%27g%27%3E%3CfeTurbulence%20type%3D%27fractalNoise%27%20baseFrequency%3D%270.7%27%20numOctaves%3D%273%27%20stitchTiles%3D%27stitch%27%2F%3E%3CfeColorMatrix%20type%3D%27saturate%27%20values%3D%270%27%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%27200%27%20height%3D%27200%27%20filter%3D%27url%28%23g%29%27%2F%3E%3C%2Fsvg%3E");
   --logic: var(--c1);
@@ -1252,21 +1256,13 @@ p, dd, .entry-desc {
    findable by browser search.
    ============================================================ */
 
-.fx { position: absolute; width: 0; height: 0; overflow: hidden; }
-
-.display {
-  filter: url(#spray-display);
-  /* each sprayed face is its own compositor layer, so the filter is
-     rasterised once and only composited while scrolling: measured,
-     1.66s of raster in an 8s scroll became 75ms */
-  will-change: transform;
-  /* four haloes, each roughly triple the last, so the light falls off
-     the way overspray does instead of stopping at a rim */
-  text-shadow:
-    0 0 0.05em color-mix(in oklab, currentColor 55%, transparent),
-    0 0 0.18em color-mix(in oklab, currentColor 30%, transparent),
-    0 0 0.55em color-mix(in oklab, currentColor 16%, transparent);
-}
+/* The display face is rendered clean. The sprayed edge and its bloom
+   are gone: the displacement map worked in absolute pixels, so at the
+   30 to 34px the names and the phone headline are set it ate a third of
+   the stroke and the type read as out of focus. The page keeps its
+   texture where texture belongs, in the grain over everything and in
+   the airbrush artwork itself. Removing the filter also retires the
+   per-face compositor layer it needed. */
 
 /* The mono labels no longer carry the spray. Profiled on the GPU, the
    reference filter on some thirty small labels was the page's whole
@@ -1475,14 +1471,21 @@ html { overflow-x: clip; }
   position: absolute;
   z-index: -1;
   inset: -40% -30% -40% -24%;
-  background: radial-gradient(ellipse at 42% 50%,
-    color-mix(in oklab, var(--bg) 86%, transparent) 0%,
-    color-mix(in oklab, var(--bg) 72%, transparent) 44%,
-    color-mix(in oklab, var(--bg) 26%, transparent) 62%,
-    transparent 74%);
+  /* deep enough at the words, gone by its own edge: the saturated blue
+     and vermilion need the ground under them about a fifth darker than
+     the red to clear 3:1 at display size */
+  background: radial-gradient(ellipse at 42% 52%,
+    color-mix(in oklab, var(--bg) 94%, transparent) 0%,
+    color-mix(in oklab, var(--bg) 90%, transparent) 52%,
+    color-mix(in oklab, var(--bg) 44%, transparent) 70%,
+    transparent 84%);
   pointer-events: none;
 }
-.plot::before { inset: -60% -30% -50% -24%; }
+/* the plot sits above the copy in paint order, so its scrim must not
+   reach up into the headline: at phone widths a -60% top inset threw the
+   ellipse over the last line and dimmed every word in it, the cream one
+   included, which was most of why the colours looked washed on a phone */
+.plot::before { inset: -8% -30% -50% -24%; }
 
 @media (max-width: 900px) {
   .hero { min-height: 100svh; }
@@ -1556,8 +1559,19 @@ html { overflow-x: clip; }
    already 2.4 on the plain dark page, so this is the hero making a
    pre-existing weakness worse. Here only, they are lifted toward the
    ink until they clear AA; the tokens themselves do not change. */
-.hero .w-logic, .hero .plot-pole--logic { color: color-mix(in oklab, var(--c1) 44%, var(--ink)); }
-.hero .w-feel,  .hero .plot-pole--feel  { color: color-mix(in oklab, var(--c7) 56%, var(--ink)); }
+/* The two spectrum words carry their own colour at full chroma. They
+   were mixed more than half way to the ink for contrast, back when the
+   headline sat on bare red, and that mix was the whole of the wash:
+   measured, it cost the blue 98 of its 193 points of chroma while the
+   scrim and the bloom cost none. Vermilion is luminous enough to pass
+   as the token; cobalt is not, at any scrim darkness, so the hero uses
+   the lifted blue, which matches the plot dots' chroma and clears the
+   3:1 the large type needs. */
+.hero .w-logic { color: var(--logic-lift); }
+.hero .w-feel  { color: var(--feel); }
+/* the pole labels are 11px mono, which needs 4.5:1, so they take the ink
+   at every width and let the dots beneath them carry the colour */
+.hero .plot-pole--logic, .hero .plot-pole--feel { color: var(--ink); }
 
 /* ============================================================
    THE ROOMS
@@ -1703,18 +1717,21 @@ html[data-copy="panel"] .entry-head::after {
     inset: 0;
     z-index: 1;
     pointer-events: none;
+    /* the band holds full strength past the last line of the headline,
+       then goes; before, its third line sat in the fade and the two
+       coloured words lost their contrast there */
     background: linear-gradient(180deg,
       var(--bg) 0%,
-      color-mix(in oklab, var(--bg) 94%, transparent) 22%,
-      color-mix(in oklab, var(--bg) 60%, transparent) 36%,
-      transparent 52%);
+      color-mix(in oklab, var(--bg) 96%, transparent) 30%,
+      color-mix(in oklab, var(--bg) 74%, transparent) 44%,
+      transparent 60%);
   }
   .hero-contact, .hero-copy, .plot { z-index: 2; }
   .hero-portrait { height: 62%; }
   .plot { max-width: 46%; margin-top: auto; }
   /* the plot sits on the bare red down here, where the tinted poles
      fall under 3:1; they take the ink, the dots keep the colours */
-  .hero .plot-pole--logic, .hero .plot-pole--feel, .plot-hint { color: var(--ink); }
+  .plot-hint { color: var(--ink); }
 }
 
 /* ============================================================
